@@ -32,7 +32,7 @@
  }
 
  .jspsych-content {
-   max-width: 95%; /* this is mainly an IE 10-11 fix */
+   max-width: 100%; /* this is mainly an IE 10-11 fix */ /* I changed this from 95-100, because the fixations weren't aligned */
    text-align: center;
    margin: auto; /* this is for overflowing content */
  }
