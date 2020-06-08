@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EvAccum</title>
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+		<script src="jspsych-rdk.js"></script>
+        <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    </head>
+    <body></body>
+    <script>
+
+		/* initialise timeline array */
+        var timeline =[];
+
+		/* fixation */
+		// var fixation = {
+		// 	type: 'html-keyboard-response',
+		// 	stimulus: '<div style="font-size:60px;">+</div>',
+		// 	choices: jsPsych.NO_KEYS,
+		// 	trial_duration: 300,
+		// 	data: {test_part: 'fixation'}
+		// };
+		var fixation = {
+			type: 'rdk',
+            background_color: "black",
+            dot_color: "black", // make the dot color the same as the background color to just get the fixation (silly way to do this, I know...)
+			aperture_type: 1,
+			fixation_cross: true,
+			fixation_cross_color: "white", 
+			fixation_cross_thickness: 6,
+			post_trial_gap: 0, 
+			number_of_dots: 200,
+			coherence: 0.5, 
+			move_distance: 1,
+            choices: jsPsych.NO_KEYS,
+            correct_choice: "a",
+            coherent_direction: 45, 
+			trial_duration: 300,
+			data: {test_part: 'fixation'}
+		};
+
+        /* rdk */
+		var rdk_block = {
+			type: "rdk", 
+            background_color: "black",
+            dot_color: "white",
+			aperture_type: 1,
+			fixation_cross: true,
+			fixation_cross_color: "white", // Dorian: does this work for you with the newer plugin version?
+			fixation_cross_thickness: 6,
+            post_trial_gap: 0, // it occurs to me that I haven't tried this to see if it will keep my fixation during the gap - I would be happy with that I think if it was easier than aligning the html fixation with the canvas (although I would need a fixation prior to the first trial)
+            // Dorian: not totally sure what you mean about post_trial_gap, but I don't think this will do what you want - it should just control the duration of a blank screen between trial objects
+			number_of_dots: 200,
+            coherence: 0.5, 
+			move_distance: 1,
+			choices: ["a", "l"],
+			correct_choice: "a", 
+			coherent_direction: 45, 
+            trial_duration: 1500,
+            data: {test_part: 'rdk'}
+		};
+        
+        /* generate timeline */
+		timeline.push(fixation);
+		timeline.push(rdk_block);
+
+		/* initialise experiment */
+        jsPsych.init({
+            timeline: timeline,
+            show_progress_bar: false,
+            show_preload_progress_bar: false
+        });
+
+    </script>
+</html>
