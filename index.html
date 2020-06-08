@@ -4,7 +4,8 @@
         <title>EvAccum</title>
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
-		<script src="jspsych-rdk.js"></script>
+		<script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
+		<!--  <script src="jspsych-rdk.js"></script> -->
         <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
     </head>
     <body></body>
@@ -47,10 +48,9 @@
             dot_color: "white",
 			aperture_type: 1,
 			fixation_cross: true,
-			fixation_cross_color: "white", // Dorian: does this work for you with the newer plugin version?
+			fixation_cross_color: "white",
 			fixation_cross_thickness: 6,
-            post_trial_gap: 0, // it occurs to me that I haven't tried this to see if it will keep my fixation during the gap - I would be happy with that I think if it was easier than aligning the html fixation with the canvas (although I would need a fixation prior to the first trial)
-            // Dorian: not totally sure what you mean about post_trial_gap, but I don't think this will do what you want - it should just control the duration of a blank screen between trial objects
+            post_trial_gap: 0,
 			number_of_dots: 200,
             coherence: 0.5, 
 			move_distance: 1,
