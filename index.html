@@ -26,70 +26,69 @@
 			{stimulus: "stimuli/4-2.png"}
 		];
 
+		var easy_coh = 70; 
+		var hard_coh = 30;
+
     	/* define parameters to pass into the stimulus_array_generator function */
    		var easy_rule = 10;
     	var hard_rule = 80;
-		var easy_coh = 70; // these don't need to go into the generator
-		var hard_coh = 30; // these don't need to go into the generator
     	var num_blocks = 20;
     	var num_trials_per_block = 64;
     	var num_cues = 4;
     	var num_motion_coherence = 8;
 
-    	/* call stimulus_array_generator function and save output as stim_array_info */
+   		/* call stimulus_array_generator function and save output as stim_array_info */
     	var stim_array_info = stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
     	console.log('Block 1: ', stim_array_info[0]);
 
 		/* initialise timeline array */
         var timeline =[];
 
-		/* fixation */
-		var fixation = {
-			type: 'rdk',
-            background_color: "black",
-            dot_color: "black", 
-			aperture_type: 1,
-			fixation_cross: true,
-			fixation_cross_color: "white", 
-			fixation_cross_thickness: 6,
-			post_trial_gap: 0, 
-			number_of_dots: 200,
-			coherence: 0.5, 
-			move_distance: 1,
-            choices: jsPsych.NO_KEYS,
-            correct_choice: "a",
-            coherent_direction: 45, 
-			trial_duration: 300,
-			data: {test_part: 'fixation'}
-		};
-
-        /* rdk */
-		var rdk_block = {
-			type: "rdk", 
-            background_color: "black",
-            dot_color: "white",
-			aperture_type: 1,
-			fixation_cross: true,
-			fixation_cross_color: "white",
-			fixation_cross_thickness: 6,
-            post_trial_gap: 0,
-			number_of_dots: 200,
-            coherence: 0.5, 
-			move_distance: 1,
-			choices: ["a", "l"],
-			correct_choice: "a", 
-			coherent_direction: 45, 
-            trial_duration: 1500,
-            data: {test_part: 'rdk'}
-		};
-        
-        /* generate timeline */
-		timeline.push(fixation);
-		timeline.push(rdk_block);
+		/* trial procedure */
+		var trial_procedure = {
+			timeline: [
+				{	
+					type: 'rdk',
+            		background_color: "black",
+            		dot_color: "black", 
+					aperture_type: 1,
+					fixation_cross: true,
+					fixation_cross_color: "white", 
+					fixation_cross_thickness: 6,
+					post_trial_gap: 0, 
+      				choices: jsPsych.NO_KEYS,
+					trial_duration: 300,
+				},
+				{
+					type: 'rdk', 
+            		background_color: "black",
+            		dot_color: "white", 
+					aperture_type: 1,
+					fixation_cross: true,
+					fixation_cross_color: "white", 
+					fixation_cross_thickness: 6,
+					post_trial_gap: 0, 
+					number_of_dots: 200,
+					coherence: jsPsych.timelineVariable('coheren'), 
+					move_distance: 1,
+      				choices: ["a", "l"],
+		            correct_choice: "a",
+        		    coherent_direction: 45, 
+					trial_duration: 1500,
+				}
+			],
+			timeline_variables: [
+				{ coheren: 0.5 },
+				{ coheren: 0.1 },
+				{ coheren: 0.8 },
+				{ coheren: 0.7 },
+			]
+		}
 
 		/* initialise experiment */
         jsPsych.init({
             timeline: timeline,
+			// we should preload the cue images here
             show_progress_bar: false,
             show_preload_progress_bar: false
         });
