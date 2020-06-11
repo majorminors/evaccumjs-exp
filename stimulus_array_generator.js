@@ -27,6 +27,7 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
         return num_array.sort(function(a,b) {return a-b;});
     }
     // helper function to shuffle the order of an array - like a deck of cards - picks 1 card randomly from the deck, decrements the deck by one, then picks another and so on.
+	// we'll use this to shuffle the trial orders at the end
     function shuffle(array) {
         var copy_array = array.slice(0);
         var m = copy_array.length,
@@ -57,17 +58,25 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     var cues = range_fun(1,4,1);
     var cue_dir = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues)).map(function(){return cues;}).flat());
     console.log("cue directions", cue_dir);
-    // array.slice(0) provides a copy of the array
-    // then use the value of the cue_dir array to get the corresponding value from cue_directions
-    // note that we need to subtract 1 from the condition number to index, because JavaScript indexing starts at 0
-    var cue_dir_deg = cue_dir.slice(0).map(function(x,i) {return cue_directions[x-1];});
+	// make a copy of cue_dir, then use the values to get values from corresponding cue_directions
+    var cue_dir_deg = cue_dir.slice(0).map(function(x,i) {return cue_directions[x-1];}); 
     console.log("cue direction degrees: ", cue_dir_deg);
     var conditions = range_fun(1,num_motion_coherence,1);
     var dot_motion_dir_cond_1 = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues/num_motion_coherence)).map(function() {return conditions;}).flat());
     var dot_motion_dir_cond = Array.apply(null, Array(num_cues)).map(function() {return dot_motion_dir_cond_1;}).flat();
     console.log("dot motion direction conditions: ", dot_motion_dir_cond);
+	// copy the dot motion condition array and replace each element with the corresponding dot motion directions
+	// the the while loop goes through and makes sure anything over 360, we subtract 360 (since we're dealing with a circle)
     var dot_motion_dir_deg = dot_motion_dir_cond.slice(0).map(function(x,i) {return dot_motion_directions[x-1]});
+	if (dot_motion_dir_deg) { // if i in the while loop isn't defined, it'll loop forever 
+		i = dot_motion_dir_deg.length
+		while (i--) { 
+			if (dot_motion_dir_deg[i] > 360) {
+				dot_motion_dir_deg[i] -= 360;
+			}
+		}
     console.log("dot motion direction degrees: ", dot_motion_dir_deg);
+	}
     var difficulty_levels = range_fun(1,2,1);
     var coh_difficulty_1 = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues/num_motion_coherence/2)).map(function() {return difficulty_levels;}).flat());
     var coh_difficulty = Array.apply(null, Array(num_cues*num_motion_coherence)).map(function() {return coh_difficulty_1;}).flat();
@@ -107,9 +116,6 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     console.log("matching difficulty: ", match_difficulty);
     var trial_cond_num = range_fun(1,cue_dir.length,1);
     console.log("trial condition number: ", trial_cond_num);
-    var meg_trigger_offset = range_fun(0,127,2).map(function(x) {return x+5;});
-    var meg_trigger_num = trial_cond_num.map(function(x,i) {return x + meg_trigger_offset[i];});
-    console.log("meg trigger number: ", meg_trigger_num);
 
     // *** put the info for each trial into an object, and put these trial objects into the block info array ***
     var block_info = [];
@@ -124,7 +130,6 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
             match_arrow: match_arrow[i],
             match_difficulty: match_difficulty[i],
             trial_cond_num: trial_cond_num[i],
-            meg_trigger_num: meg_trigger_num[i],
         };
         block_info.push(trial_info);
     }

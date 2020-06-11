@@ -2,11 +2,15 @@
 <html>
     <head>
         <title>EvAccum</title>
+    	<meta charset="utf-8"/>
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
 		<script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
-		<!--  <script src="jspsych-rdk.js"></script> -->
+    	<script src="stimulus_array_generator.js"></script>
         <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+		<style>
+			#jspsych-content {width:80%};
+		</style>
     </head>
     <body></body>
     <script>
@@ -22,8 +26,19 @@
 			{stimulus: "stimuli/4-2.png"}
 		];
 
-		/* coherence values */
-		var coherences = [0.2,0.8];
+    	/* define parameters to pass into the stimulus_array_generator function */
+   		var easy_rule = 10;
+    	var hard_rule = 80;
+		var easy_coh = 70; // these don't need to go into the generator
+		var hard_coh = 30; // these don't need to go into the generator
+    	var num_blocks = 20;
+    	var num_trials_per_block = 64;
+    	var num_cues = 4;
+    	var num_motion_coherence = 8;
+
+    	/* call stimulus_array_generator function and save output as stim_array_info */
+    	var stim_array_info = stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
+    	console.log('Block 1: ', stim_array_info[0]);
 
 		/* initialise timeline array */
         var timeline =[];
