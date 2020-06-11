@@ -11,21 +11,40 @@
     <body></body>
     <script>
 
+		/* keys */
+		var resp_keys = ['a', 's'];
+
+		/* cues */
+		var cues = [
+			{stimulus: "stimuli/1-3.png"},
+			{stimulus: "stimuli/2-4.png"},
+			{stimulus: "stimuli/3-1.png"},
+			{stimulus: "stimuli/4-2.png"}
+		];
+
+		/* coherence values */
+		var coherences = [0.2,0.8];
+
+		/* coherence directions */
+		var coh_dirs = [
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8
+		];
+
 		/* initialise timeline array */
         var timeline =[];
 
 		/* fixation */
-		// var fixation = {
-		// 	type: 'html-keyboard-response',
-		// 	stimulus: '<div style="font-size:60px;">+</div>',
-		// 	choices: jsPsych.NO_KEYS,
-		// 	trial_duration: 300,
-		// 	data: {test_part: 'fixation'}
-		// };
 		var fixation = {
 			type: 'rdk',
             background_color: "black",
-            dot_color: "black", // make the dot color the same as the background color to just get the fixation (silly way to do this, I know...)
+            dot_color: "black", 
 			aperture_type: 1,
 			fixation_cross: true,
 			fixation_cross_color: "white", 
