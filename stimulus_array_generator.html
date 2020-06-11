@@ -19,6 +19,8 @@
     // define parameters to pass into the stimulus_array_generator function
     var easy_rule = 10;
     var hard_rule = 80;
+	var easy_coh = 70;
+	var hard_coh = 30;
     var num_blocks = 20;
     var num_trials_per_block = 64;
     var num_cues = 4;
@@ -26,8 +28,8 @@
 
     // call stimulus_array_generator function and save output as stim_array_info
     var stim_array_info = stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
-    console.log('Block 1: ', stim_array_info[0]);
-
+    //console.log('Block 1: ', stim_array_info[0]);
+	console.log(stim_array_info);
     var timeline = [];  
 
     var explain_output = {

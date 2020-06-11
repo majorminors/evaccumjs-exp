@@ -16,17 +16,17 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     // - trial_cond_num = unique number for each trial condition
     // - meg_trigger_num 
 
-    // helper function to generate a range between two values
+    // helper function to generate a range between two values - replicating MATLABs ':' range function.
     function range_fun(start,stop,step) {
         return Array(Math.ceil((stop-start+1)/step)).fill(start).map(function(x,y) {
             return x+(y*step);
         });
     }
-    // helper function to sort a numeric array in ascending order
+    // helper function to sort a numeric array in ascending order - replicating MATLABs 'sort' function
     function sort_num_array(num_array) {
         return num_array.sort(function(a,b) {return a-b;});
     }
-    // helper function to shuffle the order of an array - copied from jsPsych.js
+    // helper function to shuffle the order of an array - like a deck of cards - picks 1 card randomly from the deck, decrements the deck by one, then picks another and so on.
     function shuffle(array) {
         var copy_array = array.slice(0);
         var m = copy_array.length,
@@ -44,8 +44,9 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     }
 
     // *** create the sets of trial info ***
-    var cue_directions = range_fun(45,315, 90); 
+    var cue_directions = range_fun(45,315, 90); // create the cue directions in degrees
     console.log("cue directions: ", cue_directions);
+	// pull in the coherence directions passed into it and then add those to the cue directions
     var dot_motion_directions = cue_directions.map(function(x,i) {return x + easy_rule;}).concat(cue_directions.map(function(x,i) {return x + hard_rule;}));
     sort_num_array(dot_motion_directions);
     console.log("dot motion directons: ", dot_motion_directions);
@@ -57,7 +58,7 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     var cue_dir = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues)).map(function(){return cues;}).flat());
     console.log("cue directions", cue_dir);
     // array.slice(0) provides a copy of the array
-    // then use the value of the cue_dir array to get the coresponding value from cue_directions
+    // then use the value of the cue_dir array to get the corresponding value from cue_directions
     // note that we need to subtract 1 from the condition number to index, because JavaScript indexing starts at 0
     var cue_dir_deg = cue_dir.slice(0).map(function(x,i) {return cue_directions[x-1];});
     console.log("cue direction degrees: ", cue_dir_deg);
