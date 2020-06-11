@@ -1,32 +1,43 @@
 function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence) {
 
-    // Output:
-    //  Array with length equal to num_blocks.
-    //  Each element in the array is a nested array of objects. This nested array length is equal to num_trials_per_block.
-    //  Each object in the nested array contains all the info for a single trial. Objects contain the following keys:
-    
-    // - cue_dir = cue direction (1-4)
-    // - cue_dir_deg = cue direction (in degrees)
-    // - dot_motion_dir_cond = dot motion direction condition (1-8)
-    // - dot_motion_dir_deg = dot motion direction (in degrees)
-    // - coh_difficulty = coherence difficulty (1 or 2)
-    // - match_dist_cue_dir = match distance from cue direction (degrees abs value)
-    // - match_arrow = match arrow (1 or 2)
-    // - match_difficulty = matching difficulty (1 or 2)
-    // - trial_cond_num = unique number for each trial condition
-    // - meg_trigger_num 
+	/* requires:
+		easy_rule: degrees of difference between cue orientation
+		hard_rule: same as above, but for hard (i.e. closer to the decision boundary between the two
+		num_blocks: how many times you want to repeat your trial sets
+		num_trials_per_block: how many trials you want - i have as many trials as conditions
+		num_cues: how many cues there are
+		num_motion_coherence: how many coherent motion directions will there be - i use 8 which are static throughout the experiment (although their value will change with the cue) 
+	*/
 
-    // helper function to generate a range between two values - replicating MATLABs ':' range function.
+    /* output:
+		array with length equal to num_blocks.
+		each element in the array is a nested array of objects. This nested array length is equal to num_trials_per_block.
+		each object in the nested array contains all the info for a single trial. Objects contain the following keys:
+    
+     	- cue_dir = cue direction (1-4)
+     	- cue_dir_deg = cue direction (in degrees)
+     	- dot_motion_dir_cond = dot motion direction condition (1-8)
+     	- dot_motion_dir_deg = dot motion direction (in degrees)
+     	- coh_difficulty = coherence difficulty (1 or 2)
+     	- match_dist_cue_dir = match distance from cue direction (degrees abs value)
+     	- match_arrow = match arrow (1 or 2)
+     	- match_difficulty = matching difficulty (1 or 2)
+     	- trial_cond_num = unique number for each trial condition
+     	- meg_trigger_num 
+	*/
+
+    /* helper functions */ 
+	// generate a range between two values - replicating MATLABs ':' range function 
     function range_fun(start,stop,step) {
         return Array(Math.ceil((stop-start+1)/step)).fill(start).map(function(x,y) {
             return x+(y*step);
         });
     }
-    // helper function to sort a numeric array in ascending order - replicating MATLABs 'sort' function
+    // sort a numeric array in ascending order - replicating MATLABs 'sort' function
     function sort_num_array(num_array) {
         return num_array.sort(function(a,b) {return a-b;});
     }
-    // helper function to shuffle the order of an array - like a deck of cards - picks 1 card randomly from the deck, decrements the deck by one, then picks another and so on.
+    // shuffle the order of an array - like a deck of cards - picks 1 card randomly from the deck, decrements the deck by one, then picks another and so on.
 	// we'll use this to shuffle the trial orders at the end
     function shuffle(array) {
         var copy_array = array.slice(0);
@@ -44,7 +55,7 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
         return copy_array;
     }
 
-    // *** create the sets of trial info ***
+    /* create the sets of trial info */
     var cue_directions = range_fun(45,315, 90); // create the cue directions in degrees
     console.log("cue directions: ", cue_directions);
 	// pull in the coherence directions passed into it and then add those to the cue directions
