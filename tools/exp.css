@@ -1,0 +1,11 @@
+/* going to call this rather than edit the jsPsych css 
+ * so I don't have to worry so much about breaking it 
+ * with updates
+*/
+
+@import "../jspsych-6.1.0/css/jspsych.css";
+
+body {
+	color: white;
+	background-color: black;
+}

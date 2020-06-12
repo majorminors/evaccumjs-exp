@@ -10,7 +10,8 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
 	*/
 
     /* output:
-		array with length equal to num_blocks.
+		array with length equal to num_blocks. assume you called the function into 'array':
+		array[0][0] = array[block 1][trial 1]
 		each element in the array is a nested array of objects. This nested array length is equal to num_trials_per_block.
 		each object in the nested array contains all the info for a single trial. Objects contain the following keys:
     

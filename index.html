@@ -5,12 +5,11 @@
     	<meta charset="utf-8"/>
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+		<script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
 		<script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
-    	<script src="stimulus_array_generator.js"></script>
-        <link href="jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
-		<style>
-			#jspsych-content {width:80%};
-		</style>
+    	<script src="tools/stimulus_array_generator.js"></script>
+        <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
+		<style></style>
     </head>
     <body></body>
     <script>
@@ -45,6 +44,13 @@
         var timeline =[];
 
 		/* trial procedure */
+		var cue = {
+			type: 'image-keyboard-response',
+			stimulus: cues[0].stimulus,
+			choices: resp_keys,
+		}
+		timeline.push(cue);
+
 		var fixation = {
 			type: 'rdk',
         	background_color: "black",
