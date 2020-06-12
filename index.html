@@ -17,6 +17,9 @@
 		/* keys */
 		var resp_keys = ['a', 's'];
 
+		/* coherence */
+		var coherence_values = [0.8, 0.3];
+
 		/* cues */
 		var cues = [
 			{stimulus: "stimuli/1-3.png"},
@@ -50,9 +53,8 @@
 			for (trial = 0; trial < stim_array[0].length; trial++) { // equivalent to number of trials per block (stim_array[x][0-n]) - should = num_trials_per_block
 				count++; // use this to track how many trials have happened in total
 				i = stim_array[block][trial]; // make this easier to call
-				console.log(i);
 	
-				if (count === 8) { 
+				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 
 					var cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i.cue_dir-1].stimulus, // -1 because the cues go from 1-4 and javascript indexes from 0-3
@@ -86,11 +88,11 @@
 					fixation_cross_thickness: 6,
 					post_trial_gap: 0, 
 					number_of_dots: 200,
-					coherence: jsPsych.timelineVariable('coheren'), 
+					coherence: 0.5, 
 					move_distance: 1,
 					choices: ["a", "l"],
 					correct_choice: "a",
-					coherent_direction: 45, 
+					coherent_direction: i.dot_motion_dir_deg, 
 					trial_duration: 1500,
 				}
 				timeline.push(rdk);
