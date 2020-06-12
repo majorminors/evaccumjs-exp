@@ -90,8 +90,8 @@
 					number_of_dots: 200,
 					coherence: coherence_values[i.coh_difficulty-1], 
 					move_distance: 1,
-					choices: ["a", "l"],
-					correct_choice: "a",
+					choices: resp_keys,
+					correct_choice: resp_keys[i.match_arrow-1],
 					coherent_direction: i.dot_motion_dir_deg, 
 					trial_duration: 1500,
 				}
