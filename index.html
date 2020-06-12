@@ -45,45 +45,39 @@
         var timeline =[];
 
 		/* trial procedure */
-		var trial_procedure = {
-			timeline: [
-				{	
-					type: 'rdk',
-            		background_color: "black",
-            		dot_color: "black", 
-					aperture_type: 1,
-					fixation_cross: true,
-					fixation_cross_color: "white", 
-					fixation_cross_thickness: 6,
-					post_trial_gap: 0, 
-      				choices: jsPsych.NO_KEYS,
-					trial_duration: 300,
-				},
-				{
-					type: 'rdk', 
-            		background_color: "black",
-            		dot_color: "white", 
-					aperture_type: 1,
-					fixation_cross: true,
-					fixation_cross_color: "white", 
-					fixation_cross_thickness: 6,
-					post_trial_gap: 0, 
-					number_of_dots: 200,
-					coherence: jsPsych.timelineVariable('coheren'), 
-					move_distance: 1,
-      				choices: ["a", "l"],
-		            correct_choice: "a",
-        		    coherent_direction: 45, 
-					trial_duration: 1500,
-				}
-			],
-			timeline_variables: [
-				{ coheren: 0.5 },
-				{ coheren: 0.1 },
-				{ coheren: 0.8 },
-				{ coheren: 0.7 },
-			]
+		var fixation = {
+			type: 'rdk',
+        	background_color: "black",
+        	dot_color: "black", 
+			aperture_type: 1,
+			fixation_cross: true,
+			fixation_cross_color: "white", 
+			fixation_cross_thickness: 6,
+			post_trial_gap: 0, 
+    		choices: jsPsych.NO_KEYS,
+			correct_choice: "q",
+			trial_duration: 300,
 		}
+		timeline.push(fixation);
+
+		var rdk = {
+			type: 'rdk', 
+        	background_color: "black",
+        	dot_color: "white", 
+			aperture_type: 1,
+			fixation_cross: true,
+			fixation_cross_color: "white", 
+			fixation_cross_thickness: 6,
+			post_trial_gap: 0, 
+			number_of_dots: 200,
+			coherence: jsPsych.timelineVariable('coheren'), 
+			move_distance: 1,
+      		choices: ["a", "l"],
+		    correct_choice: "a",
+            coherent_direction: 45, 
+			trial_duration: 1500,
+		}
+		timeline.push(rdk);
 
 		/* initialise experiment */
         jsPsych.init({
