@@ -14,22 +14,35 @@
     <body></body>
     <script>
 
-		/* keys */
-		var resp_keys = ['a', 's'];
+		/* use a random number generator to arbitrate between response mappings */
+		if (((Math.floor(Math.random() * 100) + 1) % 2) === 0) {
+			// if a random number generated between 1 and 100 is even then do these
+			/* keys */
+			var resp_keys = ['a', 's'];
+			/* cues */
+			var cues = [
+				{stimulus: "stimuli/1-3.png"},
+				{stimulus: "stimuli/2-4.png"},
+				{stimulus: "stimuli/3-1.png"},
+				{stimulus: "stimuli/4-2.png"}
+			];
+
+		} else {
+			// else (if the number is odd) do these
+			/* keys */
+			var resp_keys = ['s', 'a'];
+			/* cues */
+			var cues = [
+				{stimulus: "stimuli/3-1.png"},
+				{stimulus: "stimuli/4-2.png"},
+				{stimulus: "stimuli/1-3.png"},
+				{stimulus: "stimuli/2-4.png"}
+			];
+		}
 
 		/* coherence */
-		var coherence_values = [0.8, 0.3];
+		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
-		/* cues */
-		var cues = [
-			{stimulus: "stimuli/1-3.png"},
-			{stimulus: "stimuli/2-4.png"},
-			{stimulus: "stimuli/3-1.png"},
-			{stimulus: "stimuli/4-2.png"}
-		];
-
-		var easy_coh = 70; 
-		var hard_coh = 30;
 
     	/* define parameters to pass into the stimulus_array_generator function */
    		var easy_rule = 10;
@@ -57,7 +70,7 @@
 				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
 					var cue = {
 						type: 'image-keyboard-response',
-						stimulus: cues[i.cue_dir-1].stimulus, // -1 because the cues go from 1-4 and javascript indexes from 0-3
+						stimulus: cues[i.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
 						choices: resp_keys,
 					}
 					timeline.push(cue);
@@ -115,7 +128,7 @@
 		/* initialise experiment */
         jsPsych.init({
             timeline: timeline,
-			preload_images: cues.map(function (path) {return path.stimulus}); // get the path to the stimulus images (as an array) from the cues variable
+			preload_images: cues.map(function(path) {return path.stimulus}), // get the path to the stimulus images (as an array) from the cues variable
             show_progress_bar: false,
             show_preload_progress_bar: false
         });
