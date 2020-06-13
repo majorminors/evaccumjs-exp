@@ -116,7 +116,7 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
         }
     });
     console.log("match arrow: ", match_arrow);
-    // min and max values are 1, all other values are 2 - is that right?
+    // min and max values are 1, all other values are 2 so we just do this
     var match_difficulty = match_dist_cue_dir.slice(0).map(function(x) {
         if (x == Math.min.apply(null, match_dist_cue_dir) || x == Math.max.apply(null, match_dist_cue_dir)) {
             return 1;
