@@ -7,7 +7,9 @@
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
 		<script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
 		<script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
-    	<script src="tools/stimulus_array_generator.js"></script>
+    	<script src="tools/exp_stimulus_array_generator.js"></script>
+    	<script src="tools/coh_stimulus_array_generator.js"></script>
+    	<script src="tools/rule_stimulus_array_generator.js"></script>
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
 		<style></style>
     </head>
@@ -54,7 +56,7 @@
     	var num_motion_coherence = 8;
 
    		/* generate stimulus array with stimulus_array_generator function */
-    	var stim_array = stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
+    	var stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
 
 		/* initialise timeline array */
         var timeline =[];
@@ -67,7 +69,16 @@
 			for (trial = 0; trial < stim_array[0].length; trial++) { // equivalent to number of trials per block (stim_array[x][0-n]) - should = num_trials_per_block
 				count++; // use this to track how many trials have happened in total
 				i = stim_array[block][trial]; // make this easier to call
-	
+				if (count === 1) {
+					var exp_start_screen = {
+						type: "html-keyboard-response",
+						stimulus: "<p>Now we're ready to begin the experiment.</p><br>"+
+							"<p>This will take about 40 minutes.</p><br>"+
+							"<br><p>Press any key to begin.</p>"
+					}
+					timeline.push(exp_start_screen);
+				}	
+
 				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
 					var cue = {
 						type: 'image-keyboard-response',
