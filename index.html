@@ -54,7 +54,7 @@
 				count++; // use this to track how many trials have happened in total
 				i = stim_array[block][trial]; // make this easier to call
 	
-				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 
+				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
 					var cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i.cue_dir-1].stimulus, // -1 because the cues go from 1-4 and javascript indexes from 0-3
@@ -63,7 +63,7 @@
 					timeline.push(cue);
 				}
 
-				var fixation = {
+				var fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
 					type: 'rdk',
 					background_color: "black",
 					dot_color: "black", 
@@ -87,15 +87,28 @@
 					fixation_cross_color: "white", 
 					fixation_cross_thickness: 6,
 					post_trial_gap: 0, 
-					number_of_dots: 200,
+					number_of_dots: 100,
 					coherence: coherence_values[i.coh_difficulty-1], 
-					move_distance: 1,
+					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is not the same as jsPsych's 5...
 					choices: resp_keys,
 					correct_choice: resp_keys[i.match_arrow-1],
 					coherent_direction: i.dot_motion_dir_deg, 
 					trial_duration: 1500,
+					data: {test_part: 'rdk'}
 				}
-				timeline.push(rdk);
+				var feedback = {
+					type: "html-keyboard-response",
+					stimulus: function() {
+						var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+						if (last_last_accuracy) { // if true (data.correct is boolean)
+							return "<p>correct</p>";
+						} else { // else if false
+							return "<p>incorrect</p>"
+						}
+					}
+				}
+				timeline.push(rdk, feedback);
 			}
 		}
 
