@@ -80,16 +80,16 @@
 				}	
 
 				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
-					var cue = {
+					var exp_cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
 						choices: resp_keys,
 						data: {experiment_part: 'experiment_cue'}
 					}
-					timeline.push(cue);
+					timeline.push(exp_cue);
 				}
 
-				var fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
+				var exp_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
 					type: 'rdk',
 					background_color: "black",
 					dot_color: "black", 
@@ -103,9 +103,9 @@
 					trial_duration: 300,
 					data: {experiment_part: 'experiment_fixation'}
 				}
-				timeline.push(fixation);
+				timeline.push(exp_fixation);
 
-				var rdk = {
+				var exp_rdk = {
 					type: 'rdk', 
 					background_color: "black",
 					dot_color: "white", 
@@ -115,6 +115,7 @@
 					fixation_cross_thickness: 6,
 					post_trial_gap: 0, 
 					number_of_dots: 100,
+					response_ends_trial: false,
 					coherence: coherence_values[i.coh_difficulty-1], 
 					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
 					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
@@ -124,7 +125,7 @@
 					trial_duration: 1500,
 					data: {experiment_part: 'experiment_rdk'}
 				}
-				var feedback = { // you can use this for testing, otherwise comment out
+				var exp_feedback = { // you can use this for testing, otherwise comment out
 					type: "html-keyboard-response",
 					stimulus: function() {
 						var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
@@ -138,7 +139,7 @@
 					trial_duration: 300,
 					data: {experiment_part: 'experiment_feedback'}
 				}
-				timeline.push(rdk, feedback);
+				timeline.push(exp_rdk, exp_feedback);
 			}
 		}
 
