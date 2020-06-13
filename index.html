@@ -90,7 +90,7 @@
 					number_of_dots: 100,
 					coherence: coherence_values[i.coh_difficulty-1], 
 					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is not the same as jsPsych's 5...
+					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
 					choices: resp_keys,
 					correct_choice: resp_keys[i.match_arrow-1],
 					coherent_direction: i.dot_motion_dir_deg, 
@@ -115,7 +115,7 @@
 		/* initialise experiment */
         jsPsych.init({
             timeline: timeline,
-			// we should preload the cue images here
+			preload_images: cues.map(function (path) {return path.stimulus}); // get the path to the stimulus images (as an array) from the cues variable
             show_progress_bar: false,
             show_preload_progress_bar: false
         });
