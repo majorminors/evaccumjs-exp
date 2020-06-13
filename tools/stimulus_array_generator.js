@@ -24,7 +24,6 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
      	- match_arrow = match arrow (1 or 2)
      	- match_difficulty = matching difficulty (1 or 2)
      	- trial_cond_num = unique number for each trial condition
-     	- meg_trigger_num 
 	*/
 
     /* helper functions */ 
