@@ -16,7 +16,8 @@
 
 		/* use a random number generator to arbitrate between response mappings */
 		if (((Math.floor(Math.random() * 100) + 1) % 2) === 0) {
-			// if a random number generated between 1 and 100 is even then do these
+			// the order of these variables are important because we index into them later, so:
+			// if a random number generated between 1 and 100 is even then do this order
 			/* keys */
 			var resp_keys = ['a', 's'];
 			/* cues */
@@ -28,7 +29,7 @@
 			];
 
 		} else {
-			// else (if the number is odd) do these
+			// else (if the number is odd) do this order
 			/* keys */
 			var resp_keys = ['s', 'a'];
 			/* cues */
@@ -114,7 +115,7 @@
 					type: "html-keyboard-response",
 					stimulus: function() {
 						var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
-						if (last_last_accuracy) { // if true (data.correct is boolean)
+						if (last_rdk_accuracy) { // if true (data.correct is boolean)
 							return "<p>correct</p>";
 						} else { // else if false
 							return "<p>incorrect</p>"
