@@ -42,17 +42,23 @@
 				{stimulus: "stimuli/2-4.png"}
 			];
 		}
+		var num_cues = 4;
 
-		/* coherence */
+		/* coherence testing */
+		num_trials_per_block = 160;
+		num_points = 10;
+		// requires num_cues
 		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
-
-    	/* define parameters to pass into the stimulus_array_generator function */
-   		var easy_rule = 10;
-    	var hard_rule = 80;
+		/* rule testing */
+		var rule_values = [10, 80]; // will need to gen these also from earlier psychophys - [0] needs to be easy, [1] needs to be hard
+    	
+		/* define parameters to pass into the stimulus_array_generator function */
+   		var easy_rule = rule_values[0];
+    	var hard_rule = rule_values[1];
     	var num_blocks = 20;
     	var num_trials_per_block = 64;
-    	var num_cues = 4;
+    	// requires num_cues
     	var num_motion_coherence = 8;
 
    		/* generate stimulus array with stimulus_array_generator function */
@@ -61,7 +67,7 @@
 		/* initialise timeline array */
         var timeline =[];
 
-		/* generate trial procedure */
+		/* generate experimental test procedure */
 		var block;
 		var trial;
 		var count = 0;
