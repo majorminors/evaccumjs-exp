@@ -56,7 +56,7 @@
     	var num_motion_coherence = 8;
 
    		/* generate stimulus array with stimulus_array_generator function */
-    	var stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
+    	var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
 
 		/* initialise timeline array */
         var timeline =[];
@@ -65,10 +65,10 @@
 		var block;
 		var trial;
 		var count = 0;
-		for (block = 0; block < stim_array.length; block++) { // equivalent to number of blocks (stim_array[0-n]) - should = num_blocks
-			for (trial = 0; trial < stim_array[0].length; trial++) { // equivalent to number of trials per block (stim_array[x][0-n]) - should = num_trials_per_block
+		for (block = 0; block < exp_stim_array.length; block++) { // equivalent to number of blocks (exp_stim_array[0-n]) - should = num_blocks
+			for (trial = 0; trial < exp_stim_array[0].length; trial++) { // equivalent to number of trials per block (exp_stim_array[x][0-n]) - should = num_trials_per_block
 				count++; // use this to track how many trials have happened in total
-				i = stim_array[block][trial]; // make this easier to call
+				i = exp_stim_array[block][trial]; // make this easier to call
 				if (count === 1) {
 					var exp_start_screen = {
 						type: "html-keyboard-response",
