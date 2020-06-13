@@ -19,12 +19,13 @@
 		/* define parameters to pass into the stimulus_array_generator function */
 		var num_trials_per_block = 160;
 		var num_cues = 4;
+		var num_blocks = 1;
 		var coh_point_values =  [0.10, 0.20, 0.25, 0.30, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85];
 		var num_point_tests = 16; 
 		var num_trials_per_block = num_point_tests * coh_point_values.length; // check this is an integer, or it'll break
 
 		/* call stimulus_array_generator function and save output as stim_array_info */
-		var stim_array_info = coh_stimulus_array_generator(num_trials_per_block, num_cues, coh_point_values, num_point_tests);
+		var stim_array_info = coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests);
 
 		/* initialise timeline */
 		var timeline = [];  

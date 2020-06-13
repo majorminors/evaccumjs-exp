@@ -1,5 +1,5 @@
-function coh_stimulus_array_generator(num_trials_per_block, num_cues, coh_point_values, num_point_tests) {
-
+function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests) {
+	console.log("coherence stimulus array");
 	var num_blocks = 1;
 
 	/* requires:

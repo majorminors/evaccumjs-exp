@@ -45,9 +45,16 @@
 		var num_cues = 4;
 
 		/* coherence testing */
-		num_trials_per_block = 160;
-		num_points = 10;
+		// first define the parameters
+		var num_coherence_blocks = 1;
+		var num_trials_per_block = 160;
 		// requires num_cues
+		var coh_point_values =  [0.10, 0.20, 0.25, 0.30, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85];
+		var num_point_tests = 16; 
+		var num_trials_per_block = num_point_tests * coh_point_values.length; // check this is an integer, or it'll break
+		
+		var coh_stim_array = coh_stimulus_array_generator(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests);
+		
 		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
 		/* rule testing */
@@ -56,13 +63,13 @@
 		/* define parameters to pass into the stimulus_array_generator function */
    		var easy_rule = rule_values[0];
     	var hard_rule = rule_values[1];
-    	var num_blocks = 20;
+    	var num_exp_blocks = 20;
     	var num_trials_per_block = 64;
     	// requires num_cues
     	var num_motion_coherence = 8;
 
    		/* generate stimulus array with stimulus_array_generator function */
-    	var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence);
+    	var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_exp_blocks, num_trials_per_block, num_cues, num_motion_coherence);
 
 		/* initialise timeline array */
         var timeline =[];

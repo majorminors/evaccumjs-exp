@@ -1,5 +1,5 @@
 function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence) {
-
+	console.log("experiment stimulus array");
 	/* requires:
 		easy_rule: degrees of difference between cue orientation
 		hard_rule: same as above, but for hard (i.e. closer to the decision boundary between the two
