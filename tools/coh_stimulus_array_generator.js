@@ -15,7 +15,10 @@ function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues
     
      	- cue_dir = cue direction (1-4)
      	- cue_dir_deg = cue direction (in degrees)
+		- match_arrow = what arrow is the correct motion direction
 		- dot_motion_deg = the degrees of the dot motion (either cue_dir_deg, or 180 + cue_dir_deg)
+		- coh_point_code = a code referring to ascending value of coherence
+		- coherence_value = the coherence value
 	*/
 
     /* helper functions */ 
@@ -63,8 +66,8 @@ function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues
     var cue_dir_deg = cue_dir.slice(0).map(function(x,i) {return cue_directions[x-1];}); 
     console.log("cue direction degrees: ", cue_dir_deg);
 	// now we want dot motion degrees - half to go in direction of cue, half in opposite direction and also a code to use if we need
-	var dot_motion_match_cue = cue_dir_deg.map(function(x,i) {if (i % 2 == 0) {return 2;} return 1;});
-	console.log("dot motion match arrow 1 or 2: ", dot_motion_match_cue);
+	var match_arrow = cue_dir_deg.map(function(x,i) {if (i % 2 == 0) {return 2;} return 1;});
+	console.log("dot motion match arrow 1 or 2: ", match_arrow);
 	var dot_motion_deg = cue_dir_deg.map(function(x,i) {if (i % 2 == 0) {return x + 180;} return x;});
 	if (dot_motion_deg) { // if i in the while loop isn't defined, it'll loop forever 
 		i = dot_motion_deg.length
@@ -88,6 +91,7 @@ function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues
         var trial_info = {
             cue_dir: cue_dir[i],
             cue_dir_deg: cue_dir_deg[i],
+			match_arrow: match_arrow[i],
 			dot_motion_deg: dot_motion_deg[i],
 			coh_point_code: coh_point_code[i],
 			coherence_value: coherence_value[i],
