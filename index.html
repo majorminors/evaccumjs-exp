@@ -156,6 +156,14 @@
 				timeline.push(coh_rdk, coh_feedback);
 			}
 		}
+		
+		/* collecting data for analysis
+		* if we want to pass this off for analysis, I guess we'd need a var that only gets calculated in the final 'count' of the coherence test loop like:
+		* var coh_trials = jsPsych.data.get().filter({test_part: 'cohtest_rdk'});
+		* var coh_accuracy = coh_trials.filter({correct}); // is that the right way to get all the values for correct?
+		* plus the information from coh_stim_array.coherence_value
+		* then feed that to the appropriate place.
+		* then a dynamic variable that can recieve that information after it's been calculated to put into coherence_values as below */
 			
 		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
@@ -258,6 +266,14 @@
 				timeline.push(rule_rdk, rule_feedback);
 			}
 		}
+
+		/* collecting data for analysis
+		* this would be similar to the coherence testing, except we need to collect the results for both blocks seperately and then average them
+		* var rule_trials = jsPsych.data.get().filter({test_part: 'ruletest_rdk'});
+		* var rule_accuracy = rule_trials.filter({correct}); // is that the right way to get all the values for correct?
+		* plus the information from rule_stim_array.coh_direction_deg
+		* then feed that to the appropriate place.
+		* then a dynamic variable that can recieve that information after it's been calculated to put into rule_values as below */
 
 		var rule_values = [10, 80]; // will need to gen these also from earlier psychophys - [0] needs to be easy, [1] needs to be hard
     
