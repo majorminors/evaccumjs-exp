@@ -63,7 +63,7 @@
 		var coh_stim_array = coh_stimulus_array_generator(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests);
 
 		/* generate coherence test procedure */
-		/* var block;
+		var block;
 		var trial;
 		var count = 0;
 		for (block = 0; block < coh_stim_array.length; block++) { // equivalent to number of blocks (coh_stim_array[0-n]) - should = num_blocks
@@ -143,7 +143,7 @@
 				timeline.push(coh_rdk, coh_feedback);
 			}
 		}
-		*/	
+			
 		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
 		//////////////////
