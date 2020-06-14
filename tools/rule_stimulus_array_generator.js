@@ -16,7 +16,9 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
      	- cue_dir = cue direction (1-4)
      	- cue_dir_deg = cue direction (in degrees)
 		- rule_point_code = a code for the ascending point values
-		- rule_values = the actual test values for each point 
+		- rule_value: the actual test values for each point
+		- match_arrow: what arrow is the coherence moving toward
+		- coh_direction_deg: direction of coherent motion
 	*/
 
     /* helper functions */ 
@@ -68,20 +70,20 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
 	var rule_value = Array.apply(null, Array(num_point_tests)).map(function(){return rule_point_values;}).flat();
 	console.log("rule values: ", rule_value); 
 	// now we want dot motion degrees - half of the point tests to go in direction of cue, half in opposite direction and also a code to use if we need
-	// var dot_motion_match_cue = cue_dir_deg.map(function(x,i) {if (i % 2 == 0) {return 2;} return 1;});
-	var dot_motion_match_cue = [1]; // we'll loop on this entering x into the array, and the value of x changes from 1 - 2 every length of rule_point_values)
+	// var match_arrow = cue_dir_deg.map(function(x,i) {if (i % 2 == 0) {return 2;} return 1;});
+	var match_arrow = [1]; // we'll loop on this entering x into the array, and the value of x changes from 1 - 2 every length of rule_point_values)
 	i = 0;
 	x = 1;
-	checkiandj: while (dot_motion_match_cue.length < num_trials_per_block) {
+	checkiandj: while (match_arrow.length < num_trials_per_block) {
 		j = 0;
 		checkj: while (j < rule_point_values.length) {
 			j++;
-			dot_motion_match_cue[i] = x;
+			match_arrow[i] = x;
 			i++;
 		}
 		if (i/10 % 2 == 0) {x = 1;} else {x = 2;}
 	}
-	console.log("dot motion match arrow 1 or 2: ", dot_motion_match_cue);
+	console.log("dot motion match arrow 1 or 2: ", match_arrow);
 	// 1,1,2,2 repeated for num trials / 4 (for length of 1,1,2,2) - since we already have a 1,2 repeating, we need to do this or they'll overlap systematically
 	var add_or_subtract = Array.apply(null, Array(num_trials_per_block / 4)).map(function(){return [1,1,2,2];}).flat();
 	console.log("whether the trial should add (1) or subtract (2): ", add_or_subtract)
@@ -89,7 +91,7 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
 	var coh_direction_deg_oneway = cue_dir_deg.map(function(x,i) {if (add_or_subtract[i] == 1) {return x + rule_value[i]} else if (add_or_subtract[i] == 2) {return x - rule_value[i]}});
 	console.log(coh_direction_deg_oneway);
 	// now we modify the coherence direction to match the appropiate arrow (instead of just the arrow the cue is named after)
-	var coh_direction_deg = coh_direction_deg_oneway.map(function(x,i) {if (dot_motion_match_cue[i] == 1) {return x} else if (dot_motion_match_cue[i] == 2) {return x + 180}});
+	var coh_direction_deg = coh_direction_deg_oneway.map(function(x,i) {if (match_arrow[i] == 1) {return x} else if (match_arrow[i] == 2) {return x + 180}});
 	if (coh_direction_deg) { // if i in the while loop isn't defined, it'll loop forever 
 		i = coh_direction_deg.length
 		while (i--) { // make these circular (-360 if over 360, add 360 if a minus value)
@@ -108,10 +110,9 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
         var trial_info = {
             cue_dir: cue_dir[i],
             cue_dir_deg: cue_dir_deg[i],
-			dot_motion_match_cue: dot_motion_match_cue[i],
 			rule_point_code: rule_point_code[i],
 			rule_value: rule_value[i],
-			dot_motion_match_cue: dot_motion_match_cue[i],
+			match_arrow: match_arrow[i],
 			coh_direction_deg: coh_direction_deg[i],
         };
         block_info.push(trial_info);

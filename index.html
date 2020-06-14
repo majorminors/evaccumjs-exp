@@ -63,7 +63,7 @@
 		var coh_stim_array = coh_stimulus_array_generator(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests);
 
 		/* generate coherence test procedure */
-		var block;
+		/* var block;
 		var trial;
 		var count = 0;
 		for (block = 0; block < coh_stim_array.length; block++) { // equivalent to number of blocks (coh_stim_array[0-n]) - should = num_blocks
@@ -143,7 +143,7 @@
 				timeline.push(coh_rdk, coh_feedback);
 			}
 		}
-	
+		*/	
 		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
 		//////////////////
@@ -159,6 +159,88 @@
 		var num_trials_per_block = num_point_tests * rule_point_values.length; // check this is an integer, or it'll break
 		// call stimulus_array_generator function
 		var rule_stim_array = rule_stimulus_array_generator(num_rule_blocks, num_trials_per_block, num_cues, rule_point_values, num_point_tests);
+
+		/* generate coherence test procedure */
+		var block;
+		var trial;
+		var count = 0;
+		for (block = 0; block < rule_stim_array.length; block++) { // equivalent to number of blocks (rule_stim_array[0-n]) - should = num_blocks
+			for (trial = 0; trial < rule_stim_array[0].length; trial++) { // equivalent to number of trials per block (rule_stim_array[x][0-n]) - should = num_trials_per_block
+				count++; // use this to track how many trials have happened in total
+				i_rule = rule_stim_array[block][trial]; // make this easier to call
+				if (count === 1) {
+					var rule_start_screen = {
+						type: "html-keyboard-response",
+						stimulus: "<p>This is the second test.</p><br>"+
+							"<p>This will take about 10 minutes.</p><br>"+
+							"<br><p>Press any key to begin.</p>"
+					}
+					timeline.push(rule_start_screen);
+				}	
+
+				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
+					var rule_cue = {
+						type: 'image-keyboard-response',
+						stimulus: cues[i_rule.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+						choices: resp_keys,
+						data: {experiment_part: 'ruletest_cue'}
+					}
+					timeline.push(rule_cue);
+				}
+
+				var rule_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
+					type: 'rdk',
+					background_color: "black",
+					dot_color: "black", 
+					aperture_type: 1,
+					fixation_cross: true,
+					fixation_cross_color: "white", 
+					fixation_cross_thickness: 6,
+					post_trial_gap: 0, 
+					choices: jsPsych.NO_KEYS,
+					correct_choice: "q",
+					trial_duration: 300,
+					data: {experiment_part: 'ruletest_fixation'}
+				}
+				timeline.push(rule_fixation);
+
+				var rule_rdk = {
+					type: 'rdk', 
+					background_color: "black",
+					dot_color: "white", 
+					aperture_type: 1,
+					fixation_cross: true,
+					fixation_cross_color: "white", 
+					fixation_cross_thickness: 6,
+					post_trial_gap: 0, 
+					number_of_dots: 100,
+					response_ends_trial: false,
+					coherence: coherence_values[block],
+					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+					choices: resp_keys,
+					correct_choice: resp_keys[i_rule.match_arrow-1],
+					coherent_direction: i_rule.coh_direction_deg, 
+					trial_duration: 1500,
+					data: {experiment_part: 'ruletest_rdk'}
+				}
+				var rule_feedback = { // you can use this for testing, otherwise comment out
+					type: "html-keyboard-response",
+					stimulus: function() {
+						var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+						if (last_rdk_accuracy) { // if true (data.correct is boolean)
+							return "<p>correct</p>";
+						} else { // else if false
+							return "<p>incorrect</p>"
+						}
+					},
+					choices: jsPsych.NO_KEYS,
+					trial_duration: 300,
+					data: {experiment_part: 'ruletest_feedback'}
+				}
+				timeline.push(rule_rdk, rule_feedback);
+			}
+		}
 
 		var rule_values = [10, 80]; // will need to gen these also from earlier psychophys - [0] needs to be easy, [1] needs to be hard
     
