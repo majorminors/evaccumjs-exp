@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Rule Stimulus Array Test</title>
+		<meta charset="utf-8"/>
+		<script src="../jspsych-6.1.0/jspsych.js"></script>
+		<script src="../jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+		<script src="rule_stimulus_array_generator.js"></script>
+		<link href="../jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+		<style>
+			#jspsych-content {width:80%;}
+		</style>
+	</head>
+	<body></body>
+	<script>
+
+		/* use this to test your stimulus arrays */
+
+		/* define parameters to pass into the stimulus_array_generator function */
+		var num_trials_per_block = 160;
+		var num_cues = 4;
+		var num_blocks = 2; // one for each coherence level
+		var rule_point_values =  [0,5,10,15,20,70,75,80,85,90];
+		var num_point_tests = 16; 
+		var num_trials_per_block = num_point_tests * rule_point_values.length; // check this is an integer, or it'll break
+
+		/* call stimulus_array_generator function and save output as stim_array_info */
+		var stim_array_info = rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues, rule_point_values, num_point_tests);
+
+		/* initialise timeline */
+		var timeline = [];  
+
+		/* explainer */
+		var explain_output = {
+			type: 'html-keyboard-response',
+			stimulus: function() {
+				var str = '<p>console is an informative place to see whats in the array</p>'+
+				'<p>The stimulus_array_generator function returns an array<br>with length equal to the number of blocks.</p>'+
+				'<p>You can access the info for each block by indexing with the block number.<br>'+
+				'For example, if your function output is called "stim_array_info",<br>'+
+				'then you can use <strong>stim_array_info[0]</strong> for block 1, <strong>stim_array_info[1]</strong> for block 2, etc.</p>'+
+				'<p>When you index a block, it will return an array with length equal to the number of trials per block.<br>'+
+				'So if we were to look at the first block it would be [0], e.g.<br>'+
+				'<strong>stim_array_info[0][0]</strong> is trial one, the second trial is <strong>stim_array_info[0][1]</strong>, etc.</p>'+
+				'<p>This will give you an object with all of the information for that trial.<br>'+
+				'For example, <strong>stim_array_info[0][0]</strong> will return an object like this:</p>'+
+				JSON.stringify(stim_array_info[0][0], null, 2)+
+				'<p>Then, to access the value of a key from the trial object,<br>you can use ".key_name" after the index.<br>'+
+				'For example, <strong>stim_array_info[0][0].cue_dir</strong> returns the value: '+stim_array_info[0][0].cue_dir+',<br>'+
+				'<strong>stim_array_info[0][0].cue_dir_deg</strong> returns the value: '+stim_array_info[0][0].cue_dir_deg+', etc.</p>';
+				return str;
+			}
+		};
+
+		/* generate timeline */
+		timeline.push(explain_output);
+
+		/* initialise experiment */
+		jsPsych.init({
+			timeline: timeline
+		})
+
+	</script>
+</html>

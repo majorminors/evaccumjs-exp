@@ -1,12 +1,10 @@
-function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence) {
+function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues, rule_point_values, num_point_tests) {
+	console.log("rule stimulus array");
 
 	/* requires:
-		easy_rule: degrees of difference between cue orientation
-		hard_rule: same as above, but for hard (i.e. closer to the decision boundary between the two
 		num_blocks: how many times you want to repeat your trial sets
-		num_trials_per_block: how many trials you want - i have as many trials as conditions
+		num_trials_per_block: how many trials you want
 		num_cues: how many cues there are
-		num_motion_coherence: how many coherent motion directions will there be - i use 8 which are static throughout the experiment (although their value will change with the cue) 
 	*/
 
     /* output:
@@ -17,13 +15,8 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     
      	- cue_dir = cue direction (1-4)
      	- cue_dir_deg = cue direction (in degrees)
-     	- dot_motion_dir_cond = dot motion direction condition (1-8)
-     	- dot_motion_dir_deg = dot motion direction (in degrees)
-     	- coh_difficulty = coherence difficulty (1 or 2)
-     	- match_dist_cue_dir = match distance from cue direction (degrees abs value)
-     	- match_arrow = match arrow (1 or 2)
-     	- match_difficulty = matching difficulty (1 or 2)
-     	- trial_cond_num = unique number for each trial condition
+		- rule_point_code = a code for the ascending point values
+		- rule_values = the actual test values for each point 
 	*/
 
     /* helper functions */ 
@@ -58,10 +51,6 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
     /* create the sets of trial info */
     var cue_directions = range_fun(45,315, 90); // create the cue directions in degrees
     console.log("cue directions: ", cue_directions);
-	// pull in the coherence directions passed into it and then add those to the cue directions
-    var dot_motion_directions = cue_directions.map(function(x,i) {return x + easy_rule;}).concat(cue_directions.map(function(x,i) {return x + hard_rule;}));
-    sort_num_array(dot_motion_directions);
-    console.log("dot motion directons: ", dot_motion_directions);
     // create an array of length equal to number of trials per cue (e.g. 16 for 4 cues and 64 trials per block), 
     // then for each item in this array, replace each element with the array of cues,
     // then flatten this nested array, which returns an array of length equal to the number of trials per block (e.g. 64), 
@@ -72,61 +61,46 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
 	// make a copy of cue_dir, then use the values to get values from corresponding cue_directions
     var cue_dir_deg = cue_dir.slice(0).map(function(x,i) {return cue_directions[x-1];}); 
     console.log("cue direction degrees: ", cue_dir_deg);
-    var conditions = range_fun(1,num_motion_coherence,1);
-    var dot_motion_dir_cond_1 = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues/num_motion_coherence)).map(function() {return conditions;}).flat());
-    var dot_motion_dir_cond = Array.apply(null, Array(num_cues)).map(function() {return dot_motion_dir_cond_1;}).flat();
-    console.log("dot motion direction conditions: ", dot_motion_dir_cond);
-	// copy the dot motion condition array and replace each element with the corresponding dot motion directions
-	// the the while loop goes through and makes sure anything over 360, we subtract 360 (since we're dealing with a circle)
-    var dot_motion_dir_deg = dot_motion_dir_cond.slice(0).map(function(x,i) {return dot_motion_directions[x-1]});
-	if (dot_motion_dir_deg) { // if i in the while loop isn't defined, it'll loop forever 
-		i = dot_motion_dir_deg.length
-		while (i--) { 
-			if (dot_motion_dir_deg[i] > 360) {
-				dot_motion_dir_deg[i] -= 360;
+	// now add a code for the point values, and the point values
+	var rule_point_codes = range_fun(1,rule_point_values.length,1);	
+	var rule_point_code = Array.apply(null, Array(num_point_tests)).map(function(){return rule_point_codes;}).flat();
+	console.log("rule point code: ", rule_point_code);
+	var rule_value = Array.apply(null, Array(num_point_tests)).map(function(){return rule_point_values;}).flat();
+	console.log("rule values: ", rule_value); 
+	// now we want dot motion degrees - half of the point tests to go in direction of cue, half in opposite direction and also a code to use if we need
+	// var dot_motion_match_cue = cue_dir_deg.map(function(x,i) {if (i % 2 == 0) {return 2;} return 1;});
+	var dot_motion_match_cue = [1]; // we'll loop on this entering x into the array, and the value of x changes from 1 - 2 every length of rule_point_values)
+	i = 0;
+	x = 1;
+	checkiandj: while (dot_motion_match_cue.length < num_trials_per_block) {
+		j = 0;
+		checkj: while (j < rule_point_values.length) {
+			j++;
+			dot_motion_match_cue[i] = x;
+			i++;
+		}
+		if (i/10 % 2 == 0) {x = 1;} else {x = 2;}
+	}
+	console.log("dot motion match arrow 1 or 2: ", dot_motion_match_cue);
+	// 1,1,2,2 repeated for num trials / 4 (for length of 1,1,2,2) - since we already have a 1,2 repeating, we need to do this or they'll overlap systematically
+	var add_or_subtract = Array.apply(null, Array(num_trials_per_block / 4)).map(function(){return [1,1,2,2];}).flat();
+	console.log("whether the trial should add (1) or subtract (2): ", add_or_subtract)
+	// now we make a coherence direction, incorporating rule point distance from cue and additions/subtractions
+	var coh_direction_deg_oneway = cue_dir_deg.map(function(x,i) {if (add_or_subtract[i] == 1) {return x + rule_value[i]} else if (add_or_subtract[i] == 2) {return x - rule_value[i]}});
+	console.log(coh_direction_deg_oneway);
+	// now we modify the coherence direction to match the appropiate arrow (instead of just the arrow the cue is named after)
+	var coh_direction_deg = coh_direction_deg_oneway.map(function(x,i) {if (dot_motion_match_cue[i] == 1) {return x} else if (dot_motion_match_cue[i] == 2) {return x + 180}});
+	if (coh_direction_deg) { // if i in the while loop isn't defined, it'll loop forever 
+		i = coh_direction_deg.length
+		while (i--) { // make these circular (-360 if over 360, add 360 if a minus value)
+			if (coh_direction_deg[i] > 360) {
+				coh_direction_deg[i] -= 360;
+			} else if (coh_direction_deg[i] < 0){
+				coh_direction_deg[i] += 360;
 			}
 		}
-    console.log("dot motion direction degrees: ", dot_motion_dir_deg);
 	}
-    var difficulty_levels = range_fun(1,2,1);
-    var coh_difficulty_1 = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues/num_motion_coherence/2)).map(function() {return difficulty_levels;}).flat());
-    var coh_difficulty = Array.apply(null, Array(num_cues*num_motion_coherence)).map(function() {return coh_difficulty_1;}).flat();
-    console.log("coherence difficulty: ", coh_difficulty);
-    // for calculating the dist values, in JS it's easier to do this as 3 separate arrays, rather than as a matrix
-    var dot_motion_dir_minus360 = dot_motion_dir_deg.map(function(x) {return x - 360;});
-    var dot_motion_dir_plus360 = dot_motion_dir_deg.map(function(x) {return x + 360;});
-    var cue_dot_diff = dot_motion_dir_deg.slice(0).map(function(x,i) {
-        return Math.abs(x - cue_dir_deg[i]);
-    });
-    var cue_dot_diff_minus360 = dot_motion_dir_minus360.slice(0).map(function(x,i) {
-        return Math.abs(x - cue_dir_deg[i]);
-    });
-    var cue_dot_diff_plus360 = dot_motion_dir_plus360.slice(0).map(function(x,i) {
-        return Math.abs(x - cue_dir_deg[i]);
-    });
-    var match_dist_cue_dir = cue_dot_diff.slice(0).map(function (x,i) {
-        return Math.min(x, cue_dot_diff_minus360[i], cue_dot_diff_plus360[i]);
-    });
-    console.log("match distance from cue direction: ", match_dist_cue_dir);
-    var match_arrow = match_dist_cue_dir.slice(0).map(function(x) {
-        if (x > 90) {
-            return 2;
-        } else {
-            return 1;
-        }
-    });
-    console.log("match arrow: ", match_arrow);
-    // min and max values are 1, all other values are 2 so we just do this
-    var match_difficulty = match_dist_cue_dir.slice(0).map(function(x) {
-        if (x == Math.min.apply(null, match_dist_cue_dir) || x == Math.max.apply(null, match_dist_cue_dir)) {
-            return 1;
-        } else {
-            return 2;
-        }
-    });
-    console.log("matching difficulty: ", match_difficulty);
-    var trial_cond_num = range_fun(1,cue_dir.length,1);
-    console.log("trial condition number: ", trial_cond_num);
+	console.log("coherence directions: ", coh_direction_deg);
 
     // *** put the info for each trial into an object, and put these trial objects into the block info array ***
     var block_info = [];
@@ -134,13 +108,11 @@ function stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_p
         var trial_info = {
             cue_dir: cue_dir[i],
             cue_dir_deg: cue_dir_deg[i],
-            dot_motion_dir_cond: dot_motion_dir_cond[i],
-            dot_motion_dir_deg: dot_motion_dir_deg[i],
-            coh_difficulty: coh_difficulty[i],
-            match_dist_cue_dir: match_dist_cue_dir[i], 
-            match_arrow: match_arrow[i],
-            match_difficulty: match_difficulty[i],
-            trial_cond_num: trial_cond_num[i],
+			dot_motion_match_cue: dot_motion_match_cue[i],
+			rule_point_code: rule_point_code[i],
+			rule_value: rule_value[i],
+			dot_motion_match_cue: dot_motion_match_cue[i],
+			coh_direction_deg: coh_direction_deg[i],
         };
         block_info.push(trial_info);
     }
