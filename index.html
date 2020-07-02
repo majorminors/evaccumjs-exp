@@ -3,6 +3,7 @@
     <head>
         <title>EvAccum</title>
     	<meta charset="utf-8"/>
+		<script src="/assets/javascripts/jatos.js"></script>
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
 		<script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
@@ -378,12 +379,17 @@
 		}
 
 		/* initialise experiment */
-        jsPsych.init({
-            timeline: timeline,
-			preload_images: cues.map(function(path) {return path.stimulus}), // get the path to the stimulus images (as an array) from the cues variable
-            show_progress_bar: false,
-            show_preload_progress_bar: false
-        });
-
+		jatos.onLoad(function() {
+			jsPsych.init({
+				timeline: timeline,
+				preload_images: cues.map(function(path) {return path.stimulus}), // get the path to the stimulus images (as an array) from the cues variable
+				show_progress_bar: false,
+				show_preload_progress_bar: false,
+				on_finish: function() {
+					var resultJson = jsPsych.data.get().json();
+					jatos.submitResultData(resultJson, jatos.startNextComponent);
+				}
+			});
+		});
     </script>
 </html>
