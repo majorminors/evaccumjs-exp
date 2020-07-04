@@ -3,6 +3,7 @@
     <head>
         <title>EvAccum</title>
     	<meta charset="utf-8"/>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> # so we can make POST requests to other servers
 		<script src="/assets/javascripts/jatos.js"></script>
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
@@ -157,7 +158,19 @@
 				timeline.push(coh_rdk, coh_feedback);
 			}
 		}
-		
+	
+		/* collect the data for analysis */
+		var all_indices = [];
+		for (i = 0; i < coh_point_value.length; i++) {
+			function getAllIndices(coh_stim_array.coherence_value, coh_point_value[i]) {
+				var indices = [], ii;
+					for(ii = 0; ii < arr.length; ii++)
+					if (arr[ii] === val)
+						indices.push(ii);
+					return indices;
+			}
+			all_indices[i] = indices;
+		}
 		/* collecting data for analysis
 		* if we want to pass this off for analysis, I guess we'd need a var that only gets calculated in the final 'count' of the coherence test loop like:
 		* var coh_trials = jsPsych.data.get().filter({test_part: 'cohtest_rdk'});
