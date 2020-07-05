@@ -163,19 +163,20 @@
 		var coh_analysis = {
 			type: "html-keyboard-response",
 			stimulus: "Now we analyse - press any key and please wait",
-			data: {experiment_part: 'coherence_analysis'}
+			data: {experiment_part: 'coherence_analysis'},
 			on_finish: function () {
 				var payload = [];
 				for (i = 0; i < coh_point_values.length; i++) {
-					tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count()
-					tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count()
-					payload.push([coh_point_values[i],tmp_corr,tmp_trls])
+					tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count();
+					tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count();
+					payload.push([coh_point_values[i],tmp_corr,tmp_trls]);
 				}
 				
 				/* POST the data to the psignifit function */
 				axios({
 					url: 'http://localhost:5000/psignifit',
 					method: 'post',
+					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
 					data: payload
 				})
 				.then(function (response) {
