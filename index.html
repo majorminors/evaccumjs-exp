@@ -161,22 +161,12 @@
 					var coh_analysis = {
 						type: "html-keyboard-response",
 						stimulus: "Now we analyse - press any key and please wait",
-						on_finish: function(){
-							var coh_trials = jsPsych.data.get().filter({test_part: 'cohtest_rdk'});
-							var cohsum = {};
+						on_finish: function () {
 							var payload = [];
-							var coherence_values = [];
-							for (i = 0; i < coh_point_values.length; i++) { // for each coherence point
-								cohsum[coh_point_values[i]] = [0,0]; // init array in an object named after the coherence point
-								for (ii = 0; ii < Object.keys(coh_trials).length; ii++) { // for each trial object
-									if (coh_trials[ii].coherence == coh_point_values[i]) { // if the coherence value is the same as the coherence point in this trial object
-										cohsum[coh_point_values[i]][0]++; // add one to the right side of the array
-										if (coh_trials[ii].correct == 1) { // and if it's correct
-											cohsum[coh_point_values[i]][1]++; // add to the left side of the array
-										}
-									}
-								}
-								payload.push([coh_point_values[i],cohsum[i][1],cohsum[i][0]]);
+							for (i = 0; i < coh_point_values.length; i++) {
+								tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count()
+								tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count()
+								payload.push([coh_point_values[i],tmp_corr,tmp_trls])
 							}
 							
 							/* POST the data to the psignifit function */
