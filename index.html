@@ -156,40 +156,37 @@
 					data: {experiment_part: 'cohtest_feedback'}
 				}
 				timeline.push(coh_rdk, coh_feedback);
-
-				if (count == coh_stim_array.length * coh_stim_array[0].length) {
-					var coh_analysis = {
-						type: "html-keyboard-response",
-						stimulus: "Now we analyse - press any key and please wait",
-						on_finish: function () {
-							var payload = [];
-							for (i = 0; i < coh_point_values.length; i++) {
-								tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count()
-								tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count()
-								payload.push([coh_point_values[i],tmp_corr,tmp_trls])
-							}
-							
-							/* POST the data to the psignifit function */
-							axios({
-								url: 'localhost:5000/psignifit',
-								method: 'post',
-								data: payload
-							})
-							.then(function (response) {
-								coherence_values = response.data;
-							})
-							.catch(function (error) {
-								console.log(error);
-							});
-						}
-					}
-					timeline.push(coh_analysis);
-				}
 			}
 		}
 	
 		/* collecting data for analysis */
-		
+		var coh_analysis = {
+			type: "html-keyboard-response",
+			stimulus: "Now we analyse - press any key and please wait",
+			data: {experiment_part: 'coherence_analysis'}
+			on_finish: function () {
+				var payload = [];
+				for (i = 0; i < coh_point_values.length; i++) {
+					tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count()
+					tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count()
+					payload.push([coh_point_values[i],tmp_corr,tmp_trls])
+				}
+				
+				/* POST the data to the psignifit function */
+				axios({
+					url: 'http://localhost:5000/psignifit',
+					method: 'post',
+					data: payload
+				})
+				.then(function (response) {
+					coherence_values = response.data;
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+		}
+		timeline.push(coh_analysis);
 			
 		// var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
