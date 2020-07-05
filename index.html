@@ -160,26 +160,47 @@
 		}
 	
 		/* collect the data for analysis */
-		var all_indices = [];
-		for (i = 0; i < coh_point_value.length; i++) {
-			function getAllIndices(coh_stim_array.coherence_value, coh_point_value[i]) {
-				var indices = [], ii;
-					for(ii = 0; ii < arr.length; ii++)
-					if (arr[ii] === val)
-						indices.push(ii);
-					return indices;
+		// go through data object and sum 
+		// object with name of coherence value - cohsum.0.1[1]
+		// then loop thorugh to flatten it out - arr[0]=
+		// loop through array for coherence values
+		// cohsum.coherence_value[i]
+// outer array
+// then inner array for each loop through the code
+
+
+		/* collecting data for analysis */
+		var coh_trials = jsPsych.data.get().filter({test_part: 'cohtest_rdk'});
+		var cohsum = {};
+		var payload = [];
+		for (i = 0; i < coh_points_value.length; i++) { // for each coherence point
+			cohsum[coh_points_value[i]] = [0,0]; // init array in an object named after the coherence point
+			for (ii = 0; ii < Object.keys(coh_trials).length; ii++) { // for each trial object
+				if (coh_trials[ii].coherence == coh_points_value[i]) { // if the coherence value is the same as the coherence point in this trial object
+					cohsum[coh_points_value[i]][0]++; // add one to the right side of the array
+					if (coh_trials[ii].correct == 1) { // and if it's correct
+						cohsum[coh_points_value[i]][1]++; // add to the left side of the array
+					}
+				}
 			}
-			all_indices[i] = indices;
+			payload.push([coh_points_value[i],cohsum[i][1],cohsum[i][0]]);
 		}
-		/* collecting data for analysis
-		* if we want to pass this off for analysis, I guess we'd need a var that only gets calculated in the final 'count' of the coherence test loop like:
-		* var coh_trials = jsPsych.data.get().filter({test_part: 'cohtest_rdk'});
-		* var coh_accuracy = coh_trials.filter({correct}); // is that the right way to get all the values for correct?
-		* plus the information from coh_stim_array.coherence_value
-		* then feed that to the appropriate place.
-		* then a dynamic variable that can recieve that information after it's been calculated to put into coherence_values as below */
+		
+		/* POST the data to the psignifit function */
+		axios({
+			url: 'localhost:9000/psignifit',
+			method: 'post',
+			data: payload
+		})
+		.then(function (response) {
+			var coherence_values = response.data;
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+		
 			
-		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
+		// var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
 
 		//////////////////
 		/* rule testing */
