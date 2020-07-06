@@ -165,13 +165,16 @@
 			stimulus: "Now we analyse - press any key and please wait",
 			data: {experiment_part: 'coherence_analysis'},
 			on_finish: function () {
-				var payload = [];
+				var payload = {
+					data_array: []
+				};
 				for (i = 0; i < coh_point_values.length; i++) {
 					tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count();
 					tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count();
-					payload.push([coh_point_values[i],tmp_corr,tmp_trls]);
+					payload['data_array'].push([coh_point_values[i],tmp_corr,tmp_trls]);
 				}
-				
+				console.log("results to post: ", payload['data_array']);
+
 				/* POST the data to the psignifit function */
 				axios({
 					url: 'http://localhost:5000/psignifit',
@@ -180,7 +183,9 @@
 					data: payload
 				})
 				.then(function (response) {
+					console.log(response);
 					coherence_values = response.data;
+					console.log(coherence_values);
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -264,7 +269,7 @@
 					post_trial_gap: 0, 
 					number_of_dots: 100,
 					response_ends_trial: false,
-					coherence: function(){coherence_values[block]},
+					coherence: function () {coherence_values[jsPsych.data.get().last(0).values()[0].index_value]},
 					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
 					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
 					choices: resp_keys,
