@@ -78,7 +78,7 @@
 		});
 
 		/* generate coherence test procedure */
-		/* var block;
+		var block;
 		var trial;
 		var count = 0;
 		for (block = 0; block < coh_stim_array.length; block++) { // equivalent to number of blocks (coh_stim_array[0-n]) - should = num_blocks
@@ -157,10 +157,10 @@
 				}
 				timeline.push(coh_rdk, coh_feedback);
 			}
-		} */
+		}
 	
 		/* collecting data for analysis */
-		/* var coh_analysis = {
+		var coh_analysis = {
 			type: "html-keyboard-response",
 			stimulus: "Now we analyse - press any key and please wait",
 			data: {experiment_part: 'coherence_analysis'},
@@ -177,7 +177,7 @@
 
 				// POST the data to the psignifit function
 				axios({
-					url: 'http://localhost:5000/psignifit',
+					url: 'http://localhost:5000/coherence_thresholding',
 					method: 'post',
 					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
 					data: payload
@@ -192,9 +192,9 @@
 				});
 			}
 		}
-		timeline.push(coh_analysis); */
+		timeline.push(coh_analysis);
 			
-		var coherence_values = [0.8, 0.3]; // we generate this from earlier psychophys -  [0] needs to be easy, [1] needs to be hard
+		// var coherence_values = [0.8, 0.3]; // we generate this from earlier psychophys -  [0] needs to be easy, [1] needs to be hard
 
 		//////////////////
 		/* rule testing */
@@ -232,22 +232,22 @@
 					}
 					timeline.push(rule_start_screen);
 				}
-				
-				if (block === 1 && count === 1) {
+				// indicate at start of each block what kind of dots to expect (easy or hard)	
+				if (block === 0 && count === 1) {
 					var block_indicator = {
 						type: "html-keyboard-response",
 						stimulus: "<p> first with easy dots </p>",
 						choices: jsPsych.NO_KEYS,
-						trial_duration: 300
+						trial_duration: 500
 					}
 					timeline.push(block_indicator);
-				} elseif (block === 2 && turn_off_block_indicator === 0) {
+				} else if (block === 1 && turn_off_block_indicator === 0) {
 					turn_off_block_indicator = 1;
 					var block_indicator = {
 						type: "html-keyboard-response",
 						stimulus: "<p> now with hard dots </p>",
 						choices: jsPsych.NO_KEYS,
-						trial_duration: 300
+						trial_duration: 500
 					}
 					timeline.push(block_indicator);
 				}
@@ -274,7 +274,7 @@
 					choices: jsPsych.NO_KEYS,
 					correct_choice: "q",
 					trial_duration: 300,
-					data: {experiment_part: 'ruletest_fixation'}
+					data: {experiment_part: 'ruletest_fixation', index_value: block} // lets index the block value here, so we can use it to indicate coherence
 				}
 				timeline.push(rule_fixation);
 
@@ -290,9 +290,7 @@
 					number_of_dots: 100,
 					response_ends_trial: false,
 					coherence: function () {
-						var current_node_id = jsPsych.currentTimelineNodeID();
-						var data_from_current_node = jsPsych.data.getDataByTimelineNode(current_node_id);
-						return coherence_values[data_from_current_node.index_value]
+						return coherence_values[jsPsych.data.get().last(1).values()[0].index_value]; // we pull the block value from the data in the last trial block to index into coherence_values
 					},
 					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
 					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
@@ -300,7 +298,7 @@
 					correct_choice: resp_keys[i_rule.match_arrow-1],
 					coherent_direction: i_rule.coh_direction_deg, 
 					trial_duration: 1500,
-					data: {experiment_part: 'ruletest_rdk', index_value: block}
+					data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}
 				}
 				var rule_feedback = { // you can use this for testing, otherwise comment out
 					type: "html-keyboard-response",
@@ -320,13 +318,40 @@
 			}
 		}
 
-		/* collecting data for analysis
-		* this would be similar to the coherence testing, except we need to collect the results for both blocks seperately and then average them
-		* var rule_trials = jsPsych.data.get().filter({test_part: 'ruletest_rdk'});
-		* var rule_accuracy = rule_trials.filter({correct}); // is that the right way to get all the values for correct?
-		* plus the information from rule_stim_array.coh_direction_deg
-		* then feed that to the appropriate place.
-		* then a dynamic variable that can recieve that information after it's been calculated to put into rule_values as below */
+		/* collecting data for analysis */
+		var rule_analysis = {
+			type: "html-keyboard-response",
+			stimulus: "Now we analyse - press any key and please wait",
+			data: {experiment_part: 'rule_analysis'},
+			on_finish: function () {
+				var payload = {
+					data_array: []
+				};
+				for (i = 0; i < rule_point_values.length; i++) {
+					tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk', rule_code: i}).count();
+					tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk', correct: 1, rule_code: i}).count();
+					payload['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
+				}
+				console.log("results to post: ", payload['data_array']);
+
+				// POST the data to the psignifit function
+				axios({
+					url: 'http://localhost:5000/rule_thresholding',
+					method: 'post',
+					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
+					data: payload
+				})
+				.then(function (response) {
+					console.log(response);
+					coherence_values = response.data;
+					console.log(coherence_values);
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+		}
+		timeline.push(rule_analysis);
 
 		var rule_values = [10, 80]; // will need to gen these also from earlier psychophys - [0] needs to be easy, [1] needs to be hard
     
@@ -388,7 +413,7 @@
 					choices: jsPsych.NO_KEYS,
 					correct_choice: "q",
 					trial_duration: 300,
-					data: {experiment_part: 'experiment_fixation'}
+					data: {experiment_part: 'experiment_fixation', coh_idx: i_exp.coh_difficulty-1, coh_dir_idx: i_exp.dot_motion_dir_deg}
 				}
 				timeline.push(exp_fixation);
 
