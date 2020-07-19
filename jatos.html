@@ -214,7 +214,7 @@
 			rule_stim_array: rule_stim_array
 		});
 
-		/* generate coherence test procedure */
+		/* generate rule test procedure */
 		var block;
 		var trial;
 		var count = 0;
@@ -343,8 +343,9 @@
 				})
 				.then(function (response) {
 					console.log(response);
-					coherence_values = response.data;
-					console.log(coherence_values);
+					hard_rule_value = response.data;
+					console.log(hard_rule_value);
+					rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
 				})
 				.catch(function (error) {
 					console.log(error);
