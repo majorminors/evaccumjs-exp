@@ -99,7 +99,9 @@
 					var coh_cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i_coh.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
-						choices: resp_keys,
+						// choices: resp_keys,
+						choices: jsPsych.NO_KEYS,
+						trial_duration: 100,
 						data: {experiment_part: 'cohtest_cue'}
 					}
 					timeline.push(coh_cue);
@@ -256,7 +258,9 @@
 					var rule_cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i_rule.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
-						choices: resp_keys,
+						// choices: resp_keys,
+						choices: jsPsych.NO_KEYS,
+						trial_duration: 100,
 						data: {experiment_part: 'ruletest_cue'}
 					}
 					timeline.push(rule_cue);
@@ -401,7 +405,9 @@
 							var exp_cue = {
 								type: 'image-keyboard-response',
 								stimulus: cues[i_exp.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
-								choices: resp_keys,
+								// choices: resp_keys,
+								choices: jsPsych.NO_KEYS,
+								trial_duration: 100,
 								data: {experiment_part: 'experiment_cue'}
 							}
 							exp_timeline.push(exp_cue);
