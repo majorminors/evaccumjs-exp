@@ -3,6 +3,7 @@
     <head>
         <title>EvAccum</title>
     	<meta charset="utf-8"/>
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 		<script src="/assets/javascripts/jatos.js"></script>
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
@@ -157,16 +158,43 @@
 				timeline.push(coh_rdk, coh_feedback);
 			}
 		}
-		
-		/* collecting data for analysis
-		* if we want to pass this off for analysis, I guess we'd need a var that only gets calculated in the final 'count' of the coherence test loop like:
-		* var coh_trials = jsPsych.data.get().filter({test_part: 'cohtest_rdk'});
-		* var coh_accuracy = coh_trials.filter({correct}); // is that the right way to get all the values for correct?
-		* plus the information from coh_stim_array.coherence_value
-		* then feed that to the appropriate place.
-		* then a dynamic variable that can recieve that information after it's been calculated to put into coherence_values as below */
+	
+		/* collecting data for analysis */
+		var coh_analysis = {
+			type: "html-keyboard-response",
+			stimulus: "Now we analyse - press any key and please wait",
+			data: {experiment_part: 'coherence_analysis'},
+			on_finish: function () {
+				var payload = {
+					data_array: []
+				};
+				for (i = 0; i < coh_point_values.length; i++) {
+					tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', coherence: coh_point_values[i]}).count();
+					tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_rdk', correct: 1, coherence: coh_point_values[i]}).count();
+					payload['data_array'].push([coh_point_values[i],tmp_corr,tmp_trls]);
+				}
+				console.log("results to post: ", payload['data_array']);
+
+				// POST the data to the psignifit function
+				axios({
+					url: 'http://localhost:5000/coherence_thresholding',
+					method: 'post',
+					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
+					data: payload
+				})
+				.then(function (response) {
+					console.log(response);
+					coherence_values = response.data;
+					console.log(coherence_values);
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+		}
+		timeline.push(coh_analysis);
 			
-		var coherence_values = [0.8, 0.3]; // we will need to generate these from earlier psychophys. [0] needs to be easy, [1] needs to be hard
+		// var coherence_values = [0.8, 0.3]; // we generate this from earlier psychophys -  [0] needs to be easy, [1] needs to be hard
 
 		//////////////////
 		/* rule testing */
@@ -186,10 +214,11 @@
 			rule_stim_array: rule_stim_array
 		});
 
-		/* generate coherence test procedure */
+		/* generate rule test procedure */
 		var block;
 		var trial;
 		var count = 0;
+		var turn_off_block_indicator = 0;
 		for (block = 0; block < rule_stim_array.length; block++) { // equivalent to number of blocks (rule_stim_array[0-n]) - should = num_blocks
 			for (trial = 0; trial < rule_stim_array[0].length; trial++) { // equivalent to number of trials per block (rule_stim_array[x][0-n]) - should = num_trials_per_block
 				count++; // use this to track how many trials have happened in total
@@ -202,7 +231,26 @@
 							"<br><p>Press any key to begin.</p>"
 					}
 					timeline.push(rule_start_screen);
-				}	
+				}
+				// indicate at start of each block what kind of dots to expect (easy or hard)	
+				if (block === 0 && count === 1) {
+					var block_indicator = {
+						type: "html-keyboard-response",
+						stimulus: "<p> first with easy dots </p>",
+						choices: jsPsych.NO_KEYS,
+						trial_duration: 500
+					}
+					timeline.push(block_indicator);
+				} else if (block === 1 && turn_off_block_indicator === 0) {
+					turn_off_block_indicator = 1;
+					var block_indicator = {
+						type: "html-keyboard-response",
+						stimulus: "<p> now with hard dots </p>",
+						choices: jsPsych.NO_KEYS,
+						trial_duration: 500
+					}
+					timeline.push(block_indicator);
+				}
 
 				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
 					var rule_cue = {
@@ -226,7 +274,7 @@
 					choices: jsPsych.NO_KEYS,
 					correct_choice: "q",
 					trial_duration: 300,
-					data: {experiment_part: 'ruletest_fixation'}
+					data: {experiment_part: 'ruletest_fixation', index_value: block} // lets index the block value here, so we can use it to indicate coherence
 				}
 				timeline.push(rule_fixation);
 
@@ -241,14 +289,16 @@
 					post_trial_gap: 0, 
 					number_of_dots: 100,
 					response_ends_trial: false,
-					coherence: coherence_values[block],
+					coherence: function () {
+						return coherence_values[jsPsych.data.get().last(1).values()[0].index_value]; // we pull the block value from the data in the last trial block to index into coherence_values
+					},
 					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
 					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
 					choices: resp_keys,
 					correct_choice: resp_keys[i_rule.match_arrow-1],
 					coherent_direction: i_rule.coh_direction_deg, 
 					trial_duration: 1500,
-					data: {experiment_part: 'ruletest_rdk'}
+					data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}
 				}
 				var rule_feedback = { // you can use this for testing, otherwise comment out
 					type: "html-keyboard-response",
@@ -268,115 +318,154 @@
 			}
 		}
 
-		/* collecting data for analysis
-		* this would be similar to the coherence testing, except we need to collect the results for both blocks seperately and then average them
-		* var rule_trials = jsPsych.data.get().filter({test_part: 'ruletest_rdk'});
-		* var rule_accuracy = rule_trials.filter({correct}); // is that the right way to get all the values for correct?
-		* plus the information from rule_stim_array.coh_direction_deg
-		* then feed that to the appropriate place.
-		* then a dynamic variable that can recieve that information after it's been calculated to put into rule_values as below */
+		/* collecting data for analysis */
+		var rule_analysis = {
+			type: "html-keyboard-response",
+			stimulus: "Now we analyse - press any key and please wait",
+			data: {experiment_part: 'rule_analysis'},
+			on_finish: function () {
+				var payload = {
+					data_array: []
+				};
+				for (i = 0; i < rule_point_values.length; i++) {
+					tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk', rule_code: i}).count();
+					tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk', correct: 1, rule_code: i}).count();
+					payload['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
+				}
+				console.log("results to post: ", payload['data_array']);
 
-		var rule_values = [10, 80]; // will need to gen these also from earlier psychophys - [0] needs to be easy, [1] needs to be hard
+				// POST the data to the psignifit function
+				axios({
+					url: 'http://localhost:5000/rule_thresholding',
+					method: 'post',
+					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
+					data: payload
+				})
+				.then(function (response) {
+					console.log(response);
+					hard_rule_value = response.data;
+					console.log(hard_rule_value);
+					rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+		}
+		timeline.push(rule_analysis);
+
+		// var rule_values = [10, 80]; // will need to gen these also from earlier psychophys - [0] needs to be easy, [1] needs to be hard
     
 		////////////////////////
 		/* experiment testing */
 		////////////////////////
+       
+		/* we'll run this as an 'on_finish' function, then push it all to the end of the timeline */
 
-		/* define parameters to pass into the stimulus_array_generator function */
-   		var easy_rule = rule_values[0];
-    	var hard_rule = rule_values[1];
-    	var num_exp_blocks = 20;
-    	var num_trials_per_block = 64;
-    	// requires num_cues
-    	var num_motion_coherence = 8;
+		var exp_start_screen = {
+			type: "html-keyboard-response",
+			stimulus: "<p>Now we're ready to begin the experiment.</p><br>"+
+				"<p>This will take about 40 minutes.</p><br>"+
+				"<p>Please wait patiently for the experiment to load based on the data so far</p><br>"+
+				"<br><p>Press any key to begin.</p>",
+			on_finish: function(){
+			    jsPsych.pauseExperiment();
 
-   		/* generate stimulus array with stimulus_array_generator function */
-    	var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_exp_blocks, num_trials_per_block, num_cues, num_motion_coherence);
-		jsPsych.data.addProperties({
-			exp_stim_array: exp_stim_array
-		});
+				/* init a timeline for the experiment */
+				exp_timeline = [];
 
-		/* generate experimental test procedure */
-		var block;
-		var trial;
-		var count = 0;
-		for (block = 0; block < exp_stim_array.length; block++) { // equivalent to number of blocks (exp_stim_array[0-n]) - should = num_blocks
-			for (trial = 0; trial < exp_stim_array[0].length; trial++) { // equivalent to number of trials per block (exp_stim_array[x][0-n]) - should = num_trials_per_block
-				count++; // use this to track how many trials have happened in total
-				i_exp = exp_stim_array[block][trial]; // make this easier to call
-				if (count === 1) {
-					var exp_start_screen = {
-						type: "html-keyboard-response",
-						stimulus: "<p>Now we're ready to begin the experiment.</p><br>"+
-							"<p>This will take about 40 minutes.</p><br>"+
-							"<br><p>Press any key to begin.</p>"
-					}
-					timeline.push(exp_start_screen);
-				}	
+				/* define parameters to pass into the stimulus_array_generator function */
+				var easy_rule = rule_values[0];
+				var hard_rule = rule_values[1];
+				var num_exp_blocks = 20;
+				var num_trials_per_block = 64;
+				// requires num_cues
+				var num_motion_coherence = 8;
 
-				if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
-					var exp_cue = {
-						type: 'image-keyboard-response',
-						stimulus: cues[i_exp.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
-						choices: resp_keys,
-						data: {experiment_part: 'experiment_cue'}
-					}
-					timeline.push(exp_cue);
-				}
+				/* generate stimulus array with stimulus_array_generator function */
+				var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_exp_blocks, num_trials_per_block, num_cues, num_motion_coherence);
+				jsPsych.data.addProperties({
+					exp_stim_array: exp_stim_array
+				});
 
-				var exp_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
-					type: 'rdk',
-					background_color: "black",
-					dot_color: "black", 
-					aperture_type: 1,
-					fixation_cross: true,
-					fixation_cross_color: "white", 
-					fixation_cross_thickness: 6,
-					post_trial_gap: 0, 
-					choices: jsPsych.NO_KEYS,
-					correct_choice: "q",
-					trial_duration: 300,
-					data: {experiment_part: 'experiment_fixation'}
-				}
-				timeline.push(exp_fixation);
+				/* generate experimental test procedure */
+				var block;
+				var trial;
+				var count = 0;
+				for (block = 0; block < exp_stim_array.length; block++) { // equivalent to number of blocks (exp_stim_array[0-n]) - should = num_blocks
+					for (trial = 0; trial < exp_stim_array[0].length; trial++) { // equivalent to number of trials per block (exp_stim_array[x][0-n]) - should = num_trials_per_block
+						count++; // use this to track how many trials have happened in total
+						i_exp = exp_stim_array[block][trial]; // make this easier to call
 
-				var exp_rdk = {
-					type: 'rdk', 
-					background_color: "black",
-					dot_color: "white", 
-					aperture_type: 1,
-					fixation_cross: true,
-					fixation_cross_color: "white", 
-					fixation_cross_thickness: 6,
-					post_trial_gap: 0, 
-					number_of_dots: 100,
-					response_ends_trial: false,
-					coherence: coherence_values[i_exp.coh_difficulty-1], 
-					move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-					choices: resp_keys,
-					correct_choice: resp_keys[i_exp.match_arrow-1],
-					coherent_direction: i_exp.dot_motion_dir_deg, 
-					trial_duration: 1500,
-					data: {experiment_part: 'experiment_rdk'}
-				}
-				var exp_feedback = { // you can use this for testing, otherwise comment out
-					type: "html-keyboard-response",
-					stimulus: function() {
-						var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
-						if (last_rdk_accuracy) { // if true (data.correct is boolean)
-							return "<p>correct</p>";
-						} else { // else if false
-							return "<p>incorrect</p>"
+						if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
+							var exp_cue = {
+								type: 'image-keyboard-response',
+								stimulus: cues[i_exp.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+								choices: resp_keys,
+								data: {experiment_part: 'experiment_cue'}
+							}
+							exp_timeline.push(exp_cue);
 						}
-					},
-					choices: jsPsych.NO_KEYS,
-					trial_duration: 300,
-					data: {experiment_part: 'experiment_feedback'}
+
+						var exp_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
+							type: 'rdk',
+							background_color: "black",
+							dot_color: "black", 
+							aperture_type: 1,
+							fixation_cross: true,
+							fixation_cross_color: "white", 
+							fixation_cross_thickness: 6,
+							post_trial_gap: 0, 
+							choices: jsPsych.NO_KEYS,
+							correct_choice: "q",
+							trial_duration: 300,
+							data: {experiment_part: 'experiment_fixation'}
+						}
+						exp_timeline.push(exp_fixation);
+
+						var exp_rdk = {
+							type: 'rdk', 
+							background_color: "black",
+							dot_color: "white", 
+							aperture_type: 1,
+							fixation_cross: true,
+							fixation_cross_color: "white", 
+							fixation_cross_thickness: 6,
+							post_trial_gap: 0, 
+							number_of_dots: 100,
+							response_ends_trial: false,
+							coherence: function(){coherence_values[i_exp.coh_difficulty-1]}, 
+							move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+							dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+							choices: resp_keys,
+							correct_choice: resp_keys[i_exp.match_arrow-1],
+							coherent_direction: i_exp.dot_motion_dir_deg, 
+							trial_duration: 1500,
+							data: {experiment_part: 'experiment_rdk'}
+						}
+						var exp_feedback = { // you can use this for testing, otherwise comment out
+							type: "html-keyboard-response",
+							stimulus: function() {
+								var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+								if (last_rdk_accuracy) { // if true (data.correct is boolean)
+									return "<p>correct</p>";
+								} else { // else if false
+									return "<p>incorrect</p>"
+								}
+							},
+							choices: jsPsych.NO_KEYS,
+							trial_duration: 300,
+							data: {experiment_part: 'experiment_feedback'}
+						}
+						exp_timeline.push(exp_rdk, exp_feedback);
+					}
 				}
-				timeline.push(exp_rdk, exp_feedback);
+    			jsPsych.addNodeToEndOfTimeline({
+	      			timeline: exp_timeline // here is where we add it to the timeline
+		    	}, jsPsych.resumeExperiment)
 			}
 		}
+		timeline.push(exp_start_screen);
 
 		/* initialise experiment */
 		jatos.onLoad(function() {
