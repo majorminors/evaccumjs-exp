@@ -122,7 +122,7 @@
 					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
 					choices: resp_keys,
 					correct_choice: resp_keys[i_coh.match_arrow-1],
-					coherent_direction: i_coh.dot_motion_deg, 
+					coherent_direction: i_coh.dot_motion_deg_rdk, 
 					trial_duration: 1500,
 					data: {experiment_part: 'cohtest_rdk'}
 				}
@@ -281,7 +281,7 @@
 					dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
 					choices: resp_keys,
 					correct_choice: resp_keys[i_rule.match_arrow-1],
-					coherent_direction: i_rule.coh_direction_deg, 
+					coherent_direction: i_rule.coh_direction_deg_rdk, 
 					trial_duration: 1500,
 					data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}
 				}

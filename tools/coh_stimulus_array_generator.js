@@ -17,6 +17,7 @@ function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues
      	- cue_dir_deg = cue direction (in degrees)
 		- match_arrow = what arrow is the correct motion direction
 		- dot_motion_deg = the degrees of the dot motion (either cue_dir_deg, or 180 + cue_dir_deg)
+		- dot_motion_deg_rdk = dot motion converted from clockface to math circle for rdk plugin
 		- coh_point_code = a code referring to ascending value of coherence
 		- coherence_value = the coherence value
 	*/
@@ -78,6 +79,9 @@ function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues
 		}
 	}
 	console.log("dot motion direction degrees: ", dot_motion_deg);
+	// convert that into values the RDK plugin would understand (not clockface, but traditional math circle)
+	var dot_motion_deg_rdk = dot_motion_deg.slice(0).map(x => (360 - (x - 90)) % 360); // using modulus to figure out if bigger/smaller than 360
+	console.log("dot motion coverted for rdk: ", dot_motion_deg_rdk);
 	// now add a code for the point values, and the point values
 	var coh_point_codes = range_fun(1,coh_point_values.length,1);	
 	var coh_point_code = Array.apply(null, Array(num_point_tests)).map(function(){return coh_point_codes;}).flat();
@@ -93,6 +97,7 @@ function coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues
             cue_dir_deg: cue_dir_deg[i],
 			match_arrow: match_arrow[i],
 			dot_motion_deg: dot_motion_deg[i],
+			dot_motion_deg_rdk: dot_motion_deg_rdk[i],
 			coh_point_code: coh_point_code[i],
 			coherence_value: coherence_value[i],
         };

@@ -18,7 +18,8 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
 		- rule_point_code = a code for the ascending point values
 		- rule_value: the actual test values for each point
 		- match_arrow: what arrow is the coherence moving toward
-		- coh_direction_deg: direction of coherent motion
+		- coh_direction_deg = direction of coherent motion
+		- coh_direction_deg_rdk = dot motion converted from clockface to math circle for rdk plugin
 	*/
 
     /* helper functions */ 
@@ -103,6 +104,9 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
 		}
 	}
 	console.log("coherence directions: ", coh_direction_deg);
+	// convert that into a value rdk understands (not clockface, but traditional math circle)
+	var coh_direction_deg_rdk = coh_direction_deg.slice(0).map(x => (360 - (x - 90)) % 360); // using modulus to circularise this time
+	console.log("rdk converted coherence directions: ", coh_direction_deg_rdk);
 
     // *** put the info for each trial into an object, and put these trial objects into the block info array ***
     var block_info = [];
@@ -114,6 +118,7 @@ function rule_stimulus_array_generator(num_blocks, num_trials_per_block, num_cue
 			rule_value: rule_value[i],
 			match_arrow: match_arrow[i],
 			coh_direction_deg: coh_direction_deg[i],
+			coh_direction_deg_rdk: coh_direction_deg_rdk[i],
         };
         block_info.push(trial_info);
     }

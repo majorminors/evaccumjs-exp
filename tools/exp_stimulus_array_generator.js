@@ -19,6 +19,7 @@ function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_tria
      	- cue_dir_deg = cue direction (in degrees)
      	- dot_motion_dir_cond = dot motion direction condition (1-8)
      	- dot_motion_dir_deg = dot motion direction (in degrees)
+		- dot_motion_dir_deg_rdk = dot motion converted from clockface to math circle for rdk plugin
      	- coh_difficulty = coherence difficulty (1 or 2)
      	- match_dist_cue_dir = match distance from cue direction (degrees abs value)
      	- match_arrow = match arrow (1 or 2)
@@ -88,6 +89,9 @@ function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_tria
 		}
     console.log("dot motion direction degrees: ", dot_motion_dir_deg);
 	}
+	// convert that into a value the rdk plugin understands (not clockface - traditional circle)
+	var dot_motion_dir_deg_rdk = dot_motion_dir_deg.slice(0).map(x => (360 - (x - 90)) % 360); // using modulus to figure out if over/under 360 degrees, and then use remainder
+	console.log("converted motion direction for rdk :", dot_motion_dir_deg_rdk);
     var difficulty_levels = range_fun(1,2,1);
     var coh_difficulty_1 = sort_num_array(Array.apply(null, Array(num_trials_per_block/num_cues/num_motion_coherence/2)).map(function() {return difficulty_levels;}).flat());
     var coh_difficulty = Array.apply(null, Array(num_cues*num_motion_coherence)).map(function() {return coh_difficulty_1;}).flat();
@@ -136,6 +140,7 @@ function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_tria
             cue_dir_deg: cue_dir_deg[i],
             dot_motion_dir_cond: dot_motion_dir_cond[i],
             dot_motion_dir_deg: dot_motion_dir_deg[i],
+			dot_motion_dir_deg_rdk: dot_motion_dir_deg_rdk[i],
             coh_difficulty: coh_difficulty[i],
             match_dist_cue_dir: match_dist_cue_dir[i], 
             match_arrow: match_arrow[i],
