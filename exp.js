@@ -17,10 +17,10 @@
 			var condition = ['as',1];
 			/* cues */
 			var cues = [
-				{stimulus: "stimuli/1-3.png"},
-				{stimulus: "stimuli/2-4.png"},
-				{stimulus: "stimuli/3-1.png"},
-				{stimulus: "stimuli/4-2.png"}
+				{stimulus: "stimuli/1-3.svg"},
+				{stimulus: "stimuli/2-4.svg"},
+				{stimulus: "stimuli/3-1.svg"},
+				{stimulus: "stimuli/4-2.svg"}
 			];
 
 		} else {
@@ -30,10 +30,10 @@
 			var condition = ['sa',2];
 			/* cues */
 			var cues = [
-				{stimulus: "stimuli/3-1.png"},
-				{stimulus: "stimuli/4-2.png"},
-				{stimulus: "stimuli/1-3.png"},
-				{stimulus: "stimuli/2-4.png"}
+				{stimulus: "stimuli/3-1.svg"},
+				{stimulus: "stimuli/4-2.svg"},
+				{stimulus: "stimuli/1-3.svg"},
+				{stimulus: "stimuli/2-4.svg"}
 			];
 		}
 		jsPsych.data.addProperties({
