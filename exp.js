@@ -16,6 +16,7 @@
 			var resp_keys = ['a', 's'];
 			var condition = ['as',1];
 			/* cues */
+			var cueheight = window.innerHeight*0.65; // set the height to be a percentage of the window height
 			var cues = [
 				{stimulus: "stimuli/1-3.svg"},
 				{stimulus: "stimuli/2-4.svg"},
@@ -84,6 +85,7 @@
 					var coh_cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i_coh.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+						stimulus_height: cueheight,
 						choices: resp_keys,
 						data: {experiment_part: 'cohtest_cue'}
 					}
@@ -241,6 +243,7 @@
 					var rule_cue = {
 						type: 'image-keyboard-response',
 						stimulus: cues[i_rule.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+						stimulus_height: cueheight,
 						choices: resp_keys,
 						data: {experiment_part: 'ruletest_cue'}
 					}
@@ -386,6 +389,7 @@
 							var exp_cue = {
 								type: 'image-keyboard-response',
 								stimulus: cues[i_exp.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+								stimulus_height: cueheight,
 								choices: resp_keys,
 								data: {experiment_part: 'experiment_cue'}
 							}
