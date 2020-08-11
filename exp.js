@@ -13,8 +13,8 @@
 			// the order of these variables are important because we index into them later, so:
 			// if a random number generated between 1 and 100 is even then do this order
 			/* keys */
-			var resp_keys = ['a', 's'];
-			var condition = ['as',1];
+			var resp_keys = ['o', 'p'];
+			var condition = ['op',1];
 			/* cues */
 			var cueheight = window.innerHeight*0.65; // set the height to be a percentage of the window height
 			var cues = [
@@ -27,8 +27,8 @@
 		} else {
 			// else (if the number is odd) do this order
 			/* keys */
-			var resp_keys = ['s', 'a'];
-			var condition = ['sa',2];
+			var resp_keys = ['p', 'o'];
+			var condition = ['po',2];
 			/* cues */
 			var cues = [
 				{stimulus: "stimuli/3-1.svg"},
