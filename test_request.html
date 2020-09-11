@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EvAccum</title>
+        <meta charset="utf-8"/>
+        <!-- pull in axios so we can make post requests -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!-- pull in JATOS resources -->
+        <script src="/assets/javascripts/jatos.js"></script>
+        <!-- pull in jsPsych resources -->
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+
+        var timeline =[];
+
+        var test_request = {
+            type: "html-keyboard-response",
+            stimulus: "test authentication",
+            on_finish: function () {
+                var payload = {
+                    data_array: [
+                        [0.10,   45.0000,   90.0000],
+                        [0.15,   50.0000,   90.0000],
+                        [0.20,   44.0000,   90.0000],
+                        [0.25,   44.0000,   90.0000],
+                        [0.30,   52.0000,   90.0000],
+                        [0.35,   53.0000,   90.0000],
+                        [0.40,   62.0000,   90.0000],
+                        [0.45,   64.0000,   90.0000],
+                        [0.50,   76.0000,   90.0000],
+                        [0.60,   79.0000,   90.0000],
+                        [0.70,   88.0000,   90.0000],
+                        [0.80,   90.0000,   90.0000],
+                        [0.90,   90.0000,   90.0000]
+                    ],
+                };
+                console.log("results to post: ", payload['data_array']);
+
+                // POST the data to the psignifit function
+                axios({
+                    url: 'http://localhost:5000/pyapps/util/cthresh',
+                    method: 'post',
+                    data: payload,
+                    auth: {
+                        username: 'test',
+                        password: 'test'
+                    }
+                })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        }
+timeline.push(test_request);
+
+
+        var end_test = {
+            type: "html-keyboard-response",
+            stimulus: "press q to quit",
+            choices: 'q'
+        }
+timeline.push(end_test);
+
+/* initialise experiment */
+jatos.onLoad(function() {
+    jsPsych.init({
+        timeline: timeline,
+        on_finish: function() {
+            var resultJson = jsPsych.data.get().json();
+            jatos.submitResultData(resultJson, jatos.startNextComponent);
+        }
+    });
+});
+    </script>
+</html>
