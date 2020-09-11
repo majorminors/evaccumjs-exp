@@ -7,6 +7,11 @@
 		jsPsych.data.addProperties({
 			participant_id: participant_id
 		});
+                
+                var credentials = {
+                    username: 'test',
+                    password: 'test'
+                }
 
 		/* use a random number generator to arbitrate between response mappings */
 		if (((Math.floor(Math.random() * 100) + 1) % 2) === 0) {
@@ -43,7 +48,7 @@
 		var num_cues = 4;
 
 		/* initialise timeline array */
-        var timeline =[];
+                var timeline = [];
 
 		///////////////////////
 		/* coherence testing */
@@ -168,8 +173,8 @@
 					method: 'post',
                                         data: payload,
                                         auth: {
-                                            username: 'test',
-                                            password: 'test'
+                                            username: credentials.username,
+                                            password: credentials.password
                                         }
 				})
 				.then(function (response) {
@@ -331,8 +336,8 @@
 					method: 'post',
                                         data: payload,
                                         auth: {
-                                            username: 'test',
-                                            password: 'test'
+                                            username: credentials.username,
+                                            password: credentials.password
                                         }
 				})
 				.then(function (response) {

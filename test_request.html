@@ -16,6 +16,11 @@
     <body></body>
     <script>
 
+        var credentials = {
+            username: 'test',
+            password: 'test'
+        }
+
         var timeline =[];
 
         var test_request = {
@@ -47,8 +52,8 @@
                     method: 'post',
                     data: payload,
                     auth: {
-                        username: 'test',
-                        password: 'test'
+                        username: credentials.username,
+                        password: credentials.password
                     }
                 })
                     .then(function (response) {
