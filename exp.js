@@ -166,8 +166,11 @@
 				axios({
 					url: 'http://localhost:5000/pyapps/util/cthresh',
 					method: 'post',
-					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
-					data: payload
+                                        data: payload,
+                                        auth: {
+                                            username: 'test',
+                                            password: 'test'
+                                        }
 				})
 				.then(function (response) {
 					console.log(response);
@@ -326,8 +329,11 @@
 				axios({
 					url: 'http://localhost:5000/pyapps/util/rthresh',
 					method: 'post',
-					headers: {'Access-Control-Allow-Origin': 'http://localhost:5000/'},
-					data: payload
+                                        data: payload,
+                                        auth: {
+                                            username: 'test',
+                                            password: 'test'
+                                        }
 				})
 				.then(function (response) {
 					console.log(response);
