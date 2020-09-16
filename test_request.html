@@ -17,8 +17,9 @@
     <script>
 
         var credentials = {
-            username: 'test',
-            password: 'test'
+            url: 'https://studies.mrc-cbu.cam.ac.uk/pyapps/util/cthresh', //https://studies.mrc-cbu.cam.ac.uk/pyapps/util/rthresh'
+            username: 'psignifit',
+            password: 'password'
         }
 
         var timeline =[];
@@ -48,7 +49,7 @@
 
                 // POST the data to the psignifit function
                 axios({
-                    url: 'http://localhost:5000/pyapps/util/cthresh',
+                    url: credentials.url,
                     method: 'post',
                     data: payload,
                     auth: {

@@ -9,8 +9,11 @@
 		});
                 
                 var credentials = {
-                    username: 'test',
-                    password: 'test'
+                    url: 'https://studies.mrc-cbu.cam.ac.uk/pyapps/util/', // path to post data to
+                    coh: 'cthresh', // path extension for coherence thresholding
+                    rule: 'rthresh', // path extension for rule thresholding
+                    username: 'psignifit', // username for psignifit server
+                    password: 'password' // password for psignifit server
                 }
 
 		/* use a random number generator to arbitrate between response mappings */
@@ -169,7 +172,7 @@
 
 				// POST the data to the psignifit function
 				axios({
-					url: 'http://localhost:5000/pyapps/util/cthresh',
+					url: credentials.url.concat(credentials.coh),
 					method: 'post',
                                         data: payload,
                                         auth: {
@@ -332,7 +335,7 @@
 
 				// POST the data to the psignifit function
 				axios({
-					url: 'http://localhost:5000/pyapps/util/rthresh',
+					url: credentials.url.concat(credentials.rule),
 					method: 'post',
                                         data: payload,
                                         auth: {
