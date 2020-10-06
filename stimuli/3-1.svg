@@ -12,8 +12,8 @@
    version="1.1"
    id="svg901"
    width="737.29529"
-   height="738.63782"
-   viewBox="0 0 737.29529 738.63782"
+   height="816.66547"
+   viewBox="0 0 737.29529 816.66547"
    sodipodi:docname="3-1.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    inkscape:export-filename="/home/dorian/Nextcloud/desiderata/04 Research/05 Evidence Accumulation/01 EvAccum Code/evaccum-js/stimuli/3-1.png"
@@ -27,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -43,12 +43,12 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1058"
+     inkscape:window-height="1080"
      id="namedview903"
      showgrid="false"
      inkscape:zoom="0.82308728"
-     inkscape:cx="474.80377"
-     inkscape:cy="498.89366"
+     inkscape:cx="226.95642"
+     inkscape:cy="431.12875"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -118,4 +118,14 @@
        x="42.988804"
        y="716.37738"
        style="font-size:74.66666412px;line-height:1.25;fill:#f7f0e8;fill-opacity:1">o</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f6eee7;fill-opacity:1;stroke:none"
+     x="109.96319"
+     y="808.34515"
+     id="text828"><tspan
+       sodipodi:role="line"
+       id="tspan826"
+       x="109.96319"
+       y="808.34515">press any key to continue</tspan></text>
 </svg>
