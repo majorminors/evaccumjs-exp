@@ -1,4 +1,5 @@
         var instructions_on = 0; // if 1, will do instructions
+        var num_prac_trials = 10;
 
         ////////////////////////
         /* participant set up */
@@ -262,6 +263,8 @@
         var coh_prac_timeline = [];
         // for test block
         var coh_test_timeline = [];
+
+        // let them know we're onto the first test
         var coh_start_screen = {
             type: "html-keyboard-response",
             stimulus: "<p>This is the first test.</p><br>"+
@@ -269,8 +272,8 @@
                 "<p>This will take about 5 minutes.</p><br>"+
                 "<br><p>Press any key to continue.</p>"
         }
-        // push this one
         timeline.push(coh_start_screen);
+        
         // now we're going to build two timelines - one for practice and one for the test
         for (block = 0; block < coh_stim_array.length; block++) { // equivalent to number of blocks (coh_stim_array[0-n]) - should = num_blocks
             for (trial = 0; trial < coh_stim_array[0].length; trial++) { // equivalent to number of trials per block (coh_stim_array[x][0-n]) - should = num_trials_per_block
@@ -286,7 +289,7 @@
 
                     var coh_test_screen = {
                         type: "html-keyboard-response",
-                        stimulus: "<p>Now we'll begin the test.<br><br>Press any key to begin.</p>"
+                        stimulus: "<p>Good! Now we'll begin the test.<br><br>Press any key to begin.</p>"
                     }
                     coh_test_timeline.push(coh_test_screen);
                 }	
@@ -298,7 +301,9 @@
                         stimulus_height: cueheight,
                         choices: resp_keys,
                     }
-                    coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_cue'}});
+                    if (count <= num_prac_trials) {
+                        coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_cue'}});
+                    }
                     coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_cue'}});
                 }
 
@@ -315,7 +320,9 @@
                     correct_choice: "q",
                     trial_duration: 300,
                 }
-                coh_prac_timeline.push({...coh_fixation, data: {experiment_part: 'cohprac_fixation'}});
+                if (count <= num_prac_trials) {
+                    coh_prac_timeline.push({...coh_fixation, data: {experiment_part: 'cohprac_fixation'}});
+                }
                 coh_test_timeline.push({...coh_fixation, data: {experiment_part: 'cohtest_fixation'}});
 
                 var coh_rdk = {
@@ -337,7 +344,9 @@
                     coherent_direction: i_coh.dot_motion_deg_rdk, 
                     trial_duration: 1500,
                 }
-                coh_prac_timeline.push({...coh_rdk, data: {experiment_part: 'cohprac_rdk'}});
+                if (count <= num_prac_trials) {
+                    coh_prac_timeline.push({...coh_rdk, data: {experiment_part: 'cohprac_rdk'}});
+                }
                 coh_test_timeline.push({...coh_rdk, data: {experiment_part: 'cohtest_rdk'}});
 
                 var coh_feedback = { // you can use this for testing, otherwise comment out
@@ -352,9 +361,10 @@
                     },
                     choices: jsPsych.NO_KEYS,
                     trial_duration: 300,
-                    data: {experiment_part: 'cohtest_feedback'}
                 }
-                coh_prac_timeline.push({...coh_feedback, data: {experiment_part: 'cohprac_feedback'}});
+                if (count <= num_prac_trials) {
+                    coh_prac_timeline.push({...coh_feedback, data: {experiment_part: 'cohprac_feedback'}});
+                }
                 coh_test_timeline.push({...coh_feedback, data: {experiment_part: 'cohtest_feedback'}});
             }
         }
@@ -424,21 +434,41 @@
         var trial;
         var count = 0;
         var turn_off_block_indicator = 0;
+        // for practice block
+        var rule_prac_timeline = [];
+        // for test block
+        var rule_test_timeline = [];
+        
+        // let them know we're onto the next test
+        var rule_start_screen = {
+            type: "html-keyboard-response",
+            stimulus: "<p>This is the second test.</p><br>"+
+                "<p>We are testing you on different directions now.</p>"+
+                "<p>This will take about 10 minutes.</p><br>"+
+                "<br><p>Press any key to begin.</p>"
+        }
+        timeline.push(rule_start_screen);
+        
+        // now we're going to build two timelines - one for practice and one for the test
         for (block = 0; block < rule_stim_array.length; block++) { // equivalent to number of blocks (rule_stim_array[0-n]) - should = num_blocks
             for (trial = 0; trial < rule_stim_array[0].length; trial++) { // equivalent to number of trials per block (rule_stim_array[x][0-n]) - should = num_trials_per_block
                 count++; // use this to track how many trials have happened in total
                 i_rule = rule_stim_array[block][trial]; // make this easier to call
                 if (count === 1) {
-                    var rule_start_screen = {
+                    var rule_prac_screen ={
                         type: "html-keyboard-response",
-                        stimulus: "<p>This is the second test.</p><br>"+
-                            "<p>We are testing you on different directions now.</p>"+
-                            "<p>This will take about 10 minutes.</p><br>"+
-                            "<br><p>Press any key to begin.</p>"
+                        stimulus: "<p>Let's do a bit of practice first.<br><br>Press any key to begin.</p>"
                     }
-                    timeline.push(rule_start_screen);
+                    rule_prac_timeline.push(rule_prac_screen);
+
+                    var rule_test_screen = {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>Good! Now we'll begin the test.<br><br>Press any key to begin.</p>"
+                    }
+                    rule_test_timeline.push(rule_test_screen);
                 }
-                // indicate at start of each block what kind of dots to expect (easy or hard)	
+
+                // indicate at start of each block what kind of dots to expect (easy or hard) for the test
                 if (block === 0 && count === 1) {
                     var block_indicator = {
                         type: "html-keyboard-response",
@@ -446,7 +476,7 @@
                         choices: jsPsych.NO_KEYS,
                         trial_duration: 500
                     }
-                    timeline.push(block_indicator);
+                    rule_test_timeline.push(block_indicator);
                 } else if (block === 1 && turn_off_block_indicator === 0) {
                     turn_off_block_indicator = 1;
                     var block_indicator = {
@@ -455,7 +485,7 @@
                         choices: jsPsych.NO_KEYS,
                         trial_duration: 500
                     }
-                    timeline.push(block_indicator);
+                    rule_test_timeline.push(block_indicator);
                 }
 
                 if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
@@ -464,9 +494,11 @@
                         stimulus: cues[i_rule.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                         stimulus_height: cueheight,
                         choices: resp_keys,
-                        data: {experiment_part: 'ruletest_cue'}
                     }
-                    timeline.push(rule_cue);
+                    if (count <= num_prac_trials) {
+                        rule_prac_timeline.push({...rule_cue, data: {experiment_part: 'ruleprac_cue'}});
+                    }
+                    rule_test_timeline.push({...rule_cue, data: {experiment_part: 'ruletest_cue'}});
                 }
 
                 var rule_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
@@ -481,9 +513,11 @@
                     choices: jsPsych.NO_KEYS,
                     correct_choice: "q",
                     trial_duration: 300,
-                    data: {experiment_part: 'ruletest_fixation', index_value: block} // lets index the block value here, so we can use it to indicate coherence
                 }
-                timeline.push(rule_fixation);
+                if (count <= num_prac_trials) {
+                    rule_prac_timeline.push({...rule_fixation, data: {experiment_part: 'ruleprac_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
+                }
+                rule_test_timeline.push({...rule_fixation, data: {experiment_part: 'ruletest_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
 
                 var rule_rdk = {
                     type: 'rdk', 
@@ -505,8 +539,12 @@
                     correct_choice: resp_keys[i_rule.match_arrow-1],
                     coherent_direction: i_rule.coh_direction_deg_rdk, 
                     trial_duration: 1500,
-                    data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}
                 }
+                if (count <= num_prac_trials) {
+                    rule_prac_timeline.push({...rule_rdk, data: {experiment_part: 'ruleprac_rdk', rule_code: i_rule.rule_point_code}});
+                }
+                rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}});
+
                 var rule_feedback = { // you can use this for testing, otherwise comment out
                     type: "html-keyboard-response",
                     stimulus: function() {
@@ -519,11 +557,15 @@
                     },
                     choices: jsPsych.NO_KEYS,
                     trial_duration: 300,
-                    data: {experiment_part: 'ruletest_feedback'}
                 }
-                timeline.push(rule_rdk, rule_feedback);
+                if (count <= num_prac_trials) {
+                    rule_prac_timeline.push({...rule_feedback, data: {experiment_part: 'ruleprac_feedback'}});
+                }
+                rule_test_timeline.push({...rule_feedback, data: {experiment_part: 'ruletest_feedback'}});
             }
         }
+        // push those two blocks now by spreading them into timeline
+        timeline.push(...rule_prac_timeline,...rule_test_timeline);
 
         /* collecting data for analysis */
         var rule_analysis = {
