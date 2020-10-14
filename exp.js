@@ -115,6 +115,7 @@
                 var instruction_answers = {
                     type: 'image-keyboard-response',
                     stimulus_height: cueheight,
+                    response_ends_trial: false,
                     trial_duration: 1000,
                     choices: jsPsych.NO_KEYS,
                     data: {experiment_part: 'instructions'}
@@ -149,7 +150,7 @@
                             type: "html-keyboard-response",
                             stimulus: "<p>First, let me introduce you to the buttons you'll be using. Position your hand as in the following image.<br><br>Press any key to continue.</p>"
                         },
-                        {...instruction_answers, stimulus: instruction_imgs[0].stimulus},
+                        {...instruction_answers, stimulus: instruction_imgs[0].stimulus, trial_duration: 2000},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>Any time you see a cue, or moving dots, use these keys to respond.<br>Now let me show you what a cue looks like.<br><br>Press any key to continue.</p>"
