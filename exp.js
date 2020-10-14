@@ -63,6 +63,52 @@
                 /* instructions */
                 //////////////////
 
+                var instruction_cue = {
+                    type: 'image-keyboard-response',
+                    stimulus_height: cueheight,
+                    choices: resp_keys,
+                    data: {experiment_part: 'instructions'}
+                }
+                var instruction_fixation = {
+                    type: 'rdk',
+                    background_color: "black",
+                    dot_color: "black", 
+                    aperture_type: 1,
+                    fixation_cross: true,
+                    fixation_cross_color: "white", 
+                    fixation_cross_thickness: 6,
+                    post_trial_gap: 0, 
+                    choices: jsPsych.NO_KEYS,
+                    correct_choice: "q",
+                    trial_duration: 300,
+                    data: {experiment_part: 'instructions'}
+                }
+                var instruction_rdk = {
+                    type: 'rdk', 
+                    background_color: "black",
+                    dot_color: "white", 
+                    aperture_type: 1,
+                    fixation_cross: true,
+                    fixation_cross_color: "white", 
+                    fixation_cross_thickness: 6,
+                    post_trial_gap: 0, 
+                    number_of_dots: 100,
+                    response_ends_trial: false,
+                    coherence: 1, 
+                    move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                    dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                    choices: resp_keys,
+                    trial_duration: 1500,
+                    data: {experiment_part: 'instructions'}
+                }
+                var instruction_answers = {
+                    type: 'image-keyboard-response',
+                    stimulus_height: cueheight,
+                    trial_duration: 1000,
+					choices: jsPsych.NO_KEYS,
+                    data: {experiment_part: 'instructions'}
+                }
+
                 var instructions = {
                     timeline: [
                         {
@@ -74,358 +120,57 @@
                                     "<p>3. You'll press a button based on the cue and the moving dots</p><br>"+
                                     "<p>Let's see how that looks. Press any key to continue</p>"
                         },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[0].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 1, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 45, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[0].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
+                        // example
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                        {...instruction_answers, stimulus: instruction_imgs[0].stimulus},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>Let me explain the task in a bit more detail. In each trial, some of the dots are moving randomly and the rest are moving all together in one (coherent) direction. The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.</p><br>Let me show you the answer to the previous trial. Press any key to continue.</p>",
                         },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[0].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 1, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 45, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[1].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
+                        // example
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                        {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>The dots can move in any direction. The cue tells you which button classifies which directions. Let me show you a couple more examples.</p><br><p>Press any key to continue</p>",
                         },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[0].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 1, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 0, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[1].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[0].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 1, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 225, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[2].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[0].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 1, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 245, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[2].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
+                        // example
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 0},
+                        {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
+                        // example
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 225},
+                        {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
+                        // example
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 245},
+                        {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>The cue can also change. Press any key to see an example.</p>",
                         },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[3].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 1, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 0, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[1].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
+                        // example
+                        {...instruction_cue, stimulus: cues[3].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 0},
+                        {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction. Press any key to see what I mean.</p>",
                         },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: cues[0].stimulus,
-                            stimulus_height: cueheight,
-                            choices: resp_keys,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'rdk', 
-                            background_color: "black",
-                            dot_color: "white", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            number_of_dots: 100,
-                            response_ends_trial: false,
-                            coherence: 0.7, 
-                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
-                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
-                            choices: resp_keys,
-                            correct_choice: resp_keys[0],
-                            coherent_direction: 45, 
-                            trial_duration: 1500,
-                            data: {experiment_part: 'instructions'}
-                        },
-                        {
-                            type: 'image-keyboard-response',
-                            stimulus: instruction_imgs[1].stimulus,
-                            stimulus_height: cueheight,
-                            trial_duration: 1000,
-                            data: {experiment_part: 'instructions'}
-                        },
+                        // example
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                        {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>Let's do a little bit of practice to get you familiar.</p><br><p>Press any key to continue.</p>",
@@ -433,7 +178,7 @@
                         // practice block.
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>A couple of final notes:<br>1. The cue will only appear every once in a while, so please pay attention.<br>2. Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do you best and don't be discouraged. Which brings me to my last point...<br><br>3. <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.</p><br><p>Press any key to continue.</p>",
+                            stimulus: "<p>A couple of final notes:<br>1. The cue will only appear every once in a while, so please pay attention.<br>2. Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged. Which brings me to my last point...<br><br>3. <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.</p><br><p>Press any key to continue.</p>",
                         },
                         {
                             type: "html-keyboard-response",
