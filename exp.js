@@ -1,3 +1,4 @@
+        var instructions_on = 0; // if 1, will do instructions
 
         ////////////////////////
         /* participant set up */
@@ -113,6 +114,20 @@
                     choices: jsPsych.NO_KEYS,
                     data: {experiment_part: 'instructions'}
                 }
+                var instruction_feedback = { // you can use this for testing, otherwise comment out
+                    type: "html-keyboard-response",
+                    stimulus: function() {
+                        var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+                        if (last_rdk_accuracy) { // if true (data.correct is boolean)
+                            return "<p>correct</p>";
+                        } else { // else if false
+                            return "<p>incorrect</p>"
+                        }
+                    },
+                    choices: jsPsych.NO_KEYS,
+                    trial_duration: 300,
+                    data: {experiment_part: 'instructions'}
+                }
 
                 var instructions = {
                     timeline: [
@@ -160,7 +175,7 @@
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>The dots can move in any direction. The cue tells you which button classifies which directions.<br>Let me show you a couple more examples.<br><br>Press any key to continue</p>",
+                            stimulus: "<p>The dots can move in any direction, so make sure you pay close attention to the cue.<br>Let me show you a couple more examples.<br><br>Press any key to continue</p>",
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
@@ -170,12 +185,12 @@
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         instruction_fixation,
-                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 225},
+                        {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 225},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         instruction_fixation,
-                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 245},
+                        {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 245},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             type: "html-keyboard-response",
@@ -184,7 +199,7 @@
                         // example
                         {...instruction_cue, stimulus: cues[3].stimulus},
                         instruction_fixation,
-                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 0},
+                        {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 0},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             type: "html-keyboard-response",
@@ -193,16 +208,23 @@
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         instruction_fixation,
-                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45, coherence: 0.7},
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>Let's do a little bit of practice to get you familiar.<br><br>Press any key to continue.</p>",
+                            stimulus: "<p>You'll have a chance to practice a bit, but first a couple of final notes.<br><br>Press any key to continue.</p>",
                         },
-                        // practice block.
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>A couple of final notes:<br>1. The cue will only appear every once in a while, so please pay attention.<br>2. Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged. Which brings me to my last point...<br><br>3. <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.<br><br>Press any key to continue.</p>",
+                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.<br><br>Press any key to continue.</p>"
+                        }, 
+                        {
+                            type: "html-keyboard-response",
+                            stimulus: "<p>Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged.<br><br>Press any key to continue.</p>"
+                        },
+                        {
+                            type: "html-keyboard-response",
+                            stimulus: "<p>Lastly, <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.<br><br>Press any key to continue.</p>"
                         },
                         {
                             type: "html-keyboard-response",
@@ -210,7 +232,9 @@
                         },
                     ]
                 }
-                timeline.push(instructions);
+                if (instructions_on === 1) {
+                    timeline.push(instructions);
+                }
 
         ///////////////////////
         /* coherence testing */
@@ -234,19 +258,37 @@
         var block;
         var trial;
         var count = 0;
+        // for practice block
+        var coh_prac_timeline = [];
+        // for test block
+        var coh_test_timeline = [];
+        var coh_start_screen = {
+            type: "html-keyboard-response",
+            stimulus: "<p>This is the first test.</p><br>"+
+                "<p>We are testing you on different levels of coherence (the number of dots moving in one direction).</p>"+
+                "<p>This will take about 5 minutes.</p><br>"+
+                "<br><p>Press any key to continue.</p>"
+        }
+        // push this one
+        timeline.push(coh_start_screen);
+        // now we're going to build two timelines - one for practice and one for the test
         for (block = 0; block < coh_stim_array.length; block++) { // equivalent to number of blocks (coh_stim_array[0-n]) - should = num_blocks
             for (trial = 0; trial < coh_stim_array[0].length; trial++) { // equivalent to number of trials per block (coh_stim_array[x][0-n]) - should = num_trials_per_block
                 count++; // use this to track how many trials have happened in total
                 i_coh = coh_stim_array[block][trial]; // make this easier to call
+
                 if (count === 1) {
-                    var coh_start_screen = {
+                    var coh_prac_screen ={
                         type: "html-keyboard-response",
-                        stimulus: "<p>This is the first test.</p><br>"+
-                                                        "<p>We are testing you on different levels of coherence (the number of dots moving in one direction).</p>"+
-                            "<p>This will take about 5 minutes.</p><br>"+
-                            "<br><p>Press any key to begin.</p>"
+                        stimulus: "<p>Let's do a bit of practice first.<br><br>Press any key to begin.</p>"
                     }
-                    timeline.push(coh_start_screen);
+                    coh_prac_timeline.push(coh_prac_screen);
+
+                    var coh_test_screen = {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>Now we'll begin the test.<br><br>Press any key to begin.</p>"
+                    }
+                    coh_test_timeline.push(coh_test_screen);
                 }	
 
                 if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
@@ -255,9 +297,9 @@
                         stimulus: cues[i_coh.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                         stimulus_height: cueheight,
                         choices: resp_keys,
-                        data: {experiment_part: 'cohtest_cue'}
                     }
-                    timeline.push(coh_cue);
+                    coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_cue'}});
+                    coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_cue'}});
                 }
 
                 var coh_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
@@ -272,9 +314,9 @@
                     choices: jsPsych.NO_KEYS,
                     correct_choice: "q",
                     trial_duration: 300,
-                    data: {experiment_part: 'cohtest_fixation'}
                 }
-                timeline.push(coh_fixation);
+                coh_prac_timeline.push({...coh_fixation, data: {experiment_part: 'cohprac_fixation'}});
+                coh_test_timeline.push({...coh_fixation, data: {experiment_part: 'cohtest_fixation'}});
 
                 var coh_rdk = {
                     type: 'rdk', 
@@ -294,8 +336,10 @@
                     correct_choice: resp_keys[i_coh.match_arrow-1],
                     coherent_direction: i_coh.dot_motion_deg_rdk, 
                     trial_duration: 1500,
-                    data: {experiment_part: 'cohtest_rdk'}
                 }
+                coh_prac_timeline.push({...coh_rdk, data: {experiment_part: 'cohprac_rdk'}});
+                coh_test_timeline.push({...coh_rdk, data: {experiment_part: 'cohtest_rdk'}});
+
                 var coh_feedback = { // you can use this for testing, otherwise comment out
                     type: "html-keyboard-response",
                     stimulus: function() {
@@ -310,9 +354,12 @@
                     trial_duration: 300,
                     data: {experiment_part: 'cohtest_feedback'}
                 }
-                timeline.push(coh_rdk, coh_feedback);
+                coh_prac_timeline.push({...coh_feedback, data: {experiment_part: 'cohprac_feedback'}});
+                coh_test_timeline.push({...coh_feedback, data: {experiment_part: 'cohtest_feedback'}});
             }
         }
+        // push those two blocks now by spreading them into timeline
+        timeline.push(...coh_prac_timeline,...coh_test_timeline);
     
         /* collecting data for analysis */
         var coh_analysis = {
@@ -385,7 +432,7 @@
                     var rule_start_screen = {
                         type: "html-keyboard-response",
                         stimulus: "<p>This is the second test.</p><br>"+
-                                                        "<p>We are testing you on different directions now.</p>"+
+                            "<p>We are testing you on different directions now.</p>"+
                             "<p>This will take about 10 minutes.</p><br>"+
                             "<br><p>Press any key to begin.</p>"
                     }
