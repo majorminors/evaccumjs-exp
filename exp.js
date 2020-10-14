@@ -125,14 +125,33 @@
                                     "<p>3. You'll press a button based on the cue and the moving dots</p><br>"+
                                     "<p>Let's see how that looks. Press any key to continue</p>"
                         },
+                        {
+                            type: "html-keyboard-response",
+                            stimulus: "<p>First, let me introduce you to the buttons you'll be using. Position your hand as in the following image.<br><br>Press any key to continue.</p>"
+                        },
+                        {...instruction_answers, stimulus: instruction_imgs[0].stimulus},
+                        {
+                            type: "html-keyboard-response",
+                            stimulus: "<p>Any time you see a cue, or moving dots, use these keys to respond.<br>Now let me show you what a cue looks like.<br><br>Press any key to continue.</p>"
+                        },
+                        {...instruction_cue, stimulus: cues[0].stimulus},
+                        {
+                            type: "html-keyboard-response",
+                            stimulus: "<p>Here's what the moving dots look like.<br><br>Press any key to continue.</p>"
+                        },
+                        instruction_fixation,
+                        {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                        {
+                            type: "html-keyboard-response",
+                            stimulus: "<p>Now together.<br><br>Press any key to continue.</p>"
+                        },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         instruction_fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
-                        {...instruction_answers, stimulus: instruction_imgs[0].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>Let me explain the task in a bit more detail. In each trial, some of the dots are moving randomly and the rest are moving all together in one (coherent) direction. The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.</p><br>Let me show you the answer to the previous trial. Press any key to continue.</p>",
+                            stimulus: "<p>Ok. Now let me explain the task in a bit more detail.<br>In each trial, some of the moving dots are moving randomly and the rest are moving all together in one (coherent) direction.<br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.<br><br>Press any key to continue.</p>",
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
@@ -141,7 +160,7 @@
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>The dots can move in any direction. The cue tells you which button classifies which directions. Let me show you a couple more examples.</p><br><p>Press any key to continue</p>",
+                            stimulus: "<p>The dots can move in any direction. The cue tells you which button classifies which directions.<br>Let me show you a couple more examples.<br><br>Press any key to continue</p>",
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
@@ -160,7 +179,7 @@
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>The cue can also change. Press any key to see an example.</p>",
+                            stimulus: "<p>The cue can also change.<br><br>Press any key to see an example.</p>",
                         },
                         // example
                         {...instruction_cue, stimulus: cues[3].stimulus},
@@ -169,7 +188,7 @@
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction. Press any key to see what I mean.</p>",
+                            stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction.<br><br>Press any key to see what I mean.</p>",
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
@@ -178,16 +197,16 @@
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>Let's do a little bit of practice to get you familiar.</p><br><p>Press any key to continue.</p>",
+                            stimulus: "<p>Let's do a little bit of practice to get you familiar.<br><br>Press any key to continue.</p>",
                         },
                         // practice block.
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>A couple of final notes:<br>1. The cue will only appear every once in a while, so please pay attention.<br>2. Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged. Which brings me to my last point...<br><br>3. <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.</p><br><p>Press any key to continue.</p>",
+                            stimulus: "<p>A couple of final notes:<br>1. The cue will only appear every once in a while, so please pay attention.<br>2. Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged. Which brings me to my last point...<br><br>3. <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.<br><br>Press any key to continue.</p>",
                         },
                         {
                             type: "html-keyboard-response",
-                            stimulus: "<p>Ok! Let's get started. This experiment has three parts. The first is a short five minute test, the second is about ten minutes, and the third is the full experiment and will take up the rest of the time.</p><br><p>Press any key to begin.</p>",
+                            stimulus: "<p>Ok! Let's get started. This experiment has three parts. The first is a short five minute test, the second is about ten minutes, and the third is the full experiment and will take up the rest of the time.<br><br>Press any key to begin.</p>",
                         },
                     ]
                 }
