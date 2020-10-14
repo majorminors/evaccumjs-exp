@@ -31,6 +31,11 @@
                 {stimulus: "stimuli/3-1.svg"},
                 {stimulus: "stimuli/4-2.svg"}
             ];
+            var instruction_imgs = [
+                {stimulus: "stimuli/buttons.svg"},
+                {stimulus: "stimuli/buttons-o.svg"},
+                {stimulus: "stimuli/buttons-p.svg"}
+            ];
 
         } else {
             // else (if the number is odd) do this order
@@ -44,17 +49,17 @@
                 {stimulus: "stimuli/1-3.svg"},
                 {stimulus: "stimuli/2-4.svg"}
             ];
+            var instruction_imgs = [
+                {stimulus: "stimuli/buttons.svg"},
+                {stimulus: "stimuli/buttons-p.svg"},
+                {stimulus: "stimuli/buttons-o.svg"}
+            ];
         }
         jsPsych.data.addProperties({
             condition: condition
         });
         var num_cues = 4;
 
-                var instruction_imgs = [
-                    {stimulus: "stimuli/buttons.svg"},
-                    {stimulus: "stimuli/buttons-o.svg"},
-                    {stimulus: "stimuli/buttons-p.svg"}
-                ];
 
         /* initialise timeline array */
                 var timeline = [];
@@ -161,7 +166,7 @@
                         {...instruction_cue, stimulus: cues[3].stimulus},
                         instruction_fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 0},
-                        {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
+                        {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction. Press any key to see what I mean.</p>",
