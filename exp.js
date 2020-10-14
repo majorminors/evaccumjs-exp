@@ -1,4 +1,8 @@
-        var instructions_on = 0; // if 1, will do instructions
+        /////////////////
+        /* set up vars */
+        /////////////////
+
+        var instructions_on = 1; // if 1, will do instructions
         var num_prac_trials = 10;
 
         ////////////////////////
