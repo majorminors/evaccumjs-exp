@@ -3,7 +3,7 @@
         /////////////////
 
         var instructions_on = 1; // if 1, will do instructions
-        var fixation_type = 2; // if 1 just a fixation, if 2 a fixation with dots
+        var fixation_type = 1; // if 1 just a fixation, if 2 a fixation with dots
         var num_prac_trials = 10;
 
         ////////////////////////
