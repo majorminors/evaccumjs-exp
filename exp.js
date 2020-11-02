@@ -3,6 +3,7 @@
         /////////////////
 
         var instructions_on = 1; // if 1, will do instructions
+        var fixation_type = 2; // if 1 just a fixation, if 2 a fixation with dots
         var num_prac_trials = 10;
 
         ////////////////////////
@@ -69,6 +70,45 @@
 
         /* initialise timeline array */
                 var timeline = [];
+
+                // create a reusable fixation
+                if (fixation_type == 1) {
+                    var fixation = { // this is an RDK block with invisible (black) dots just to have the fixation cross
+                        type: 'rdk',
+                        background_color: "black",
+                        dot_color: "black", 
+                        aperture_type: 1,
+                        fixation_cross: true,
+                        fixation_cross_color: "white", 
+                        fixation_cross_thickness: 6,
+                        post_trial_gap: 0, 
+                        choices: jsPsych.NO_KEYS,
+                        response_ends_trial: false,
+                        correct_choice: "q",
+                        trial_duration: 300,
+                        data: {experiment_part: 'fixation'}
+                    }
+                } else if (fixation_type == 2) {
+                    var fixation = { // this is an RDK block with a red fixation cross and 100% random dots
+                        type: 'rdk',
+                        background_color: "black",
+                        dot_color: "white", 
+                        aperture_type: 1,
+                        fixation_cross: true,
+                        fixation_cross_color: "red", 
+                        fixation_cross_thickness: 6,
+                        post_trial_gap: 0, 
+                        choices: jsPsych.NO_KEYS,
+                        response_ends_trial: false,
+                        correct_choice: "q",
+                        trial_duration: 300,
+                        number_of_dots: 100,
+                        coherence: 0, 
+                        move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                        dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                        data: {experiment_part: 'fixation'}
+                    }
+                }
  
                 //////////////////
                 /* instructions */
@@ -78,20 +118,6 @@
                     type: 'image-keyboard-response',
                     stimulus_height: cueheight,
                     choices: resp_keys,
-                    data: {experiment_part: 'instructions'}
-                }
-                var instruction_fixation = {
-                    type: 'rdk',
-                    background_color: "black",
-                    dot_color: "black", 
-                    aperture_type: 1,
-                    fixation_cross: true,
-                    fixation_cross_color: "white", 
-                    fixation_cross_thickness: 6,
-                    post_trial_gap: 0, 
-                    choices: jsPsych.NO_KEYS,
-                    correct_choice: "q",
-                    trial_duration: 300,
                     data: {experiment_part: 'instructions'}
                 }
                 var instruction_rdk = {
@@ -160,7 +186,7 @@
                             type: "html-keyboard-response",
                             stimulus: "<p>Here's what the moving dots look like.<br><br>Press any key to continue.</p>"
                         },
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
                         {
                             type: "html-keyboard-response",
@@ -168,7 +194,7 @@
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
                         {
                             type: "html-keyboard-response",
@@ -176,7 +202,7 @@
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
@@ -185,17 +211,17 @@
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 0},
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 225},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 245},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
@@ -204,7 +230,7 @@
                         },
                         // example
                         {...instruction_cue, stimulus: cues[3].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 0},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
@@ -213,7 +239,7 @@
                         },
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
-                        instruction_fixation,
+                        fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45, coherence: 0.7},
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
@@ -312,23 +338,10 @@
                     coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_cue'}});
                 }
 
-                var coh_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
-                    type: 'rdk',
-                    background_color: "black",
-                    dot_color: "black", 
-                    aperture_type: 1,
-                    fixation_cross: true,
-                    fixation_cross_color: "white", 
-                    fixation_cross_thickness: 6,
-                    post_trial_gap: 0, 
-                    choices: jsPsych.NO_KEYS,
-                    correct_choice: "q",
-                    trial_duration: 300,
-                }
                 if (count <= num_prac_trials) {
-                    coh_prac_timeline.push({...coh_fixation, data: {experiment_part: 'cohprac_fixation'}});
+                    coh_prac_timeline.push({...fixation, data: {experiment_part: 'cohprac_fixation'}});
                 }
-                coh_test_timeline.push({...coh_fixation, data: {experiment_part: 'cohtest_fixation'}});
+                coh_test_timeline.push({...fixation, data: {experiment_part: 'cohtest_fixation'}});
 
                 var coh_rdk = {
                     type: 'rdk', 
@@ -506,23 +519,10 @@
                     rule_test_timeline.push({...rule_cue, data: {experiment_part: 'ruletest_cue'}});
                 }
 
-                var rule_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
-                    type: 'rdk',
-                    background_color: "black",
-                    dot_color: "black", 
-                    aperture_type: 1,
-                    fixation_cross: true,
-                    fixation_cross_color: "white", 
-                    fixation_cross_thickness: 6,
-                    post_trial_gap: 0, 
-                    choices: jsPsych.NO_KEYS,
-                    correct_choice: "q",
-                    trial_duration: 300,
-                }
                 if (count <= num_prac_trials) {
-                    rule_prac_timeline.push({...rule_fixation, data: {experiment_part: 'ruleprac_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
+                    rule_prac_timeline.push({...fixation, data: {experiment_part: 'ruleprac_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
                 }
-                rule_test_timeline.push({...rule_fixation, data: {experiment_part: 'ruletest_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
+                rule_test_timeline.push({...fixation, data: {experiment_part: 'ruletest_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
 
                 var rule_rdk = {
                     type: 'rdk', 
@@ -665,21 +665,7 @@
                             exp_timeline.push(exp_cue);
                         }
 
-                        var exp_fixation = { // do an rdk block with invisible dots (since the html doesn't line up with the rdk canvas, the fixation appears to jump around)
-                            type: 'rdk',
-                            background_color: "black",
-                            dot_color: "black", 
-                            aperture_type: 1,
-                            fixation_cross: true,
-                            fixation_cross_color: "white", 
-                            fixation_cross_thickness: 6,
-                            post_trial_gap: 0, 
-                            choices: jsPsych.NO_KEYS,
-                            correct_choice: "q",
-                            trial_duration: 300,
-                            data: {experiment_part: 'experiment_fixation'}
-                        }
-                        exp_timeline.push(exp_fixation);
+                        exp_timeline.push(fixation);
 
                         var exp_rdk = {
                             type: 'rdk', 
