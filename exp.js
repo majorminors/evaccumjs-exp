@@ -160,11 +160,25 @@
                     trial_duration: 300,
                     data: {experiment_part: 'instructions'}
                 }
+                var instruction_noresp = {
+                    type: 'html-keyboard-response',
+                    choices: jsPsych.NO_KEYS,
+                    trial_duration: 1000,
+                    response_ends_trial: false
+                }
+                var instruction_resp = { // requires html stimulus entry in previous trial
+                    type: 'html-keyboard-response',
+                    stimulus: function() {
+                        var last_stim = jsPsych.data.get().last(1).values()[0].stimulus;
+                        var addcontinue = last_stim+'<p><br>Press any key to continue</p>';
+                        return addcontinue;
+                    }
+                }
 
                 var instructions = {
                     timeline: [
                         {
-                            type: "html-keyboard-response",
+                            ...instruction_noresp,
                             stimulus: "<p>Welcome, and thanks for participating.</p><br>"+
                                     "<p>Trials will go as follows:</p>"+
                                     "<p>1. You'll see a cue</p>"+
@@ -172,6 +186,7 @@
                                     "<p>3. You'll press a button based on the cue and the moving dots</p><br>"+
                                     "<p>Let's see how that looks. Press any key to continue</p>"
                         },
+                        instruction_resp,
                         {
                             type: "html-keyboard-response",
                             stimulus: "<p>First, let me introduce you to the buttons you'll be using. Position your hand as in the following image.<br><br>Press any key to continue.</p>"
