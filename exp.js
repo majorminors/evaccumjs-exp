@@ -2,9 +2,10 @@
         /* set up vars */
         /////////////////
 
-        var instructions_on = 1; // if 1, will do instructions
+        var instructions_on = 0; // if 1, will do instructions
         var fixation_type = 1; // if 1 just a fixation, if 2 a fixation with dots
-        var num_prac_trials = 10;
+        var num_prac_trials = 2;
+        var num_prac_blocks = 1;
 
         ////////////////////////
         /* participant set up */
@@ -321,6 +322,8 @@
         var trial;
         var count = 0;
         // for practice block
+        var prac_count = 0;
+        var prac_on = 1;
         var coh_prac_timeline = [];
         // for test block
         var coh_test_timeline = [];
@@ -362,13 +365,16 @@
                         stimulus_height: cueheight,
                         choices: resp_keys,
                     }
-                    if (count <= num_prac_trials) {
+                    prac_count = 1;
+                    if (block <= num_prac_blocks) {
                         coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_cue'}});
+                    } else if (block > num_prac_blocks) {
+                        prac_on = 0;
                     }
                     coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_cue'}});
                 }
 
-                if (count <= num_prac_trials) {
+                if (prac_count <= num_prac_trials && prac_on) {
                     coh_prac_timeline.push({...fixation, data: {experiment_part: 'cohprac_fixation'}});
                 }
                 coh_test_timeline.push({...fixation, data: {experiment_part: 'cohtest_fixation'}});
@@ -392,7 +398,8 @@
                     coherent_direction: i_coh.dot_motion_deg_rdk, 
                     trial_duration: 1500,
                 }
-                if (count <= num_prac_trials) {
+                if (prac_count <= num_prac_trials && prac_on) {
+                    prac_count++;
                     coh_prac_timeline.push({...coh_rdk, data: {experiment_part: 'cohprac_rdk'}});
                 }
                 coh_test_timeline.push({...coh_rdk, data: {experiment_part: 'cohtest_rdk'}});
