@@ -153,7 +153,7 @@
                         if (last_rdk_accuracy) { // if true (data.correct is boolean)
                             return "<p>correct</p>";
                         } else { // else if false
-                            return "<p>incorrect</p>"
+                            return "<p>incorrect</p>";
                         }
                     },
                     choices: jsPsych.NO_KEYS,
@@ -389,7 +389,7 @@
                         if (last_rdk_accuracy) { // if true (data.correct is boolean)
                             return "<p>correct</p>";
                         } else { // else if false
-                            return "<p>incorrect</p>"
+                            return "<p>incorrect</p>";
                         }
                     },
                     choices: jsPsych.NO_KEYS,
@@ -572,7 +572,7 @@
                         if (last_rdk_accuracy) { // if true (data.correct is boolean)
                             return "<p>correct</p>";
                         } else { // else if false
-                            return "<p>incorrect</p>"
+                            return "<p>incorrect</p>";
                         }
                     },
                     choices: jsPsych.NO_KEYS,
@@ -709,7 +709,7 @@
                                 if (last_rdk_accuracy) { // if true (data.correct is boolean)
                                     return "<p>correct</p>";
                                 } else { // else if false
-                                    return "<p>incorrect</p>"
+                                    return "<p>incorrect</p>";
                                 }
                             },
                             choices: jsPsych.NO_KEYS,
