@@ -322,9 +322,9 @@
         var trial;
         var count = 0;
         // for practice block
-        var prac_count = 0;
-        var prac_on = 1;
-        var last_cue = -1;
+        var prac_count = 0; // init practice counter
+        var prac_on = 1; // init a switch to turn practice off
+        var last_cue = -1; // set this to the number prior to the first cue index so we can manage the amount of practice by repeating cues
         var coh_prac_timeline = [];
         // for test block
         var coh_test_timeline = [];
@@ -366,13 +366,13 @@
                         stimulus_height: cueheight,
                         choices: resp_keys,
                     }
-                    this_cue = cues[i_coh.cue_dir-1].stimulus;
+                    this_cue = cues[i_coh.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
                     if (block <= num_prac_blocks && this_cue != last_cue) {
-                        prac_count = 1;
+                        prac_count = 1; // restart our practice counter (this is iterated on last trial of this experiment procedure)
                         coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_cue'}});
-                        last_cue = this_cue; 
+                        last_cue = this_cue; // save this cue to check against later
                     } else if (block > num_prac_blocks && this_cue == last_cue) {
-                        prac_on = 0;
+                        prac_on = 0; // turn practice off
                     }
                     coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_cue'}});
                 }
@@ -420,7 +420,7 @@
                     trial_duration: 300,
                 }
                 if (prac_count <= num_prac_trials && prac_on) {
-                    prac_count++;
+                    prac_count++; // iterate practice counter
                     coh_prac_timeline.push({...coh_feedback, data: {experiment_part: 'cohprac_feedback'}});
                 }
                 coh_test_timeline.push({...coh_feedback, data: {experiment_part: 'cohtest_feedback'}});
@@ -493,6 +493,9 @@
         var count = 0;
         var turn_off_block_indicator = 0;
         // for practice block
+        var prac_count = 0; // init practice counter
+        var prac_on = 1; // init a switch to turn practice off
+        var last_cue = -1; // set this to the number prior to the first cue index so we can manage the amount of practice by repeating cues
         var rule_prac_timeline = [];
         // for test block
         var rule_test_timeline = [];
@@ -553,13 +556,18 @@
                         stimulus_height: cueheight,
                         choices: resp_keys,
                     }
-                    if (count <= num_prac_trials) {
+                    this_cue = cues[i_coh.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
+                    if (block <= num_prac_blocks && this_cue != last_cue) {
+                        prac_count = 1; // restart our practice counter (this is iterated on last trial of this experiment procedure)
                         rule_prac_timeline.push({...rule_cue, data: {experiment_part: 'ruleprac_cue'}});
+                        last_cue = this_cue; // save this cue to check against later
+                    } else if (block > num_prac_blocks && this_cue == last_cue) {
+                        prac_on = 0; // turn practice off
                     }
                     rule_test_timeline.push({...rule_cue, data: {experiment_part: 'ruletest_cue'}});
                 }
 
-                if (count <= num_prac_trials) {
+                if (prac_count <= num_prac_trials && prac_on) {
                     rule_prac_timeline.push({...fixation, data: {experiment_part: 'ruleprac_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
                 }
                 rule_test_timeline.push({...fixation, data: {experiment_part: 'ruletest_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
@@ -585,7 +593,7 @@
                     coherent_direction: i_rule.coh_direction_deg_rdk, 
                     trial_duration: 1500,
                 }
-                if (count <= num_prac_trials) {
+                if (prac_count <= num_prac_trials && prac_on) {
                     rule_prac_timeline.push({...rule_rdk, data: {experiment_part: 'ruleprac_rdk', rule_code: i_rule.rule_point_code}});
                 }
                 rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}});
@@ -603,7 +611,8 @@
                     choices: jsPsych.NO_KEYS,
                     trial_duration: 300,
                 }
-                if (count <= num_prac_trials) {
+                if (prac_count <= num_prac_trials && prac_on) {
+                    prac_count++; // iterate practice counter
                     rule_prac_timeline.push({...rule_feedback, data: {experiment_part: 'ruleprac_feedback'}});
                 }
                 rule_test_timeline.push({...rule_feedback, data: {experiment_part: 'ruletest_feedback'}});
