@@ -50,6 +50,8 @@
             var resp_keys = ['p', 'o'];
             var condition = ['po',2];
             /* cues */
+            var cueheight = window.innerHeight*0.65; // set the height to be a percentage of the window height
+            /* cues */
             var cues = [
                 {stimulus: "stimuli/3-1.svg"},
                 {stimulus: "stimuli/4-2.svg"},
@@ -184,46 +186,52 @@
                                     "<p>1. You'll see a cue</p>"+
                                     "<p>2. You'll see some moving dots on the screen</p>"+
                                     "<p>3. You'll press a button based on the cue and the moving dots</p><br>"+
-                                    "<p>Let's see how that looks. Press any key to continue</p>"
+                                    "<p>Let's see how that looks</p>"
                         },
                         instruction_resp,
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>First, let me introduce you to the buttons you'll be using. Position your hand as in the following image.<br><br>Press any key to continue.</p>"
+                            ...instruction_noresp,
+                            stimulus: "<p>First, let me introduce you to the buttons you'll be using. Position your hand as in the following image.</p>"
                         },
+                        instruction_resp,
                         {...instruction_answers, stimulus: instruction_imgs[0].stimulus, trial_duration: 2000},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Any time you see a cue, or moving dots, use these keys to respond.<br>Now let me show you what a cue looks like.<br><br>Press any key to continue.</p>"
+                            ...instruction_noresp,
+                            stimulus: "<p>Any time you see a cue, or moving dots, use these keys to respond.<br>Now let me show you what a cue looks like.</p>"
                         },
+                        instruction_resp,
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Here's what the moving dots look like.<br><br>Press any key to continue.</p>"
+                            ...instruction_noresp,
+                            stimulus: "<p>Here's what the moving dots look like.</p>"
                         },
+                        instruction_resp,
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Now together.<br><br>Press any key to continue.</p>"
+                            ...instruction_noresp,
+                            stimulus: "<p>Now together.</p>"
                         },
+                        instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Ok. Now let me explain the task in a bit more detail.<br>In each trial, some of the moving dots are moving randomly and the rest are moving all together in one (coherent) direction.<br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.<br><br>Press any key to continue.</p>",
+                            ...instruction_noresp,
+                            stimulus: "<p>Ok. Now let me explain the task in a bit more detail.<br>In each trial, some of the moving dots are moving randomly and the rest are moving all together in one (coherent) direction.<br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>"
                         },
+                        instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>The dots can move in any direction, so make sure you pay close attention to the cue.<br>Let me show you a couple more examples.<br><br>Press any key to continue</p>",
+                            ...instruction_noresp,
+                            stimulus: "<p>The dots can move in any direction, so make sure you pay close attention to the cue.<br>Let me show you a couple more examples.</p>"
                         },
+                        instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         fixation,
@@ -240,43 +248,50 @@
                         {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 245},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>The cue can also change.<br><br>Press any key to see an example.</p>",
+                            ...instruction_noresp,
+                            stimulus: "<p>The cue can also change.</p>"
                         },
+                        instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[3].stimulus},
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 0},
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction.<br><br>Press any key to see what I mean.</p>",
+                            ...instruction_noresp,
+                            stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction.</p>"
                         },
+                        instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45, coherence: 0.7},
                         {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>You'll have a chance to practice a bit, but first a couple of final notes.<br><br>Press any key to continue.</p>",
+                            ...instruction_noresp,
+                            stimulus: "<p>You'll have a chance to practice a bit, but first a couple of final notes.</p>"
                         },
+                        instruction_resp,
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.<br><br>Press any key to continue.</p>"
+                            ...instruction_noresp,
+                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.</p>"
                         }, 
+                        instruction_resp,
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged.<br><br>Press any key to continue.</p>"
-                        },
+                            ...instruction_noresp,
+                            stimulus: "<p>Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged.</p>"
+                        }, 
+                        instruction_resp,
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Lastly, <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.<br><br>Press any key to continue.</p>"
+                            ...instruction_noresp,
+                            stimulus: "<p>Lastly, <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.</p>"
                         },
+                        instruction_resp,
                         {
-                            type: "html-keyboard-response",
-                            stimulus: "<p>Ok! Let's get started. This experiment has three parts. The first is a short five minute test, the second is about ten minutes, and the third is the full experiment and will take up the rest of the time.<br><br>Press any key to begin.</p>",
+                            ...instruction_noresp,
+                            stimulus: "<p>Ok! Let's get started. This experiment has three parts. The first is a short five minute test, the second is about ten minutes, and the third is the full experiment and will take up the rest of the time.</p>"
                         },
+                        instruction_resp,
                     ]
                 }
                 if (instructions_on === 1) {
