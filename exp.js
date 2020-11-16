@@ -172,7 +172,7 @@
                     type: 'html-keyboard-response',
                     stimulus: function() {
                         var last_stim = jsPsych.data.get().last(1).values()[0].stimulus;
-                        var addcontinue = last_stim+'<p><br>Press any key to continue</p>';
+                        var addcontinue = last_stim+'<p style="position: fixed; bottom: 0; left: 50%; transform: translate(-50%, -50%); margin: 0 auto;"><br>Press any key to continue</p>';
                         return addcontinue;
                     }
                 }
