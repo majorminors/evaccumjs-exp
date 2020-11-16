@@ -324,6 +324,7 @@
         // for practice block
         var prac_count = 0;
         var prac_on = 1;
+        var last_cue = -1;
         var coh_prac_timeline = [];
         // for test block
         var coh_test_timeline = [];
@@ -365,10 +366,12 @@
                         stimulus_height: cueheight,
                         choices: resp_keys,
                     }
-                    prac_count = 1;
-                    if (block <= num_prac_blocks) {
+                    this_cue = cues[i_coh.cue_dir-1].stimulus;
+                    if (block <= num_prac_blocks && this_cue != last_cue) {
+                        prac_count = 1;
                         coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_cue'}});
-                    } else if (block > num_prac_blocks) {
+                        last_cue = this_cue; 
+                    } else if (block > num_prac_blocks && this_cue == last_cue) {
                         prac_on = 0;
                     }
                     coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_cue'}});
@@ -399,7 +402,6 @@
                     trial_duration: 1500,
                 }
                 if (prac_count <= num_prac_trials && prac_on) {
-                    prac_count++;
                     coh_prac_timeline.push({...coh_rdk, data: {experiment_part: 'cohprac_rdk'}});
                 }
                 coh_test_timeline.push({...coh_rdk, data: {experiment_part: 'cohtest_rdk'}});
@@ -417,7 +419,8 @@
                     choices: jsPsych.NO_KEYS,
                     trial_duration: 300,
                 }
-                if (count <= num_prac_trials) {
+                if (prac_count <= num_prac_trials && prac_on) {
+                    prac_count++;
                     coh_prac_timeline.push({...coh_feedback, data: {experiment_part: 'cohprac_feedback'}});
                 }
                 coh_test_timeline.push({...coh_feedback, data: {experiment_part: 'cohtest_feedback'}});
