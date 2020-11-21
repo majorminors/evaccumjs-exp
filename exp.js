@@ -2,9 +2,9 @@
         /* set up vars */
         /////////////////
 
-        var instructions_on = 1; // if 1, will do instructions
+        var instructions_on = 0; // if 1, will do instructions
         var dots_fixation = 1; // if 0 just a fixation, if 1 a fixation with dots
-        var num_prac_trials = 5;
+        var num_prac_trials = 0;
         var num_prac_blocks = 1;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
@@ -434,6 +434,7 @@
             stimulus: "Now we analyse - press any key and please wait",
             data: {experiment_part: 'coherence_analysis'},
             on_finish: function () {
+                jsPsych.pauseExperiment();
                 var payload = {
                     data_array: []
                 };
@@ -458,6 +459,7 @@
                     console.log(response);
                     coherence_values = response.data;
                     console.log(coherence_values);
+                    jsPsych.resumeExperiment();
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -626,6 +628,7 @@
             stimulus: "Now we analyse - press any key and please wait",
             data: {experiment_part: 'rule_analysis'},
             on_finish: function () {
+                jsPsych.pauseExperiment();
                 var payload = {
                     data_array: []
                 };
@@ -651,6 +654,7 @@
                     hard_rule_value = response.data;
                     console.log(hard_rule_value);
                     rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+                    jsPsych.resumeExperiment();
                 })
                 .catch(function (error) {
                     console.log(error);

@@ -26,6 +26,8 @@
             type: "html-keyboard-response",
             stimulus: "press any key to make a test request",
             on_finish: function () {
+
+                jsPsych.pauseExperiment();
                 var payload = {
                     data_array: [
                         [0.10,   45.0000,   90.0000],
@@ -64,6 +66,7 @@
                 })
                     .then(function (response) {
                         console.log(response);
+                        jsPsych.resumeExperiment();
                     })
                     .catch(function (error) {
                         console.log(error);
