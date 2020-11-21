@@ -7,6 +7,8 @@
         var num_prac_trials = 5;
         var num_prac_blocks = 1;
 
+        // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
+
         ////////////////////////
         /* participant set up */
         ////////////////////////
@@ -16,14 +18,6 @@
             participant_id: participant_id
         });
                 
-                var credentials = {
-                    url: 'https://studies.mrc-cbu.cam.ac.uk/pyapps/util/', // path to post data to
-                    coh: 'cthresh', // path extension for coherence thresholding
-                    rule: 'rthresh', // path extension for rule thresholding
-                    username: 'psignifit', // username for psignifit server
-                    password: 'password' // password for psignifit server
-                }
-
         /* use a random number generator to arbitrate between response mappings */
         if (((Math.floor(Math.random() * 100) + 1) % 2) === 0) {
             // the order of these variables are important because we index into them later, so:

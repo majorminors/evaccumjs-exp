@@ -3,22 +3,23 @@
     <head>
         <title>EvAccum</title>
     	<meta charset="utf-8"/>
-		<!-- pull in axios so we can make post requests -->
-		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-		<!-- pull in jsPsych resources -->
+        <!-- pull in axios so we can make post requests -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!-- pull in jsPsych resources -->
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
-		<script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
-		<script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
-		<!-- pull in the experiment resources we need -->
+        <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
+        <!-- pull in the experiment resources we need -->
+        <script src="tools/credentials.js"></script>
     	<script src="tools/exp_stimulus_array_generator.js"></script>
     	<script src="tools/coh_stimulus_array_generator.js"></script>
     	<script src="tools/rule_stimulus_array_generator.js"></script>
-		<!-- needs to be called after the generators, because this script uses them -->
-		<script src="exp.js"></script>
-		<!-- some additional styling to make the background black -->
+        <!-- needs to be called after the generators, because this script uses them -->
+        <script src="exp.js"></script>
+        <!-- some additional styling to make the background black -->
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
-		<style></style>
+        <style></style>
     </head>
     <body></body>
     <script>
