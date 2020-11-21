@@ -2,8 +2,8 @@
         /* set up vars */
         /////////////////
 
-        var instructions_on = 0; // if 1, will do instructions
-        var fixation_type = 1; // if 1 just a fixation, if 2 a fixation with dots
+        var instructions_on = 1; // if 1, will do instructions
+        var dots_fixation = 1; // if 0 just a fixation, if 1 a fixation with dots
         var num_prac_trials = 2;
         var num_prac_blocks = 1;
 
@@ -75,7 +75,7 @@
                 var timeline = [];
 
                 // create a reusable fixation
-                if (fixation_type == 1) {
+                if (dots_fixation == 0) {
                     var fixation = { // this is an RDK block with invisible (black) dots just to have the fixation cross
                         type: 'rdk',
                         background_color: "black",
@@ -91,14 +91,14 @@
                         trial_duration: 300,
                         data: {experiment_part: 'fixation'}
                     }
-                } else if (fixation_type == 2) {
+                } else if (dots_fixation == 1) {
                     var fixation = { // this is an RDK block with a red fixation cross and 100% random dots
                         type: 'rdk',
                         background_color: "black",
                         dot_color: "white", 
                         aperture_type: 1,
                         fixation_cross: true,
-                        fixation_cross_color: "red", 
+                        fixation_cross_color: "lightpink", 
                         fixation_cross_thickness: 6,
                         post_trial_gap: 0, 
                         choices: jsPsych.NO_KEYS,
@@ -218,10 +218,10 @@
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
-                        {
-                            ...instruction_noresp,
-                            stimulus: "<p>Ok. Now let me explain the task in a bit more detail.<br>In each trial, some of the moving dots are moving randomly and the rest are moving all together in one (coherent) direction.<br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>"
-                        },
+			{
+			    ...instruction_noresp,
+			    stimulus: dots_fixation ? "<p>Ok. Now let me explain the task in a bit more detail.<br>On each trial, some of the moving dots are moving randomly—the rest are moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>" : "<p>Ok. Now let me explain the task in a bit more detail.<br>First, when the cross in the middle of the dots is red, you shouldn't respond.<br>These dots are moving completely randomly.<br><br>Then, when the cross turns white,<br>only some of the moving dots are moving randomly—the rest are moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>"
+			},
                         instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
