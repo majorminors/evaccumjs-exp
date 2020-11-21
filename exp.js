@@ -4,7 +4,7 @@
 
         var instructions_on = 1; // if 1, will do instructions
         var dots_fixation = 1; // if 0 just a fixation, if 1 a fixation with dots
-        var num_prac_trials = 2;
+        var num_prac_trials = 5;
         var num_prac_blocks = 1;
 
         ////////////////////////
@@ -272,6 +272,10 @@
                             ...instruction_noresp,
                             stimulus: "<p>You'll have a chance to practice a bit, but first a couple of final notes.</p>"
                         },
+                        {
+                            ...instruction_noresp,
+                            stimulus: "<p>Answer while the dots are on the screen, not afterwards.</p>"
+                        },
                         instruction_resp,
                         {
                             ...instruction_noresp,
@@ -280,17 +284,17 @@
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>Some trials are easy, but many trials are hard. This is on purpose—I am also interested in errors. So just do your best and don't be discouraged.</p>"
+                            stimulus: "<p>Some trials are easy, but many trials are hard.<br>This is on purpose—I am also interested in errors.<br>So just do your best and don't be discouraged.</p>"
                         }, 
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>Lastly, <strong>Always answer!</strong> Try to be as <em>accurate</em> and as <em>fast</em> as possible, but please make sure you always answer.</p>"
+                            stimulus: "<p>Lastly, <strong>Always answer!</strong><br><br>Try to be as <em>accurate</em> and as <em>fast</em> as possible,<br><br>but please make sure you always answer.</p>"
                         },
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>Ok! Let's get started. This experiment has three parts. The first is a short five minute test, the second is about ten minutes, and the third is the full experiment and will take up the rest of the time.</p>"
+                            stimulus: "<p>Ok! Let's get started.<br><br>This experiment has three parts.<br>The first is a short five minute test,<br>the second is about ten minutes,<br>and the third is the full experiment and will take up the rest of the time.</p>"
                         },
                         instruction_resp,
                     ]
