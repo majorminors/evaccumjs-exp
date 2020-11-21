@@ -11,16 +11,14 @@
         <!-- pull in jsPsych resources -->
         <script src="jspsych-6.1.0/jspsych.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <!-- get credentials -->
+        <script src="tools/credentials.js"></script>
         <style></style>
     </head>
     <body></body>
     <script>
 
-        var credentials = {
-            url: 'https://studies.mrc-cbu.cam.ac.uk/pyapps/util/cthresh', //https://studies.mrc-cbu.cam.ac.uk/pyapps/util/rthresh'
-            username: 'psignifit',
-            password: 'password'
-        }
+        var which_ext = 1; // 1 will test coherence route, 2 will test rule route
 
         var timeline =[];
 
@@ -47,9 +45,16 @@
                 };
                 console.log("results to post: ", payload['data_array']);
 
+                // first code which route we're using
+                if (which_ext == 1) {
+                    credentials.extension = credentials.coh;
+                } else if (which_ext == 2) {
+                    credentials.extension = credentials.rule;
+                }
+
                 // POST the data to the psignifit function
                 axios({
-                    url: credentials.url,
+                    url: credentials.url.concat(credentials.extension),
                     method: 'post',
                     data: payload,
                     auth: {
