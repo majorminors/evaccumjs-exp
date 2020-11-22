@@ -2,9 +2,9 @@
         /* set up vars */
         /////////////////
 
-        var instructions_on = 0; // if 1, will do instructions
+        var instructions_on = 1; // if 1, will do instructions
         var dots_fixation = 1; // if 0 just a fixation, if 1 a fixation with dots
-        var num_prac_trials = 0;
+        var num_prac_trials = 5;
         var num_prac_blocks = 1;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
@@ -267,6 +267,7 @@
                             ...instruction_noresp,
                             stimulus: "<p>You'll have a chance to practice a bit, but first a couple of final notes.</p>"
                         },
+                        instruction_resp,
                         {
                             ...instruction_noresp,
                             stimulus: "<p>Answer while the dots are on the screen, not afterwards.</p>"
@@ -536,7 +537,7 @@
                         type: "html-keyboard-response",
                         stimulus: "<p> first with easy dots </p>",
                         choices: jsPsych.NO_KEYS,
-                        trial_duration: 500
+                        trial_duration: 1000
                     }
                     rule_test_timeline.push(block_indicator);
                 } else if (block === 1 && turn_off_block_indicator === 0) {
@@ -545,7 +546,7 @@
                         type: "html-keyboard-response",
                         stimulus: "<p> now with hard dots </p>",
                         choices: jsPsych.NO_KEYS,
-                        trial_duration: 500
+                        trial_duration: 1000
                     }
                     rule_test_timeline.push(block_indicator);
                 }
@@ -735,7 +736,7 @@
                             dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
                             choices: resp_keys,
                             correct_choice: resp_keys[i_exp.match_arrow-1],
-                            coherent_direction: i_exp.dot_motion_dir_deg, 
+                            coherent_direction: i_exp.dot_motion_dir_deg_rdk, 
                             trial_duration: 1500,
                             data: {experiment_part: 'experiment_rdk'}
                         }
