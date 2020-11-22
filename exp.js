@@ -313,9 +313,9 @@
         
         // call stimulus_array_generator function and save output
         var coh_stim_array = coh_stimulus_array_generator(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests);
-        jsPsych.data.addProperties({
-            coh_stim_array: coh_stim_array
-        });
+        // jsPsych.data.addProperties({
+        //     coh_stim_array: coh_stim_array
+        // });
 
         /* generate coherence test procedure */
         var block;
@@ -335,7 +335,8 @@
             stimulus: "<p>This is the first test.</p><br>"+
                 "<p>We are testing you on different levels of coherence (the number of dots moving in one direction).</p>"+
                 "<p>This will take about 5 minutes.</p><br>"+
-                "<br><p>Press any key to continue.</p>"
+                "<br><p>Press any key to continue.</p>",
+            data: { coh_stim_array: coh_stim_array }
         }
         timeline.push(coh_start_screen);
         
@@ -485,9 +486,9 @@
 
         // call stimulus_array_generator function
         var rule_stim_array = rule_stimulus_array_generator(num_rule_blocks, num_trials_per_block, num_cues, rule_point_values, num_point_tests);
-        jsPsych.data.addProperties({
-            rule_stim_array: rule_stim_array
-        });
+        // jsPsych.data.addProperties({
+        //   rule_stim_array: rule_stim_array
+        // });
 
         /* generate rule test procedure */
         var block;
@@ -508,7 +509,8 @@
             stimulus: "<p>This is the second test.</p><br>"+
                 "<p>We are testing you on different directions now.</p>"+
                 "<p>This will take about 10 minutes.</p><br>"+
-                "<br><p>Press any key to begin.</p>"
+                "<br><p>Press any key to begin.</p>",
+            data: { rule_stim_array: rule_stim_array }
         }
         timeline.push(rule_start_screen);
         
@@ -694,9 +696,9 @@
 
                 /* generate stimulus array with stimulus_array_generator function */
                 var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_exp_blocks, num_trials_per_block, num_cues, num_motion_coherence);
-                jsPsych.data.addProperties({
-                    exp_stim_array: exp_stim_array
-                });
+                // jsPsych.data.addProperties({
+                //     exp_stim_array: exp_stim_array
+                // });
 
                 /* generate experimental test procedure */
                 var block;
@@ -757,6 +759,13 @@
                         exp_timeline.push(exp_rdk, exp_feedback);
                     }
                 }
+                var exp_finish_screen = {
+                    type: "html-keyboard-response",
+                    stimulus: "<p>All done!<br><br>Thanks so much for participating.</p>",
+                    data: { exp_stim_array: exp_stim_array }
+                }
+                exp_timeline.push(exp_finish_screen);
+
                 jsPsych.addNodeToEndOfTimeline({
                       timeline: exp_timeline // here is where we add it to the timeline
                 }, jsPsych.resumeExperiment)
