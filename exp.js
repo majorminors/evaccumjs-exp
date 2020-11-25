@@ -654,7 +654,7 @@
                     payload['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
                 }
                 console.log("results to post: ", payload['data_array']);
-
+                     
                 // POST the data to the psignifit function
                 axios({
                     url: credentials.url.concat(credentials.rule),
@@ -755,21 +755,22 @@
                             trial_duration: 1500,
                             data: {experiment_part: 'experiment_rdk'}
                         }
-                        var exp_feedback = { // you can use this for testing, otherwise comment out
-                            type: "html-keyboard-response",
-                            stimulus: function() {
-                                var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
-                                if (last_rdk_accuracy) { // if true (data.correct is boolean)
-                                    return "<p>correct</p>";
-                                } else { // else if false
-                                    return "<p>incorrect</p>";
-                                }
-                            },
-                            choices: jsPsych.NO_KEYS,
-                            trial_duration: 300,
-                            data: {experiment_part: 'experiment_feedback'}
-                        }
-                        exp_timeline.push(exp_rdk, exp_feedback);
+                        // var exp_feedback = { // you can use this for testing, otherwise comment out
+                        //     type: "html-keyboard-response",
+                        //     stimulus: function() {
+                        //         var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+                        //         if (last_rdk_accuracy) { // if true (data.correct is boolean)
+                        //             return "<p>correct</p>";
+                        //         } else { // else if false
+                        //             return "<p>incorrect</p>";
+                        //         }
+                        //     },
+                        //     choices: jsPsych.NO_KEYS,
+                        //     trial_duration: 300,
+                        //     data: {experiment_part: 'experiment_feedback'}
+                        // }
+                        // exp_timeline.push(exp_rdk, exp_feedback);
+                        exp_timeline.push(exp_rdk);
                     }
                 }
                 var exp_finish_screen = {
