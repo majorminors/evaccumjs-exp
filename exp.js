@@ -268,7 +268,7 @@
                         {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>The dots can also be easier or harder to see, because some dots will be moving in one direction and the rest will be moving in a random direction.</p>"
+                            stimulus: "<p>The dots can also be easier or harder to see<br>This is because some dots will be moving in one direction and the rest will be moving in a random direction.</p>"
                         },
                         instruction_resp,
                         // example
@@ -283,7 +283,7 @@
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>Answer as soon as your sure of your answer.</p>"
+                            stimulus: "<p>Answer as soon as you're sure of your answer.</p>"
                         },
                         instruction_resp,
                         {
