@@ -6,6 +6,7 @@
         var dots_fixation = 1; // if 0 just a fixation, if 1 a fixation with dots
         var num_prac_trials = 5;
         var num_prac_blocks = 1;
+        var iti_range = [300,800]; // enter array of two values = [max, min]
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
 
@@ -82,7 +83,13 @@
                         choices: jsPsych.NO_KEYS,
                         response_ends_trial: false,
                         correct_choice: "q",
-                        trial_duration: 300,
+                        trial_duration: function(){ // lil function to randomise the iti between a range
+                            var min = iti_range[0];
+                            var max = iti_range[1];
+                            var random_iti = Math.random() * (max - min) + min;
+                            // console.log(random_iti);
+                            return random_iti;
+                        },
                         data: {experiment_part: 'fixation'}
                     }
                 } else if (dots_fixation == 1) {
@@ -98,7 +105,13 @@
                         choices: jsPsych.NO_KEYS,
                         response_ends_trial: false,
                         correct_choice: "q",
-                        trial_duration: 300,
+                        trial_duration: function(){ // lil function to randomise the iti between a range
+                            var min = iti_range[0];
+                            var max = iti_range[1];
+                            var random_iti = Math.random() * (max - min) + min;
+                            // console.log(random_iti);
+                            return random_iti;
+                        },
                         number_of_dots: 100,
                         coherence: 0, 
                         move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
