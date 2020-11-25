@@ -225,11 +225,11 @@
                         {...instruction_cue, stimulus: cues[0].stimulus},
                         fixation,
                         {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
-			{
-			    ...instruction_noresp,
+                        {
+                            ...instruction_noresp,
                             // this is a ternery operator - if dots_fixation is false, it will show the bit in quotes before the :, if true it will show the bit in quotes after the :
-			    stimulus: dots_fixation ? "<p>Ok. Now let me explain the task in a bit more detail.<br>First, when the cross in the middle of the dots is red, you shouldn't respond.<br>These dots are moving completely randomly.<br><br>Then, when the cross turns white,<br>only some of the moving dots will be moving randomly—the rest will be moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>" : "<p>Ok. Now let me explain the task in a bit more detail.<br>On each trial, some of the moving dots are moving randomly—the rest are moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>"
-			},
+                            stimulus: dots_fixation ? "<p>Ok. Now let me explain the task in a bit more detail.<br>First, when the cross in the middle of the dots is red, you shouldn't respond.<br>These dots are moving completely randomly.<br><br>Then, when the cross turns white,<br>only some of the moving dots will be moving randomly—the rest will be moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>" : "<p>Ok. Now let me explain the task in a bit more detail.<br>On each trial, some of the moving dots are moving randomly—the rest are moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>"
+                        },
                         instruction_resp,
                         // example
                         {...instruction_cue, stimulus: cues[0].stimulus},
@@ -283,7 +283,7 @@
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>Answer while the dots are on the screen, not afterwards.</p>"
+                            stimulus: "<p>Answer as soon as your sure of your answer.</p>"
                         },
                         instruction_resp,
                         {
