@@ -5,7 +5,7 @@
         var instructions_on = 1; // if 1, will do instructions
         var dots_fixation = 1; // if 0 just a fixation, if 1 a fixation with dots
         var num_prac_trials = 5;
-        var num_prac_blocks = 1;
+        var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         var iti_range = [300,800]; // enter array of two values = [max, min]
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
