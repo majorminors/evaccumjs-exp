@@ -140,7 +140,7 @@ function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_tria
             cue_dir_deg: cue_dir_deg[i],
             dot_motion_dir_cond: dot_motion_dir_cond[i],
             dot_motion_dir_deg: dot_motion_dir_deg[i],
-			dot_motion_dir_deg_rdk: dot_motion_dir_deg_rdk[i],
+            dot_motion_dir_deg_rdk: dot_motion_dir_deg_rdk[i],
             coh_difficulty: coh_difficulty[i],
             match_dist_cue_dir: match_dist_cue_dir[i], 
             match_arrow: match_arrow[i],
@@ -152,12 +152,15 @@ function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_tria
     console.log("block info (before shuffling): ", block_info);
 
     // *** use the block info to create each block of trials ***
-    // for each block, shuffle all rows/trials, then sort the shuffled rows by cue_dir
+    // for each block, shuffle all rows/trials, then sort the shuffled rows by a shuffled sort order of cue_dir
     var all_blocks = [];
     for (var j=0; j<num_blocks; j++) {
         var shuffled_block = shuffle(block_info);
+        // shuffle a sort order and use cue dir as a key
+        var sort_order = shuffle([1,2,3,4]);
         shuffled_block.sort(function(a,b) {
-            return a.cue_dir - b.cue_dir;
+            // return a.cue_dir - b.cue_dir;
+            return sort_order.indexOf(a.cue_dir) - sort_order.indexOf(b.cue_dir);
         });
         all_blocks.push(shuffled_block);
     }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Exp tester</title>
+    	<meta charset="utf-8"/>
+    	<script src="../tools/exp_stimulus_array_generator.js"></script>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+		
+    exp_timeline = [];
+    
+    /* define parameters to pass into the stimulus_array_generator function */
+    var easy_rule = 10;
+    var hard_rule = 80;
+    var num_exp_blocks = 20;
+    var num_trials_per_block = 64;
+    var num_cues = 4;
+    var num_motion_coherence = 8;
+    
+    /* generate stimulus array with stimulus_array_generator function */
+    var exp_stim_array = exp_stimulus_array_generator(easy_rule, hard_rule, num_exp_blocks, num_trials_per_block, num_cues, num_motion_coherence);
+
+    </script>
+</html>
