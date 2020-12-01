@@ -1,3 +1,8 @@
+function make_experiment(id_number,images_only) {
+    
+    // id_number is needed to select conditions
+    // images_only, if 1, will break the function after it's used the condition selection process to generate the stimulus paths
+
         /////////////////
         /* set up vars */
         /////////////////
@@ -10,17 +15,30 @@
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
 
+        console.log(credentials);
+
         ////////////////////////
         /* participant set up */
         ////////////////////////
 
-        var participant_id = jsPsych.randomization.randomID(15);
+        var unique_id = jsPsych.randomization.randomID(15);
         jsPsych.data.addProperties({
-            participant_id: participant_id
+            id_number: id_number,
+            unique_id: unique_id
         });
                 
-        /* use a random number generator to arbitrate between response mappings */
-        if (((Math.floor(Math.random() * 100) + 1) % 2) === 0) {
+        if (id_number > 1) {
+            condition_bin = id_number % 2; 
+        } else if (id_number == 1) {
+            condition_bin = 1;
+        } else if (id_number == 0) {
+            condition_bin = 0;
+        } else {
+            console.log('id number: ',id_number);
+            throw 'invalid id_number - must be 0 or greater';
+        }
+        console.log('condition_bin :',condition_bin)
+        if (condition_bin == 0) {
             // the order of these variables are important because we index into them later, so:
             // if a random number generated between 1 and 100 is even then do this order
             /* keys */
@@ -40,7 +58,7 @@
                 {stimulus: "stimuli/buttons-p.svg"}
             ];
 
-        } else {
+        } else if (condition_bin == 1) {
             // else (if the number is odd) do this order
             /* keys */
             var resp_keys = ['p', 'o'];
@@ -60,11 +78,24 @@
                 {stimulus: "stimuli/buttons-o.svg"}
             ];
         }
+    console.log(condition);
         jsPsych.data.addProperties({
             condition: condition
         });
         var num_cues = 4;
 
+        var cue_image_paths = []; // init the variable
+        for (i = 0; i < cues.length; i++) {
+            cue_image_paths[i] = cues[i].stimulus;
+        }
+        var instruction_image_paths = []; // init the variable
+        for (i = 0; i < instruction_imgs.length; i++) {
+            instruction_image_paths[i] = instruction_imgs[i].stimulus;
+        }
+        var image_paths = [cue_image_paths, instruction_image_paths]; 
+        if (images_only == 1) {
+            return image_paths;
+        }
 
         /* initialise timeline array */
                 var timeline = [];
@@ -786,3 +817,6 @@
             }
         }
         timeline.push(exp_start_screen);
+
+        return timeline;
+}

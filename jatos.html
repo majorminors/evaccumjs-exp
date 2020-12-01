@@ -17,7 +17,7 @@
     	<script src="tools/exp_stimulus_array_generator.js"></script>
     	<script src="tools/coh_stimulus_array_generator.js"></script>
     	<script src="tools/rule_stimulus_array_generator.js"></script>
-        <!-- needs to be called after the generators, because this script uses them -->
+        <!-- call the experiment creator function 'make_experiment' - needs to be called after the generators, because this function uses them -->
         <script src="exp.js"></script>
         <!-- some additional styling to make the background black -->
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
@@ -25,24 +25,75 @@
     </head>
     <body></body>
     <script>
-		
-		/*
-		 * the experiment script is in exp.js (called in the head)
-		 * so we don't need to maintain it twice for index.html and jatos.html
-		*/
+        
+        /*
+         * the experiment script is in exp.js (called in the head)
+         * this is so we don't need to maintain it twice for index.html and jatos.html
+         * the experiment script is wrapped in a function 'make_experiment', which we call in jsPsych.init to get the timeline and image paths
+         * this is my messy solution to working with JATOS batch session data to manage the conditions
+        */
 
-		/* initialise experiment */
-		jatos.onLoad(function() {
-			jsPsych.init({
-				timeline: timeline,
-				preload_images: cues.map(function(path) {return path.stimulus}), // get the path to the stimulus images (as an array) from the cues variable
-				show_progress_bar: false,
-				show_preload_progress_bar: false,
-				on_finish: function() {
-					var resultJson = jsPsych.data.get().json();
-					jatos.submitResultData(resultJson, jatos.startNextComponent);
-				}
-			});
-		});
+        /* initialise experiment */
+        jatos.onLoad(function() {
+
+            // to test set the id_number (0-1, although if you go 1-2, will set 2 to 0, and above that will use the modulus after remainder - allows you to use this as a participant id)
+            // var id_number = 1;
+            var num_conditions = 2;
+            var num_condition_repeats = 3;
+            // despite the fail condition in the code from the documentation,
+            // you have to run this once and have it crash before the conditions
+            // are generated. it works after that
+            initBatchConditions(num_conditions,num_condition_repeats);
+            var id_number = getNextCondition();
+
+            jsPsych.init({
+            timeline: make_experiment(id_number),
+            preload_images: make_experiment(id_number,1),
+                show_progress_bar: false,
+                show_preload_progress_bar: false,
+                on_finish: function() {
+                    var resultJson = jsPsych.data.get().json();
+                    jatos.submitResultData(resultJson, jatos.startNextComponent);
+                }
+            });
+        });
+
+        function initBatchConditions(num_conditions,conditionCounts) {
+            // Check if 'conditions' are not already in the batch session
+            if (!jatos.batchSession.defined("/conditions")) {
+                // Get the count of each condition
+                var conditions = [];
+                // Fill the array with conditions according to the counters
+                for (this_cond = 0; this_cond < num_conditions; this_cond++) {
+                    fillArrayWithValues(conditions, this_cond, conditionCounts)
+                }
+                // Put the conditions in the batch session
+                jatos.batchSession.set("conditions", conditions)
+                    .fail(initBatchConditions); // If it fails: try again
+            }
+        }
+        function fillArrayWithValues(array, value, count) {
+            for (var i = 0; i < count; i++) {
+                array.push(value);
+            }
+        }
+        function getNextCondition() {
+            // Get the still available conditions from the Batch Session
+            var conditions = jatos.batchSession.get("conditions");
+            // If no more conditions throw an error
+            if (conditions.length == 0) {
+                throw "Max number of workers reached";
+            }
+            // Get a random condition
+            var randomIndex = Math.floor(Math.random() * conditions.length);
+            var randomCondition = conditions[randomIndex];
+            // Delete the choosen condition from the array
+            conditions.splice(randomIndex, 1);
+            // Set the changed conditions array in the Batch Session.
+            jatos.batchSession.set("conditions", conditions).fail(function () {
+                randomCondition = getNextCondition(); // If it fails: try again
+            });
+            return randomCondition;
+        }
     </script>
 </html>

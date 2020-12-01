@@ -15,7 +15,7 @@
     	<script src="tools/exp_stimulus_array_generator.js"></script>
     	<script src="tools/coh_stimulus_array_generator.js"></script>
     	<script src="tools/rule_stimulus_array_generator.js"></script>
-        <!-- needs to be called after the generators, because this script uses them -->
+        <!-- call the experiment creator function 'make_experiment' - needs to be called after the generators, because this function uses them -->
         <script src="exp.js"></script>
         <!-- some additional styling to make the background black -->
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
@@ -24,20 +24,25 @@
     <body></body>
     <script>
 		
-		/*
-		 * the experiment script is in exp.js (called in the head)
-		 * so we don't need to maintain it twice for index.html and jatos.html
-		*/
+        /*
+         * the experiment script is in exp.js (called in the head)
+         * this is so we don't need to maintain it twice for index.html and jatos.html
+         * the experiment script is wrapped in a function 'make_experiment', which we call in jsPsych.init to get the timeline and image paths
+         * this is my messy solution to working with JATOS batch session data to manage the conditions, although the JATOS stuff is not in this document
+        */
 
-		/* initialise experiment */
-		jsPsych.init({
-			timeline: timeline,
-			preload_images: cues.map(function(path) {return path.stimulus}), // get the path to the stimulus images (as an array) from the cues variable
-			show_progress_bar: false,
-			show_preload_progress_bar: false,
-			on_finish: function(){
-				jsPsych.data.displayData();
-			}
-		});
+        // set the id_number (0-1, although if you go 1-2, will set 2 to 0, and above that will use the modulus after remainder - allows you to use this as a participant id)
+        var id_number = 1;
+
+        /* initialise experiment */
+        jsPsych.init({
+            timeline: make_experiment(id_number),
+            preload_images: make_experiment(id_number,1),
+            show_progress_bar: false,
+            show_preload_progress_bar: false,
+            on_finish: function(){
+                jsPsych.data.displayData();
+            }
+        });
     </script>
 </html>
