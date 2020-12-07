@@ -15,9 +15,6 @@ function make_experiment(id_number,images_only) {
         var iti_duration = 300;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
-
-        console.log(credentials);
-
         ////////////////////////
         /* participant set up */
         ////////////////////////
