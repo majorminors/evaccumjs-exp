@@ -150,20 +150,12 @@ function make_experiment(id_number,images_only) {
                 } else if (dots_fixation == 2 ) {
                     var fixation = {
                         timeline: [
-                            { // rdk with invisible dots
-                                type: 'rdk',
-                                background_color: "black",
-                                dot_color: "black", 
-                                aperture_type: 1,
-                                fixation_cross: true,
-                                fixation_cross_color: "white", 
-                                fixation_cross_thickness: 6,
-                                post_trial_gap: 0, 
+                            { // blank interval
+                                type: 'html-keyboard-response',
+                                stimulus: '<div></div>',
                                 choices: jsPsych.NO_KEYS,
-                                response_ends_trial: false,
-                                correct_choice: "q",
                                 trial_duration: iti_duration,
-                                data: {experiment_part: 'fixation'}
+                                response_ends_trial: false
                             },
                             { // rdk with random dots
                                 type: 'rdk',
