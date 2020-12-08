@@ -76,7 +76,8 @@ function make_experiment(id_number,images_only) {
                 {stimulus: "stimuli/buttons-o.svg"}
             ];
         }
-    console.log(condition);
+        console.log(condition);
+
         jsPsych.data.addProperties({
             condition: condition
         });
@@ -724,11 +725,11 @@ function make_experiment(id_number,images_only) {
                 axios({
                     url: credentials.url.concat(credentials.rule),
                     method: 'post',
-                                        data: payload,
-                                        auth: {
-                                            username: credentials.username,
-                                            password: credentials.password
-                                        }
+                        data: payload,
+                        auth: {
+                            username: credentials.username,
+                            password: credentials.password
+                        }
                 })
                 .then(function (response) {
                     console.log(response);
@@ -756,6 +757,7 @@ function make_experiment(id_number,images_only) {
             type: "html-keyboard-response",
             stimulus: "<p>Now we're ready to begin the experiment.</p><br>"+
                 "<p>This will take about 40 minutes.</p><br>"+
+                "<p>Remember, answer as fast and as accurately as you can but please don't guess.</p>"+
                 "<p>Please wait patiently for the experiment to load based on the data so far</p><br>"+
                 "<br><p>Press any key to begin.</p>",
             on_finish: function(){
