@@ -53,7 +53,11 @@
                 show_preload_progress_bar: false,
                 on_finish: function() {
                     var resultJson = jsPsych.data.get().json();
-                    jatos.submitResultData(resultJson, jatos.startNextComponent);
+                    jatos.submitResultData(resultJson, jatos.startNextComponent)
+                    .then(jatos.endStudyAjax)
+                    .then(() => {
+                        window.location.href = 'https://app.prolific.co/submissions/complete?cc=18112FFE'
+                    });
                 }
             });
         });
