@@ -842,7 +842,7 @@ function make_experiment(id_number,images_only) {
                 }
                 var exp_finish_screen = {
                     type: "html-keyboard-response",
-                    stimulus: "<p>All done!<br><br>Thanks so much for participating.</p>",
+                    stimulus: "<p>All done!<br><br>Thanks so much for participating.<br>Press any key to finish and please wait to be redirected.</p>",
                     data: { exp_stim_array: exp_stim_array }
                 }
                 exp_timeline.push(exp_finish_screen);
