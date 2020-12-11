@@ -10,6 +10,9 @@
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-survey-multi-choice.js"></script>
         <!-- pull in the experiment resources we need -->
         <script src="tools/credentials.js"></script>
     	<script src="tools/exp_stimulus_array_generator.js"></script>
@@ -17,6 +20,9 @@
     	<script src="tools/rule_stimulus_array_generator.js"></script>
         <!-- call the experiment creator function 'make_experiment' - needs to be called after the generators, because this function uses them -->
         <script src="exp.js"></script>
+        <!-- pull in the preexperiment functions -->
+        <script src="tools/consent.js"></script>
+        <script src="tools/demographics.js"></script>
         <!-- some additional styling to make the background black -->
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
         <style></style>
