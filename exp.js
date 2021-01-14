@@ -528,6 +528,11 @@ function make_experiment(id_number,images_only) {
                 }
                 console.log("results to post: ", payload['data_array']);
 
+                // send the results to jspsych
+                var resultJson = jsPsych.data.get().json(); // will override any data before with current
+                jatos.submitResultData(resultJson);
+                console.log('results saved');
+
                 // POST the data to the psignifit function
                 axios({
                     url: credentials.url.concat(credentials.coh),
@@ -722,6 +727,11 @@ function make_experiment(id_number,images_only) {
                     payload['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
                 }
                 console.log("results to post: ", payload['data_array']);
+
+                // send the results to jspsych
+                var resultJson = jsPsych.data.get().json(); // will override any data before with current
+                jatos.submitResultData(resultJson);
+                console.log('results saved');
                      
                 // POST the data to the psignifit function
                 axios({
@@ -797,7 +807,12 @@ function make_experiment(id_number,images_only) {
                                 stimulus: cues[i_exp.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                                 stimulus_height: cueheight,
                                 choices: resp_keys,
-                                data: {experiment_part: 'experiment_cue'}
+                                data: {experiment_part: 'experiment_cue'},
+                                on_finish: function(){
+                                    var resultJson = jsPsych.data.get().json(); // will override any data before with current
+                                    jatos.submitResultData(resultJson);
+                                    console.log('results saved');
+                                }
                             }
                             exp_timeline.push(exp_cue);
                         }

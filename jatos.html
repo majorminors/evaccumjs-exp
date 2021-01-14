@@ -57,6 +57,10 @@
             preload_images: make_experiment(id_number,1),
                 show_progress_bar: false,
                 show_preload_progress_bar: false,
+                // on_trial_finish: function(){ // save data every trial? might slow things down...
+                //    var resultJson = jsPsych.data.get().json();
+                //    jatos.submitResultData(resultJson);
+                //},
                 on_finish: function() {
                     var resultJson = jsPsych.data.get().json();
                     jatos.submitResultData(resultJson, jatos.startNextComponent)
