@@ -555,7 +555,7 @@ function make_experiment(id_number,images_only) {
             }
         }
         timeline.push(coh_analysis);
-            
+
         // var coherence_values = [0.8, 0.3]; // we generate this from earlier psychophys -  [0] needs to be easy, [1] needs to be hard
 
         //////////////////
@@ -686,7 +686,11 @@ function make_experiment(id_number,images_only) {
                 if (prac_count <= num_prac_trials && prac_on) {
                     rule_prac_timeline.push({...rule_rdk, data: {experiment_part: 'ruleprac_rdk', rule_code: i_rule.rule_point_code}});
                 }
-                rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk', rule_code: i_rule.rule_point_code}});
+                if (block == 0) {
+                    rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk_easy', rule_code: i_rule.rule_point_code}});
+                } else if (block == 1) {
+                    rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk_hard', rule_code: i_rule.rule_point_code}});
+                }
 
                 var rule_feedback = { // you can use this for testing, otherwise comment out
                     type: "html-keyboard-response",
@@ -718,15 +722,25 @@ function make_experiment(id_number,images_only) {
             data: {experiment_part: 'rule_analysis'},
             on_finish: function () {
                 jsPsych.pauseExperiment();
-                var payload = {
+                var payload_easy = {
                     data_array: []
                 };
                 for (i = 0; i < rule_point_values.length; i++) {
-                    tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk', rule_code: i}).count();
-                    tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk', correct: 1, rule_code: i}).count();
-                    payload['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
+                    tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', rule_code: i}).count();
+                    tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', correct: 1, rule_code: i}).count();
+                    payload_easy['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
                 }
-                console.log("results to post: ", payload['data_array']);
+                console.log("results to post: ", payload_easy['data_array']);
+                var payload_hard = {
+                    data_array: []
+                };
+                for (i = 0; i < rule_point_values.length; i++) {
+                    tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', rule_code: i}).count();
+                    tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', correct: 1, rule_code: i}).count();
+                    payload_hard['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
+                }
+                console.log("results to post: ", payload_hard['data_array']);
+                
 
                 // send the results to jspsych
                 var resultJson = jsPsych.data.get().json(); // will override any data before with current
@@ -737,7 +751,7 @@ function make_experiment(id_number,images_only) {
                 axios({
                     url: credentials.url.concat(credentials.rule),
                     method: 'post',
-                        data: payload,
+                        data: payload_easy,
                         auth: {
                             username: credentials.username,
                             password: credentials.password
@@ -745,14 +759,45 @@ function make_experiment(id_number,images_only) {
                 })
                 .then(function (response) {
                     console.log(response);
-                    hard_rule_value = response.data;
-                    console.log(hard_rule_value);
-                    rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
-                    jsPsych.resumeExperiment();
+                    hard_rule_value_easy_dots = response.data;
+                    console.log(hard_rule_value_easy_dots);
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
+
+                // POST the data to the psignifit function
+                axios({
+                    url: credentials.url.concat(credentials.rule),
+                    method: 'post',
+                        data: payload_hard,
+                        auth: {
+                            username: credentials.username,
+                            password: credentials.password
+                        }
+                })
+                .then(function (response) {
+                    console.log(response);
+                    hard_rule_value_hard_dots = response.data;
+                    console.log(hard_rule_value_hard_dots);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+                // lets average the rules, to get it off the floor
+                hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
+                // since easy rule is the inverse of the hard rule, lets cap it
+                if (hard_rule_value >= 40) {
+                    jsPsych.data.addProperties({
+                        participant_maxed_match_threshold: hard_rule_value
+                    });
+                    hard_rule_value = 40;
+                }
+
+                rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+
+                jsPsych.resumeExperiment();
             }
         }
         timeline.push(rule_analysis);
@@ -772,6 +817,7 @@ function make_experiment(id_number,images_only) {
                 "<p>Remember, answer as fast and as accurately as you can but please don't guess.</p>"+
                 "<p>Please wait patiently for the experiment to load based on the data so far</p><br>"+
                 "<br><p>Press any key to begin.</p>",
+            data: {coherence_values: coherence_values, rule_values: rule_values, rule_easy_dots: hard_rule_value_easy_dots, rule_hard_dots: hard_rule_value_hard_dots},
             on_finish: function(){
                 jsPsych.pauseExperiment();
 
