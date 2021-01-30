@@ -7,7 +7,7 @@ function make_experiment(id_number,images_only) {
         /* set up vars */
         /////////////////
 
-        var instructions_on = 1; // if 1, will do instructions
+        var instructions_on = 0; // if 1, will do instructions, get consent, and demographics
         var dots_fixation = 2; // if 0 just a fixation, if 1 a fixation with dots
         var num_prac_trials = 5;
         var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
@@ -98,8 +98,10 @@ function make_experiment(id_number,images_only) {
 
         /* initialise timeline array */
                 var timeline = [];
-                get_consent(timeline); // do the consent function
-                get_demographics(timeline); // do the demographics function
+                if (instructions_on === 1) {
+                    get_consent(timeline); // do the consent function
+                    get_demographics(timeline); // do the demographics function
+                }
 
                 // create a reusable fixation
                 if (dots_fixation == 0) {
@@ -761,43 +763,43 @@ function make_experiment(id_number,images_only) {
                     console.log(response);
                     hard_rule_value_easy_dots = response.data;
                     console.log(hard_rule_value_easy_dots);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-
-                // POST the data to the psignifit function
-                axios({
-                    url: credentials.url.concat(credentials.rule),
-                    method: 'post',
-                        data: payload_hard,
-                        auth: {
-                            username: credentials.username,
-                            password: credentials.password
+                    // POST the data again to the psignifit function
+                    axios({
+                        url: credentials.url.concat(credentials.rule),
+                        method: 'post',
+                            data: payload_hard,
+                            auth: {
+                                username: credentials.username,
+                                password: credentials.password
+                            }
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        hard_rule_value_hard_dots = response.data;
+                        console.log(hard_rule_value_hard_dots);
+                        // lets average the rules, to get it off the floor
+                        hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
+                        // since easy rule is the inverse of the hard rule, lets cap it
+                        if (hard_rule_value >= 40) {
+                            jsPsych.data.addProperties({
+                                participant_maxed_match_threshold: hard_rule_value
+                            });
+                            hard_rule_value = 40;
                         }
-                })
-                .then(function (response) {
-                    console.log(response);
-                    hard_rule_value_hard_dots = response.data;
-                    console.log(hard_rule_value_hard_dots);
+
+                        rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+
+                        jsPsych.resumeExperiment();
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
 
-                // lets average the rules, to get it off the floor
-                hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
-                // since easy rule is the inverse of the hard rule, lets cap it
-                if (hard_rule_value >= 40) {
-                    jsPsych.data.addProperties({
-                        participant_maxed_match_threshold: hard_rule_value
-                    });
-                    hard_rule_value = 40;
-                }
 
-                rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
-
-                jsPsych.resumeExperiment();
             }
         }
         timeline.push(rule_analysis);
@@ -817,7 +819,6 @@ function make_experiment(id_number,images_only) {
                 "<p>Remember, answer as fast and as accurately as you can but please don't guess.</p>"+
                 "<p>Please wait patiently for the experiment to load based on the data so far</p><br>"+
                 "<br><p>Press any key to begin.</p>",
-            data: {coherence_values: coherence_values, rule_values: rule_values, rule_easy_dots: hard_rule_value_easy_dots, rule_hard_dots: hard_rule_value_hard_dots},
             on_finish: function(){
                 jsPsych.pauseExperiment();
 
@@ -906,7 +907,7 @@ function make_experiment(id_number,images_only) {
                 var exp_finish_screen = {
                     type: "html-keyboard-response",
                     stimulus: "<p>All done!<br><br>Thanks so much for participating.<br>Feel free to email me if you'd like to know more about what the study was exploring.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish and please wait to be redirected.</p>",
-                    data: { exp_stim_array: exp_stim_array }
+                    data: { exp_stim_array: exp_stim_array, coherence_values: coherence_values, rule_values: rule_values, rule_easy_dots: hard_rule_value_easy_dots, rule_hard_dots: hard_rule_value_hard_dots}
                 }
                 exp_timeline.push(exp_finish_screen);
 
