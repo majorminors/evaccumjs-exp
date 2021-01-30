@@ -566,7 +566,7 @@ function make_experiment(id_number,images_only) {
         var num_trials_per_block = 160;
         // requires num_cues
         var num_rule_blocks = 2; // one for each coherence level
-        var rule_point_values =  [0,5,10,15,20,70,75,80,85,90];
+        var rule_point_values =  [0,5,10,20,30,40,50,60,70,80];
         var num_point_tests = 16; 
         var num_trials_per_block = num_point_tests * rule_point_values.length; // check this is an integer, or it'll break
 
