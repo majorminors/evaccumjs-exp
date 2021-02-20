@@ -885,6 +885,9 @@ function make_experiment(id_number,images_only) {
                             coherent_direction: i_exp.dot_motion_dir_deg_rdk, 
                             trial_duration: 1500,
                             data: {experiment_part: 'experiment_rdk'}
+                            on_finish: function(){
+                                console.log('coherence value: ',data.coherence);
+                            }
                         }
                         // var exp_feedback = { // you can use this for testing, otherwise comment out
                         //     type: "html-keyboard-response",
