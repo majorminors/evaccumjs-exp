@@ -796,7 +796,7 @@ function make_experiment(id_number,images_only) {
                                 hard_rule_value = 40;
                             }
 
-                            rule_values = [hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+                            rule_values = [90-hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
 
                             jsPsych.resumeExperiment();
                         })
