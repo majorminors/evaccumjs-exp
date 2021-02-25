@@ -7,13 +7,13 @@ function make_experiment(id_number,images_only) {
         /* set up vars */
         /////////////////
 
-        var instructions_on = 1; // if 1, will do instructions, get consent, and demographics
+        var instructions_on = 0; // if 1, will do instructions, get consent, and demographics
         var dots_fixation = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
         var num_prac_trials = 5;
         var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         var iti_range = [400,600]; // enter array of two values = [max, min]
         var iti_duration = 300;
-	var skip_coherence = 0;
+	var skip_coherence = 1;
 	var skip_matching = 0;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
@@ -657,7 +657,7 @@ function make_experiment(id_number,images_only) {
                             stimulus_height: cueheight,
                             choices: resp_keys,
                         }
-                        this_cue = cues[i_coh.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
+                        this_cue = cues[i_rule.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
                         if (block <= num_prac_blocks && this_cue != last_cue) {
                             prac_count = 1; // restart our practice counter (this is iterated on last trial of this experiment procedure)
                             rule_prac_timeline.push({...rule_cue, data: {experiment_part: 'ruleprac_cue'}});
