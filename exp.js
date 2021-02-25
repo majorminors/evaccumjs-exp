@@ -657,7 +657,7 @@ function make_experiment(id_number,images_only) {
                             stimulus_height: cueheight,
                             choices: resp_keys,
                         }
-                        this_cue = cues[i_coh.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
+                        this_cue = cues[i_rule.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
                         if (block <= num_prac_blocks && this_cue != last_cue) {
                             prac_count = 1; // restart our practice counter (this is iterated on last trial of this experiment procedure)
                             rule_prac_timeline.push({...rule_cue, data: {experiment_part: 'ruleprac_cue'}});
