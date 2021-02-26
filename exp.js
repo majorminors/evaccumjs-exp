@@ -7,13 +7,13 @@ function make_experiment(id_number,images_only) {
         /* set up vars */
         /////////////////
 
-        var instructions_on = 0; // if 1, will do instructions, get consent, and demographics
+        var instructions_on = 1; // if 1, will do instructions, get consent, and demographics
         var dots_fixation = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
         var num_prac_trials = 5;
         var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         var iti_range = [400,600]; // enter array of two values = [max, min]
         var iti_duration = 300;
-	var skip_coherence = 1;
+	var skip_coherence = 0;
 	var skip_matching = 0;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
@@ -770,8 +770,8 @@ function make_experiment(id_number,images_only) {
                     })
                     .then(function (response) {
                         console.log(response);
-                        hard_rule_value_easy_dots = response.data;
-                        console.log(hard_rule_value_easy_dots);
+                        easy_rule_value_easy_dots = response.data;
+                        console.log(easy_rule_value_easy_dots);
                         // POST the data again to the psignifit function
                         axios({
                             url: credentials.url.concat(credentials.rule),
@@ -784,20 +784,20 @@ function make_experiment(id_number,images_only) {
                         })
                         .then(function (response) {
                             console.log(response);
-                            hard_rule_value_hard_dots = response.data;
-                            console.log(hard_rule_value_hard_dots);
+                            easy_rule_value_hard_dots = response.data;
+                            console.log(easy_rule_value_hard_dots);
                             // lets average the rules, to get it off the floor
-                            hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
+                            easy_rule_value = (easy_rule_value_easy_dots+easy_rule_value_hard_dots)/2;
                             // since easy rule is the inverse of the hard rule, lets cap it
-                            if (hard_rule_value >= 40) {
+                            if (easy_rule_value >= 40) {
                                 jsPsych.data.addProperties({
-                                    participant_maxed_match_threshold: hard_rule_value
+                                    participant_maxed_match_threshold: easy_rule_value
                                 });
-                                hard_rule_value = 40;
+                                easy_rule_value = 40;
                             }
 
-                            rule_values = [90-hard_rule_value, 90-hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
-
+                            rule_values = [easy_rule_value, 90-easy_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+			console.log('rule values: ',rule_values);
                             jsPsych.resumeExperiment();
                         })
                         .catch(function (error) {
@@ -835,7 +835,9 @@ function make_experiment(id_number,images_only) {
 
                 /* define parameters to pass into the stimulus_array_generator function */
                 var easy_rule = rule_values[0];
-                var hard_rule = rule_values[1];
+		    console.log('easy rule: ',easy_rule);
+                var hard_rule = easy_rule;//rule_values[1];
+		    console.log('hard rule: ',hard_rule);
                 var num_exp_blocks = 20;
                 var num_trials_per_block = 64;
                 // requires num_cues
