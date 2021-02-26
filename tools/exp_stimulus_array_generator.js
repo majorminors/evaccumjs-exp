@@ -1,5 +1,10 @@
 function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_trials_per_block, num_cues, num_motion_coherence) {
 	console.log("experiment stimulus array");
+        console.log('easy rule: ',easy_rule);
+        console.log('hard rule: ',hard_rule);
+        /* this will return dot_motion_dir_rdk as easy rules only, and matching difficulty is used to code whether it's the cue+easy rule(2) or cue-easy rule(1)
+         * match distance is no longer informative */
+
 	/* requires:
 		easy_rule: degrees of difference between cue orientation
 		hard_rule: same as above, but for hard (i.e. closer to the decision boundary between the two
@@ -131,6 +136,35 @@ function exp_stimulus_array_generator(easy_rule, hard_rule, num_blocks, num_tria
     console.log("matching difficulty: ", match_difficulty);
     var trial_cond_num = range_fun(1,cue_dir.length,1);
     console.log("trial condition number: ", trial_cond_num);
+
+    console.log('now we alter the structure to produce easy rules only');
+
+    // copy match_difficulty
+    var easy_rule_only = match_difficulty.slice(0).map(function(x,i){
+        // if divisible by 2, add easy rule to cue
+        if(x%2){
+            x = cue_dir_deg[i]+easy_rule;
+        } else {
+            // else minus the easy rule from cue
+            x = cue_dir_deg[i]-easy_rule;
+        }
+        // if it's supposed to match the opposite of the cue
+        if (match_arrow[i] == 2) {
+            // minus 180
+            x = x-180;
+        }
+        // now make sure x is a circle
+        if (x < 0) {
+            x = x+360;
+        } else if (x > 360) {
+            x = x-360;
+        }
+        return x;
+    });
+    console.log('easy rule only: ',easy_rule_only);
+    // convert that into a value the rdk plugin understands (not clockface - traditional circle)
+    var dot_motion_dir_deg_rdk = easy_rule_only.slice(0).map(x => (360 - (x - 90)) % 360); // using modulus to figure out if over/under 360 degrees, and then use remainder
+    console.log("converted motion direction for rdk :", dot_motion_dir_deg_rdk);
 
     // *** put the info for each trial into an object, and put these trial objects into the block info array ***
     var block_info = [];
