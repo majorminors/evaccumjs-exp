@@ -746,8 +746,8 @@ function make_experiment(id_number,images_only) {
                         data_array: []
                     };
                     for (i = 0; i < rule_point_values.length; i++) {
-                        tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', rule_code: i}).count();
-                        tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', correct: 1, rule_code: i}).count();
+                        tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', rule_code: i+1}).count();
+                        tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', correct: 1, rule_code: i+1}).count();
                         payload_hard['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
                     }
                     console.log("results to post: ", payload_hard['data_array']);
