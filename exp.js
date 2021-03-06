@@ -836,7 +836,7 @@ function make_experiment(id_number,images_only) {
                 /* define parameters to pass into the stimulus_array_generator function */
                 var easy_rule = rule_values[0];
 		    console.log('easy rule: ',easy_rule);
-                var hard_rule = easy_rule;//rule_values[1];
+                var hard_rule = rule_values[1];
 		    console.log('hard rule: ',hard_rule);
                 var num_exp_blocks = 20;
                 var num_trials_per_block = 64;
