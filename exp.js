@@ -7,14 +7,14 @@ function make_experiment(id_number,images_only) {
         /* set up vars */
         /////////////////
 
-        var instructions_on = 0; // if 1, will do instructions, get consent, and demographics
+        var instructions_on = 1; // if 1, will do instructions, get consent, and demographics
         var dots_fixation = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
         var num_prac_trials = 5;
         var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         var iti_range = [400,600]; // enter array of two values = [max, min]
         var iti_duration = 300;
-        var skip_coherence = 1;
-        var skip_matching = 1;
+        var skip_coherence = 0;
+        var skip_matching = 0;
         var skip_coherence_with_angle = 0;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
@@ -582,7 +582,7 @@ function make_experiment(id_number,images_only) {
             var num_trials_per_block = 160;
             // requires num_cues
             var num_rule_blocks = 2; // one for each coherence level
-            var rule_point_values =  [0,5,25,45,60,65,70,75,80,85];
+            var rule_point_values =  [5,25,40,45,60,65,70,75,80,85];
             var num_point_tests = 16; 
             var num_trials_per_block = num_point_tests * rule_point_values.length; // check this is an integer, or it'll break
 
@@ -648,7 +648,7 @@ function make_experiment(id_number,images_only) {
                         turn_off_block_indicator = 1;
                         var block_indicator = {
                             type: "html-keyboard-response",
-                            stimulus: "<p> now with hard dots </p>",
+                            stimulus: "<p> now with harder dots </p>",
                             choices: jsPsych.NO_KEYS,
                             trial_duration: 1000
                         }
@@ -753,7 +753,7 @@ function make_experiment(id_number,images_only) {
                     for (i = 0; i < rule_point_values.length; i++) {
                         tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', rule_code: i+1}).count();
                         tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', correct: 1, rule_code: i+1}).count();
-                        payload_hard['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
+                        payload_hard['data_array'].push([-rule_point_values[i],tmp_corr,tmp_trls]);
                     }
                     console.log("results to post: ", payload_hard['data_array']);
                     
