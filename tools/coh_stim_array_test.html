@@ -6,6 +6,7 @@
 		<script src="../jspsych-6.1.0/jspsych.js"></script>
 		<script src="../jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
 		<script src="coh_stimulus_array_generator.js"></script>
+		<script src="coh_stimulus_array_generator_with_angle.js"></script>
 		<link href="../jspsych-6.1.0/css/jspsych.css" rel="stylesheet" type="text/css"></link>
 		<style>
 			#jspsych-content {width:80%;}
@@ -23,9 +24,11 @@
 		var coh_point_values =  [0.10, 0.20, 0.25, 0.30, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85];
 		var num_point_tests = 16; 
 		var num_trials_per_block = num_point_tests * coh_point_values.length; // check this is an integer, or it'll break
+        var angle_adjustment_off_0 = 20;
 
 		/* call stimulus_array_generator function and save output as stim_array_info */
 		var stim_array_info = coh_stimulus_array_generator(num_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests);
+		var stim_array_info_angle = coh_stimulus_array_generator_with_angle(num_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests,angle_adjustment_off_0);
 
 		/* initialise timeline */
 		var timeline = [];  
@@ -35,6 +38,8 @@
 			type: 'html-keyboard-response',
 			stimulus: function() {
 				var str = '<p>console is an informative place to see whats in the array</p>'+
+                JSON.stringify(stim_array_info[0][0],null,2)+
+                JSON.stringify(stim_array_info_angle[0][0],null,2)+
 				'<p>The stimulus_array_generator function returns an array<br>with length equal to the number of blocks.</p>'+
 				'<p>You can access the info for each block by indexing with the block number.<br>'+
 				'For example, if your function output is called "stim_array_info",<br>'+
