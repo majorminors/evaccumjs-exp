@@ -1,5 +1,6 @@
 function coh_stimulus_array_generator_with_angle(num_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests, angle) {
 	console.log("coherence stimulus array");
+    console.log('angle :', angle)
 
 	/* requires:
 		num_blocks: how many times you want to repeat your trial sets
