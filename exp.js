@@ -376,7 +376,7 @@ function make_experiment(id_number,images_only) {
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>Ok! Let's get started.<br><br>This experiment has three parts.<br>The first is a short five minute test,<br>the second is about ten minutes,<br>and the third is the full experiment and will take up the rest of the time.</p>"
+                            stimulus: "<p>Ok! Let's get started.<br><br>This experiment has four parts.<br>The first is a short five minute test,<br>the second is about ten minutes.<br>A third which is short again, about five minutes.<br> The last test is the full experiment and will take up the rest of the time.</p>"
                         },
                         instruction_resp,
                     ]
