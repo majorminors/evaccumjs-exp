@@ -15,6 +15,7 @@ function make_experiment(id_number,images_only) {
         var iti_duration = 300;
 	var skip_coherence = 0;
 	var skip_matching = 0;
+	var skip_coherence_with_angle = 0;
 
         // note both index.html and jatos.html expect to call a script 'tools/credentials.js' with a variable containing credential information for the axios requests, otherwise will need to include that here
         ////////////////////////
@@ -822,6 +823,191 @@ function make_experiment(id_number,images_only) {
             timeline.push(rule_analysis);
 	}
     
+        /////////////////////////////////
+        /* coherence testing round two */
+        /////////////////////////////////
+
+	if (skip_coherence_with_angle) {
+            var coherence_values = [0.8, 0.3]; // we generate this from earlier psychophys -  [0] needs to be easy, [1] needs to be hard
+	} else {
+            // let them know we're onto the next test
+            var coh_start_screen = {
+                type: "html-keyboard-response",
+                stimulus: "<p>This is the third test.</p><br>"+
+                    "<p>We are testing you again on different levels of coherence (the number of dots moving in one direction).</p>"+
+                    "<p>This will take about 5 minutes.</p><br>"+
+                    "<br><p>Press any key to continue.</p>",
+                on_finish: function () {
+                    /* first define the parameters */
+                    // comment these out -> just use earlier values. might want to change the coh point values?
+                    // var num_coherence_blocks = 1;
+                    // var num_trials_per_block = 160;
+                    // // requires num_cues
+                    // var coh_point_values =  [0.10, 0.20, 0.25, 0.30, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85];
+                    // var num_point_tests = 16; 
+                    // var num_trials_per_block = num_point_tests * coh_point_values.length; // check this is an integer, or it'll break
+                    
+                    // call stimulus_array_generator function and save output
+                    var coh_stim_array_with_angle_adjustment = coh_stimulus_array_generator_with_angle(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests,rule_values[0]);
+                    // jsPsych.data.addProperties({
+                    //     coh_stim_array: coh_stim_array
+                    // });
+
+                    /* generate coherence test procedure */
+                    var block;
+                    var trial;
+                    var count = 0;
+                    // for practice block
+                    var prac_count = 0; // init practice counter
+                    var prac_on = 1; // init a switch to turn practice off
+                    var last_cue = -1; // set this to the number prior to the first cue index so we can manage the amount of practice by repeating cues
+                    var coh_prac_timeline = [];
+                    // for test block
+                    var coh_test_timeline = [];
+                        // now we're going to build two timelines - one for practice and one for the test
+                        for (block = 0; block < coh_stim_array_with_angle_adjustment.length; block++) { // equivalent to number of blocks (coh_stim_array[0-n]) - should = num_blocks
+                            for (trial = 0; trial < coh_stim_array_with_angle_adjustment[0].length; trial++) { // equivalent to number of trials per block (coh_stim_array[x][0-n]) - should = num_trials_per_block
+                                count++; // use this to track how many trials have happened in total
+                                i_coh_ang = coh_stim_array_with_angle_adjustment[block][trial]; // make this easier to call
+
+                                if (count === 1) {
+                                    var coh_prac_screen ={
+                                        type: "html-keyboard-response",
+                                        stimulus: "<p>Let's do a bit of practice first.<br><br>Press any key to begin.</p>"
+                                    }
+                                    coh_prac_timeline.push(coh_prac_screen);
+
+                                    var coh_test_screen = {
+                                        type: "html-keyboard-response",
+                                        stimulus: "<p>Good! Now we'll begin the test.<br><br>Press any key to begin.</p>"
+                                    }
+                                    coh_test_timeline.push(coh_test_screen);
+                                }	
+
+                                if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
+                                    var coh_cue = {
+                                        type: 'image-keyboard-response',
+                                        stimulus: cues[i_coh_ang.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+                                        stimulus_height: cueheight,
+                                        choices: resp_keys,
+                                    }
+                                    this_cue = cues[i_coh_ang.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
+                                    if (block <= num_prac_blocks && this_cue != last_cue) {
+                                        prac_count = 1; // restart our practice counter (this is iterated on last trial of this experiment procedure)
+                                        coh_prac_timeline.push({...coh_cue, data: {experiment_part: 'cohprac_angle_cue'}});
+                                        last_cue = this_cue; // save this cue to check against later
+                                    } else if (block > num_prac_blocks && this_cue == last_cue) {
+                                        prac_on = 0; // turn practice off
+                                    }
+                                    coh_test_timeline.push({...coh_cue, data: {experiment_part: 'cohtest_angle_cue'}});
+                                }
+
+                                if (prac_count <= num_prac_trials && prac_on) {
+                                    coh_prac_timeline.push({...fixation, data: {experiment_part: 'cohprac_angle_fixation'}});
+                                }
+                                coh_test_timeline.push({...fixation, data: {experiment_part: 'cohtest_angle_fixation'}});
+
+                                var coh_rdk = {
+                                    type: 'rdk', 
+                                    background_color: "black",
+                                    dot_color: "white", 
+                                    aperture_type: 1,
+                                    fixation_cross: true,
+                                    fixation_cross_color: "white", 
+                                    fixation_cross_thickness: 6,
+                                    post_trial_gap: 0, 
+                                    number_of_dots: 100,
+                                    response_ends_trial: false,
+                                    coherence: i_coh_ang.coherence_value, 
+                                    move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                                    dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                                    choices: resp_keys,
+                                    correct_choice: resp_keys[i_coh_ang.match_arrow-1],
+                                    coherent_direction: i_coh_ang.dot_motion_deg_rdk, 
+                                    trial_duration: 1500,
+                                }
+                                if (prac_count <= num_prac_trials && prac_on) {
+                                    coh_prac_timeline.push({...coh_rdk, data: {experiment_part: 'cohprac_angle_rdk'}});
+                                }
+                                coh_test_timeline.push({...coh_rdk, data: {experiment_part: 'cohtest_angle_rdk'}});
+
+                                var coh_feedback = { // you can use this for testing, otherwise comment out
+                                    type: "html-keyboard-response",
+                                    stimulus: function() {
+                                        var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+                                        if (last_rdk_accuracy) { // if true (data.correct is boolean)
+                                            return "<p>correct</p>";
+                                        } else { // else if false
+                                            return "<p>incorrect</p>";
+                                        }
+                                    },
+                                    choices: jsPsych.NO_KEYS,
+                                    trial_duration: 300,
+                                }
+                                if (prac_count <= num_prac_trials && prac_on) {
+                                    prac_count++; // iterate practice counter
+                                    coh_prac_timeline.push({...coh_feedback, data: {experiment_part: 'cohprac_angle_feedback'}});
+                                }
+                                coh_test_timeline.push({...coh_feedback, data: {experiment_part: 'cohtest_angle_feedback'}});
+                            }
+                        }
+                        // push those two blocks now by spreading them into timeline
+                        timeline.push(...coh_prac_timeline,...coh_test_timeline);
+                
+                        /* collecting data for analysis */
+                        var coh_analysis = {
+                            type: "html-keyboard-response",
+                            stimulus: "Now we analyse - press any key and please wait",
+                            data: {experiment_part: 'coherence_angle_analysis', coherence_angle_array: 'coh_stim_array_with_angle_adjustment'},
+                            on_finish: function () {
+                                jsPsych.pauseExperiment();
+                                var payload = {
+                                    data_array: []
+                                };
+                                for (i = 0; i < coh_point_values.length; i++) {
+                                    tmp_trls = jsPsych.data.get().filter({experiment_part: 'cohtest_angle_rdk', coherence: coh_point_values[i]}).count();
+                                    tmp_corr = jsPsych.data.get().filter({experiment_part: 'cohtest_angle_rdk', correct: 1, coherence: coh_point_values[i]}).count();
+                                    payload['data_array'].push([coh_point_values[i],tmp_corr,tmp_trls]);
+                                }
+                                console.log("results to post: ", payload['data_array']);
+
+                                jsPsych.data.addProperties({
+                                        coh_data_array: payload,
+                                });
+
+                                // send the results to jspsych
+                                var resultJson = jsPsych.data.get().json(); // will override any data before with current
+                                jatos.submitResultData(resultJson);
+                                console.log('results saved');
+
+                                // POST the data to the psignifit function
+                                axios({
+                                    url: credentials.url.concat(credentials.coh),
+                                    method: 'post',
+                                                        data: payload,
+                                                        auth: {
+                                                            username: credentials.username,
+                                                            password: credentials.password
+                                                        }
+                                })
+                                .then(function (response) {
+                                    console.log(response);
+                                    coherence_values = response.data;
+                                    console.log(coherence_values);
+                                    jsPsych.resumeExperiment();
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                            }
+                        }
+                        timeline.push(coh_analysis);
+                    }
+                }
+            }
+            timeline.push(coh_start_screen);
+            
+
         ////////////////////////
         /* experiment testing */
         ////////////////////////
