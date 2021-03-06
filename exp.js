@@ -535,6 +535,10 @@ function make_experiment(id_number,images_only) {
                     }
                     console.log("results to post: ", payload['data_array']);
 
+                    jsPsych.data.addProperties({
+                            coh_data_array: payload,
+                    });
+
                     // send the results to jspsych
                     var resultJson = jsPsych.data.get().json(); // will override any data before with current
                     jatos.submitResultData(resultJson);
@@ -577,7 +581,7 @@ function make_experiment(id_number,images_only) {
             var num_trials_per_block = 160;
             // requires num_cues
             var num_rule_blocks = 2; // one for each coherence level
-            var rule_point_values =  [0,5,10,20,30,40,50,60,70,80];
+            var rule_point_values =  [0,5,25,45,60,65,70,75,80,85];
             var num_point_tests = 16; 
             var num_trials_per_block = num_point_tests * rule_point_values.length; // check this is an integer, or it'll break
 
@@ -610,7 +614,7 @@ function make_experiment(id_number,images_only) {
                 data: { rule_stim_array: rule_stim_array }
             }
             timeline.push(rule_start_screen);
-            
+
             // now we're going to build two timelines - one for practice and one for the test
             for (block = 0; block < rule_stim_array.length; block++) { // equivalent to number of blocks (rule_stim_array[0-n]) - should = num_blocks
                 for (trial = 0; trial < rule_stim_array[0].length; trial++) { // equivalent to number of trials per block (rule_stim_array[x][0-n]) - should = num_trials_per_block
@@ -737,9 +741,9 @@ function make_experiment(id_number,images_only) {
                         data_array: []
                     };
                     for (i = 0; i < rule_point_values.length; i++) {
-                        tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', rule_code: i}).count();
-                        tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', correct: 1, rule_code: i}).count();
-                        payload_easy['data_array'].push([rule_point_values[i],tmp_corr,tmp_trls]);
+                        tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', rule_code: i+1}).count();
+                        tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', correct: 1, rule_code: i+1}).count();
+                        payload_easy['data_array'].push([-rule_point_values[i],tmp_corr,tmp_trls]); // negative because python psignifit is broken for values that get harder as bigger
                     }
                     console.log("results to post: ", payload_easy['data_array']);
                     var payload_hard = {
@@ -752,6 +756,10 @@ function make_experiment(id_number,images_only) {
                     }
                     console.log("results to post: ", payload_hard['data_array']);
                     
+                    jsPsych.data.addProperties({
+                            easy_dots_rule_data_array: payload_easy,
+                            hard_dots_rule_data_array: payload_hard
+                    });
 
                     // send the results to jspsych
                     var resultJson = jsPsych.data.get().json(); // will override any data before with current
@@ -770,8 +778,8 @@ function make_experiment(id_number,images_only) {
                     })
                     .then(function (response) {
                         console.log(response);
-                        easy_rule_value_easy_dots = response.data;
-                        console.log(easy_rule_value_easy_dots);
+                        hard_rule_value_easy_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
+                        console.log(hard_rule_value_easy_dots);
                         // POST the data again to the psignifit function
                         axios({
                             url: credentials.url.concat(credentials.rule),
@@ -784,19 +792,19 @@ function make_experiment(id_number,images_only) {
                         })
                         .then(function (response) {
                             console.log(response);
-                            easy_rule_value_hard_dots = response.data;
-                            console.log(easy_rule_value_hard_dots);
+                            hard_rule_value_hard_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
+                            console.log(hard_rule_value_hard_dots);
                             // lets average the rules, to get it off the floor
-                            easy_rule_value = (easy_rule_value_easy_dots+easy_rule_value_hard_dots)/2;
+                            hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
                             // since easy rule is the inverse of the hard rule, lets cap it
-                            if (easy_rule_value >= 40) {
+                            if (hard_rule_value <= 50) {
                                 jsPsych.data.addProperties({
-                                    participant_maxed_match_threshold: easy_rule_value
+                                    participant_maxed_match_threshold: hard_rule_value
                                 });
-                                easy_rule_value = 40;
+                                hard_rule_value = 50;
                             }
 
-                            rule_values = [easy_rule_value, 90-easy_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+                            rule_values = [90-hard_rule_value, hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
 			console.log('rule values: ',rule_values);
                             jsPsych.resumeExperiment();
                         })
