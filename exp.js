@@ -13,6 +13,7 @@ function make_experiment(id_number,images_only) {
         var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         var iti_range = [400,600]; // enter array of two values = [max, min]
         var iti_duration = 300;
+        var cue_max_duration = 8000;
         var skip_coherence = 0;
         var skip_matching = 0;
         var skip_coherence_with_angle = 0;
@@ -201,6 +202,7 @@ function make_experiment(id_number,images_only) {
                     type: 'image-keyboard-response',
                     stimulus_height: cueheight,
                     choices: resp_keys,
+                    trial_duration: cue_max_duration,
                     data: {experiment_part: 'instructions'}
                 }
                 var instruction_rdk = {
@@ -454,6 +456,7 @@ function make_experiment(id_number,images_only) {
                             type: 'image-keyboard-response',
                             stimulus: cues[i_coh.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                             stimulus_height: cueheight,
+                            trial_duration: cue_max_duration,
                             choices: resp_keys,
                         }
                         this_cue = cues[i_coh.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
@@ -660,6 +663,7 @@ function make_experiment(id_number,images_only) {
                             type: 'image-keyboard-response',
                             stimulus: cues[i_rule.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                             stimulus_height: cueheight,
+                            trial_duration: cue_max_duration,
                             choices: resp_keys,
                         }
                         this_cue = cues[i_rule.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
@@ -890,6 +894,7 @@ function make_experiment(id_number,images_only) {
                                         type: 'image-keyboard-response',
                                         stimulus: cues[i_coh_ang.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                                         stimulus_height: cueheight,
+                                        trial_duration: cue_max_duration,
                                         choices: resp_keys,
                                     }
                                     this_cue = cues[i_coh_ang.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
@@ -1050,6 +1055,7 @@ function make_experiment(id_number,images_only) {
                                                 stimulus: cues[i_exp.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
                                                 stimulus_height: cueheight,
                                                 choices: resp_keys,
+                                                trial_duration: cue_max_duration,
                                                 data: {experiment_part: 'experiment_cue'},
                                                 on_finish: function(){
                                                     var resultJson = jsPsych.data.get().json(); // will override any data before with current
