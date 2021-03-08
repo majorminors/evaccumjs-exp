@@ -976,7 +976,7 @@ function make_experiment(id_number,images_only) {
                                 console.log("results to post: ", payload['data_array']);
 
                                 jsPsych.data.addProperties({
-                                        coh_data_array: payload,
+                                        coh_data_array_updated: payload,
                                 });
 
                                 // send the results to jspsych
