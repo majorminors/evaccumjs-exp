@@ -13,7 +13,7 @@ function make_experiment(id_number,images_only) {
         var num_prac_blocks = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         var iti_range = [400,600]; // enter array of two values = [max, min]
         var iti_duration = 300;
-        var cue_max_duration = 8000;
+        var cue_max_duration = 6500;
         var skip_coherence = 0;
         var skip_matching = 0;
         var skip_coherence_with_angle = 0;
@@ -358,12 +358,17 @@ function make_experiment(id_number,images_only) {
                         instruction_resp,
                         {
                             ...instruction_noresp,
+                            stimulus: "<p>You'll get a couple of opportunities to take a little break throughout the experiment.</p>"
+                        },
+                        instruction_resp,
+                        {
+                            ...instruction_noresp,
                             stimulus: "<p>Answer as soon as you're sure of your answer.</p>"
                         },
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.</p>"
+                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.<br>It will also only stay on the screen for a few seconds if you don't press any key to continue.</p>"
                         }, 
                         instruction_resp,
                         {
@@ -1017,6 +1022,7 @@ function make_experiment(id_number,images_only) {
                                 "<p>This will take about 40 minutes.</p><br>"+
                                 "<p>Remember, answer as fast and as accurately as you can but please don't guess.</p>"+
                                 "<p>Please wait patiently for the experiment to load based on the data so far</p><br>"+
+                                "<p>You might think about taking a quick break. You have about two minutes.</p><br>"+
                                 "<br><p>Press any key to begin.</p>",
                             on_finish: function(){
                                 jsPsych.pauseExperiment();
@@ -1048,6 +1054,15 @@ function make_experiment(id_number,images_only) {
                                     for (trial = 0; trial < exp_stim_array[0].length; trial++) { // equivalent to number of trials per block (exp_stim_array[x][0-n]) - should = num_trials_per_block
                                         count++; // use this to track how many trials have happened in total
                                         i_exp = exp_stim_array[block][trial]; // make this easier to call
+
+                                        if ((count-1) % 640 === 0) { // show this after 640 trials (intended to be halfway point) 
+                                            var exp_break = {
+                                                type: 'image-keyboard-response',
+                                                stimulus: "<p>Take a little break. This break will automatically end after 3 minutes, or you can continue at any time by pressing any key.</p>", 
+                                                trial_duration: 180000,
+                                            }
+                                            exp_timeline.push(exp_break);
+                                        }
 
                                         if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
                                             var exp_cue = {
