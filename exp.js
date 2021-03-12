@@ -1056,7 +1056,7 @@ function make_experiment(id_number,images_only) {
                                         count++; // use this to track how many trials have happened in total
                                         i_exp = exp_stim_array[block][trial]; // make this easier to call
 
-                                        if ((count-1) % 640 === 0) { // show this after 640 trials (intended to be halfway point) 
+                                        if (count > 1 && (count-1) % 640 === 0) { // show this after 640 trials (intended to be halfway point) 
                                             var exp_break = {
                                                 type: 'html-keyboard-response',
                                                 stimulus: "<p>Take a little break. This break will automatically end after 3 minutes, or you can continue at any time by pressing any key.</p>", 
