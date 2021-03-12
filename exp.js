@@ -368,7 +368,7 @@ function make_experiment(id_number,images_only) {
                         instruction_resp,
                         {
                             ...instruction_noresp,
-                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.<br>It will also only stay on the screen for a few seconds if you don't press any key to continue.</p>"
+                            stimulus: "<p>The cue will only appear every once in a while, so please pay attention.<br>It will also only stay on the screen for a few seconds.<br>You can press any key to continue when you're ready, but if you wait too long the experiment will continue anyway.</p>"
                         }, 
                         instruction_resp,
                         {
