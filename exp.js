@@ -852,13 +852,14 @@ function make_experiment(id_number,images_only) {
                     /* first define the parameters */
                     var num_coherence_blocks = 1;
                     var num_trials_per_block = 160;
+                    var modification_angle = 0; // what do you want to modify the coherence thresholding with? e.g. rule_values[0] would be the easy rule 
                     // requires num_cues
                     var coh_point_values =  [0.10, 0.20, 0.25, 0.30, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85];
                     var num_point_tests = 16; 
                     var num_trials_per_block = num_point_tests * coh_point_values.length; // check this is an integer, or it'll break
                     
                     // call stimulus_array_generator function and save output
-                    var coh_stim_array_with_angle_adjustment = coh_stimulus_array_generator_with_angle(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests,rule_values[0]);
+                    var coh_stim_array_with_angle_adjustment = coh_stimulus_array_generator_with_angle(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests,modification_angle);
                     // jsPsych.data.addProperties({
                     //     coh_stim_array: coh_stim_array
                     // });
@@ -1057,7 +1058,7 @@ function make_experiment(id_number,images_only) {
 
                                         if ((count-1) % 640 === 0) { // show this after 640 trials (intended to be halfway point) 
                                             var exp_break = {
-                                                type: 'image-keyboard-response',
+                                                type: 'html-keyboard-response',
                                                 stimulus: "<p>Take a little break. This break will automatically end after 3 minutes, or you can continue at any time by pressing any key.</p>", 
                                                 trial_duration: 180000,
                                             }
