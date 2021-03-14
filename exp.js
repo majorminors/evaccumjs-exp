@@ -968,7 +968,7 @@ function make_experiment(id_number,images_only) {
                         var coh_angle_analysis = {
                             type: "html-keyboard-response",
                             stimulus: "Now we analyse - press any key and please wait",
-                            data: {experiment_part: 'coherence_angle_analysis', coherence_angle_array: 'coh_stim_array_with_angle_adjustment'},
+                            data: {experiment_part: 'coherence_angle_analysis', coherence_angle_array: coh_stim_array_with_angle_adjustment},
                             on_finish: function () {
                                 jsPsych.pauseExperiment();
                                 var payload = {
