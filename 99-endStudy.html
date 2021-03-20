@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>EvAccum</title>
+    	<meta charset="utf-8"/>
+        <!-- pull in axios so we can make post requests -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!-- pull in JATOS resources -->
+        <script src="/assets/javascripts/jatos.js"></script>
+        <!-- pull in jsPsych resources -->
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <!-- some additional styling to make the background black -->
+        <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+
+        // for redirecting to Prolific
+        // remember to change the prolific link below
+
+        jatos.onLoad(function() {
+
+            /* initialise timeline array */
+
+            var timeline = [];
+
+            var redirection_screen = {
+                type: "html-keyboard-response",
+                stimulus: "<p>All done!<br><br>Thanks so much for participating.<br>Feel free to email me if you'd like to know more about what the study was exploring.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish and please wait to be redirected to Prolific.</p>",
+            }
+            timeline.push(redirection_screen);
+
+
+            jsPsych.init({
+                timeline: timeline,
+                on_finish: function() {
+                    var resultJson = jsPsych.data.get().json();
+                    jatos.submitResultData(resultJson)
+                    .then(jatos.endStudyAjax)
+                    .then(() => {
+                        window.location.href = 'https://app.prolific.co/submissions/complete?cc=18112FFE'
+                    });
+                on_close: function(){ // save data if browser is closed
+                    var time = jspsych.totaltime();
+                    jspsych.data.addproperties({
+                        expt_duration: time,
+                    });
+
+                    var resultjson = jspsych.data.get().json(); 
+                    jatos.submitresultdata(resultjson, jatos.endstudy);
+                }
+            });
+        });
+
+    </script>
+</html>
