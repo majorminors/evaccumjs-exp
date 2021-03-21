@@ -34,7 +34,9 @@
         jatos.studySessionData["condition_bin"] = condition_bin;
         console.log('condition_bin :',condition_bin)
 
-        jatos.startNextComponent();
+        var thisSessionData = jatos.studySessionData;
+        var resultJson = {...thisSessionData};
+        jatos.submitResultData(resultJson, jatos.startNextComponent);
     
         ///////////////
         /* functions */

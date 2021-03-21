@@ -244,8 +244,10 @@
             jsPsych.init({
                 timeline: timeline,
                 on_finish: function() {
-                    var resultJson = jsPsych.data.get().json();
-                    jatos.submitResultData(resultJson, jatos.startNextComponent)
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
                 on_close: function(){ // save data if browser is closed
                     var time = jspsych.totaltime();
@@ -253,8 +255,10 @@
                         expt_duration: time,
                     });
 
-                    var resultjson = jspsych.data.get().json(); 
-                    jatos.submitResultData(resultjson, jatos.endstudy);
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.endStudy);
                 }
             });
         });

@@ -241,10 +241,11 @@
                                 hard_dots_rule_data_array: payload_hard
                         });
 
-                        // send the results to jspsych
-                        var resultJson = jsPsych.data.get().json(); // will override any data before with current
+                        // send the results to jatos in case of failure (will override existing)
+                        var thisSessionData = jatos.studySessionData;
+                        var thisExpData = jsPsych.data.get();
+                        var resultJson = {...thisSessionData, ...thisExpData};
                         jatos.submitResultData(resultJson);
-                        console.log('results saved');
                              
                         // POST the data to the psignifit function
                         axios({
@@ -289,15 +290,25 @@
                                 /////////////////////////////////////////
 
                                 rule_values = [90-hard_rule_value, hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
-                            console.log('rule values: ',rule_values);
+                                console.log('rule values: ',rule_values);
                                 jatos.studySessionData["rule_values"] = rule_values;
                                 jsPsych.resumeExperiment();
                             })
                             .catch(function (error) {
+                                // send the results to jatos in case of failure (will override existing)
+                                var thisSessionData = jatos.studySessionData;
+                                var thisExpData = jsPsych.data.get();
+                                var resultJson = {...thisSessionData, ...thisExpData};
+                                jatos.submitResultData(resultJson);
                                 console.log(error);
                             });
                         })
                         .catch(function (error) {
+                            // send the results to jatos in case of failure (will override existing)
+                            var thisSessionData = jatos.studySessionData;
+                            var thisExpData = jsPsych.data.get();
+                            var resultJson = {...thisSessionData, ...thisExpData};
+                            jatos.submitResultData(resultJson);
                             console.log(error);
                         });
 
@@ -311,8 +322,10 @@
             jsPsych.init({
                 timeline: timeline,
                 on_finish: function() {
-                    var resultJson = jsPsych.data.get().json();
-                    jatos.submitResultData(resultJson, jatos.startNextComponent)
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
                 on_close: function(){ // save data if browser is closed
                     var time = jspsych.totaltime();
@@ -320,8 +333,10 @@
                         expt_duration: time,
                     });
 
-                    var resultjson = jspsych.data.get().json(); 
-                    jatos.submitResultData(resultjson, jatos.endstudy);
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.endStudy);
                 }
             });
         });

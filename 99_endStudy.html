@@ -35,7 +35,9 @@
             jsPsych.init({
                 timeline: timeline,
                 on_finish: function() {
-                    var resultJson = jsPsych.data.get().json();
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson)
                     .then(jatos.endStudyAjax)
                     .then(() => {
@@ -48,8 +50,10 @@
                         expt_duration: time,
                     });
 
-                    var resultjson = jspsych.data.get().json(); 
-                    jatos.submitResultData(resultjson, jatos.endstudy);
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.endStudy);
                 }
             });
         });
