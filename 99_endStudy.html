@@ -56,7 +56,7 @@
                     var thisSessionData = jatos.studySessionData;
                     var thisExpData = jsPsych.data.get();
                     var resultJson = {...thisSessionData, ...thisExpData};
-                    jatos.submitResultData(resultJson, jatos.endStudy);
+                    jatos.submitResultData(resultJson, jatos.endStudy); // this may fire as jatos moves off this page, beware!
                 }
             });
         });

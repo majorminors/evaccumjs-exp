@@ -45,7 +45,7 @@
             // timeline on/off switches
             jatos.studySessionData["consent_on"] = 0; // if 1 well get consent, and demographics
             jatos.studySessionData["instructions_on"] = 0; // if 1, will do instructions
-            jatos.studySessionData["skip_coherence"] = 0;
+            jatos.studySessionData["skip_coherence"] = 1;
             jatos.studySessionData["skip_matching"] = 0;
             jatos.studySessionData["skip_coherence_two"] = 0;
 
@@ -149,7 +149,7 @@
                     var thisSessionData = jatos.studySessionData;
                     var thisExpData = jsPsych.data.get();
                     var resultJson = {...thisSessionData, ...thisExpData};
-                    jatos.submitResultData(resultJson, jatos.endStudy);
+                    jatos.submitResultData(resultJson); // this will fire when jatos moves to the next component too, beware!
                 }
             });
         });
