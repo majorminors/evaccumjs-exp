@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>EvAccum</title>
+        <title>EvAccum Done!</title>
     	<meta charset="utf-8"/>
         <!-- pull in axios so we can make post requests -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -41,6 +41,7 @@
                     .then(() => {
                         window.location.href = 'https://app.prolific.co/submissions/complete?cc=18112FFE'
                     });
+                },
                 on_close: function(){ // save data if browser is closed
                     var time = jspsych.totaltime();
                     jspsych.data.addproperties({
