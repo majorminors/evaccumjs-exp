@@ -8,6 +8,9 @@
         <script src="/assets/javascripts/jatos.js"></script>
         <!-- pull in jsPsych resources -->
         <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-survey-multi-choice.js"></script>
         <!-- pull in the preexperiment functions -->
         <script src="tools/consent.js"></script>
         <script src="tools/demographics.js"></script>
@@ -20,14 +23,13 @@
     <script>
 
         jatos.onLoad(function() {
-
             ////////////////
             /* exp set up */
             ////////////////
 
             // for setting up trial pieces
             jatos.studySessionData["dots_fixation"] = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
-            // call with the function `trial_pieces();`
+            // call with the function `trial_pieces();
 
             // for setting up experiment blocks
             jatos.studySessionData["id_number"] = id_number;
@@ -100,15 +102,15 @@
             }
 
             // we might want this number
-            jatos.studySessionData["var"] num_cues = jatos.studySessionData["cues"].length;
+            jatos.studySessionData["num_cues"] = jatos.studySessionData["cues"].length;
 
             // let's gather the paths, so we can preload them with jsPsych
             var cue_image_paths = []; // init the variable
-            for (i = 0; i < cues.length; i++) {
+            for (i = 0; i < jatos.studySessionData["cues"].length; i++) {
                 cue_image_paths[i] = jatos.studySessionData["cues"][i].stimulus;
             }
             var instruction_image_paths = []; // init the variable
-            for (i = 0; i < instruction_imgs.length; i++) {
+            for (i = 0; i < jatos.studySessionData["instruction_imgs"].length; i++) {
                 instruction_image_paths[i] = jatos.studySessionData["instruction_imgs"][i].stimulus;
             }
             jatos.studySessionData["image_paths"] = [cue_image_paths, instruction_image_paths]; 
