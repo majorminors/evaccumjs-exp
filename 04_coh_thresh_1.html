@@ -32,6 +32,9 @@
             var iti_duration = jatos.studySessionData.iti_duration;
             var num_prac_trials = jatos.studySessionData.num_prac_trials;
             var num_prac_blocks = jatos.studySessionData.num_prac_blocks;
+            var cues = jatos.studySessionData.cues;
+            var num_cues = jatos.studySessionData.num_cues;
+            var resp_keys = jatos.studySessionData.resp_keys;
 
             /* initialise timeline array */
 
@@ -257,8 +260,8 @@
                     jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
                 on_close: function(){ // save data if browser is closed
-                    var time = jspsych.totaltime();
-                    jspsych.data.addproperties({
+                    var time = jsPsych.totalTime();
+                    jsPsych.data.addProperties({
                         expt_duration: time,
                     });
 

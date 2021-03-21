@@ -169,8 +169,8 @@
                     jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
                 on_close: function(){ // save data if browser is closed
-                    var time = jspsych.totaltime();
-                    jspsych.data.addproperties({
+                    var time = jsPsych.totalTime();
+                    jsPsych.data.addProperties({
                         expt_duration: time,
                     });
 
