@@ -59,8 +59,8 @@
             if (jatos.studySessionData["skip_matching"]) {
 
                 var rule_values = [10, 80];
-                var hard_rule_value_easy_dots = rule_values[0];
-                var hard_rule_value_hard_dots = rule_values[1];
+
+                jatos.studySessionData["rule_values"] = rule_values;
 
                 console.log('decision values set to: ', rule_values);
 
