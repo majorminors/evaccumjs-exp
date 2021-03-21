@@ -161,6 +161,7 @@
 
             jsPsych.init({
                 timeline: timeline,
+                preload_images: jatos.studySessionData["image_paths"] = [cue_image_paths, instruction_image_paths],
                 on_finish: function() {
                     var thisSessionData = jatos.studySessionData;
                     var thisExpData = jsPsych.data.get();
