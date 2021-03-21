@@ -19,102 +19,102 @@
     <body></body>
     <script>
 
-        ////////////////
-        /* exp set up */
-        ////////////////
-
-        // for setting up trial pieces
-        jatos.studySessionData["dots_fixation"] = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
-        // call with the function `trial_pieces();`
-
-        // for setting up experiment blocks
-        jatos.studySessionData["id_number"] = id_number;
-        jatos.studySessionData["num_prac_trials"] = 5;
-        jatos.studySessionData["num_prac_blocks"] = 1; // I don't think this really does anything yet but it's coded in, so just leave it
-        jatos.studySessionData["iti_range"] = [400,600]; // enter array of two values = [max, min]
-        jatos.studySessionData["iti_duration"] = 300;
-        jatos.studySessionData["cue_max_duration"] = 6500;
-        jatos.studySessionData["cueheight"] = window.innerHeight*0.65; // set the height to be a percentage of the window height
-
-
-        // timeline on/off switches
-        jatos.studySessionData["consent_on"] = 1; // if 1 well get consent, and demographics
-        jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
-        jatos.studySessionData["skip_coherence"] = 0;
-        jatos.studySessionData["skip_matching"] = 0;
-        jatos.studySessionData["skip_coherence_two"] = 0;
-
-        ////////////////////////
-        /* participant set up */
-        ////////////////////////
-
-        var id_number = jatos.studySessionData.id_number;
-        var condition_bin = jatos.studySessionData.condition_bin;
-
-        var unique_id = jsPsych.randomization.randomID(15);
-        jsPsych.data.addProperties({
-            id_number: id_number,
-            unique_id: unique_id
-        });
-                
-        // mappings for conditions
-
-        if (condition_bin == 0) {
-            // the order of these variables are important because we index into them later, so:
-            // if a random number generated between 1 and 100 is even then do this order
-            /* keys */
-            jatos.studySessionData["resp_keys"] = ['o', 'p'];
-            jatos.studySessionData["condition"] = ['op',1];
-            /* cues */
-            jatos.studySessionData["cues"] = [
-                {stimulus: "stimuli/1-3.svg"},
-                {stimulus: "stimuli/2-4.svg"},
-                {stimulus: "stimuli/3-1.svg"},
-                {stimulus: "stimuli/4-2.svg"}
-            ];
-            jatos.studySessionData["instruction_imgs"] = [
-                {stimulus: "stimuli/buttons.svg"},
-                {stimulus: "stimuli/buttons-o.svg"},
-                {stimulus: "stimuli/buttons-p.svg"}
-            ];
-
-        } else if (condition_bin == 1) {
-            // else (if the number is odd) do this order
-            /* keys */
-            jatos.studySessionData["resp_keys"] = ['p', 'o'];
-            jatos.studySessionData["condition"] = ['po',2];
-            /* cues */
-            jatos.studySessionData["cues"] = [
-                {stimulus: "stimuli/3-1.svg"},
-                {stimulus: "stimuli/4-2.svg"},
-                {stimulus: "stimuli/1-3.svg"},
-                {stimulus: "stimuli/2-4.svg"}
-            ];
-            jatos.studySessionData["instruction_imgs"] = [
-                {stimulus: "stimuli/buttons.svg"},
-                {stimulus: "stimuli/buttons-p.svg"},
-                {stimulus: "stimuli/buttons-o.svg"}
-            ];
-        }
-
-        // we might want this number
-        jatos.studySessionData["var"] num_cues = jatos.studySessionData["cues"].length;
-
-        // let's gather the paths, so we can preload them with jsPsych
-        var cue_image_paths = []; // init the variable
-        for (i = 0; i < cues.length; i++) {
-            cue_image_paths[i] = jatos.studySessionData["cues"][i].stimulus;
-        }
-        var instruction_image_paths = []; // init the variable
-        for (i = 0; i < instruction_imgs.length; i++) {
-            instruction_image_paths[i] = jatos.studySessionData["instruction_imgs"][i].stimulus;
-        }
-        jatos.studySessionData["image_paths"] = [cue_image_paths, instruction_image_paths]; 
-
-        // let's get some consent!
-        
         jatos.onLoad(function() {
 
+            ////////////////
+            /* exp set up */
+            ////////////////
+
+            // for setting up trial pieces
+            jatos.studySessionData["dots_fixation"] = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
+            // call with the function `trial_pieces();`
+
+            // for setting up experiment blocks
+            jatos.studySessionData["id_number"] = id_number;
+            jatos.studySessionData["num_prac_trials"] = 5;
+            jatos.studySessionData["num_prac_blocks"] = 1; // I don't think this really does anything yet but it's coded in, so just leave it
+            jatos.studySessionData["iti_range"] = [400,600]; // enter array of two values = [max, min]
+            jatos.studySessionData["iti_duration"] = 300;
+            jatos.studySessionData["cue_max_duration"] = 6500;
+            jatos.studySessionData["cueheight"] = window.innerHeight*0.65; // set the height to be a percentage of the window height
+
+
+            // timeline on/off switches
+            jatos.studySessionData["consent_on"] = 1; // if 1 well get consent, and demographics
+            jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
+            jatos.studySessionData["skip_coherence"] = 0;
+            jatos.studySessionData["skip_matching"] = 0;
+            jatos.studySessionData["skip_coherence_two"] = 0;
+
+            ////////////////////////
+            /* participant set up */
+            ////////////////////////
+
+            var id_number = jatos.studySessionData.id_number;
+            var condition_bin = jatos.studySessionData.condition_bin;
+
+            var unique_id = jsPsych.randomization.randomID(15);
+            jsPsych.data.addProperties({
+                id_number: id_number,
+                unique_id: unique_id
+            });
+                    
+            // mappings for conditions
+
+            if (condition_bin == 0) {
+                // the order of these variables are important because we index into them later, so:
+                // if a random number generated between 1 and 100 is even then do this order
+                /* keys */
+                jatos.studySessionData["resp_keys"] = ['o', 'p'];
+                jatos.studySessionData["condition"] = ['op',1];
+                /* cues */
+                jatos.studySessionData["cues"] = [
+                    {stimulus: "stimuli/1-3.svg"},
+                    {stimulus: "stimuli/2-4.svg"},
+                    {stimulus: "stimuli/3-1.svg"},
+                    {stimulus: "stimuli/4-2.svg"}
+                ];
+                jatos.studySessionData["instruction_imgs"] = [
+                    {stimulus: "stimuli/buttons.svg"},
+                    {stimulus: "stimuli/buttons-o.svg"},
+                    {stimulus: "stimuli/buttons-p.svg"}
+                ];
+
+            } else if (condition_bin == 1) {
+                // else (if the number is odd) do this order
+                /* keys */
+                jatos.studySessionData["resp_keys"] = ['p', 'o'];
+                jatos.studySessionData["condition"] = ['po',2];
+                /* cues */
+                jatos.studySessionData["cues"] = [
+                    {stimulus: "stimuli/3-1.svg"},
+                    {stimulus: "stimuli/4-2.svg"},
+                    {stimulus: "stimuli/1-3.svg"},
+                    {stimulus: "stimuli/2-4.svg"}
+                ];
+                jatos.studySessionData["instruction_imgs"] = [
+                    {stimulus: "stimuli/buttons.svg"},
+                    {stimulus: "stimuli/buttons-p.svg"},
+                    {stimulus: "stimuli/buttons-o.svg"}
+                ];
+            }
+
+            // we might want this number
+            jatos.studySessionData["var"] num_cues = jatos.studySessionData["cues"].length;
+
+            // let's gather the paths, so we can preload them with jsPsych
+            var cue_image_paths = []; // init the variable
+            for (i = 0; i < cues.length; i++) {
+                cue_image_paths[i] = jatos.studySessionData["cues"][i].stimulus;
+            }
+            var instruction_image_paths = []; // init the variable
+            for (i = 0; i < instruction_imgs.length; i++) {
+                instruction_image_paths[i] = jatos.studySessionData["instruction_imgs"][i].stimulus;
+            }
+            jatos.studySessionData["image_paths"] = [cue_image_paths, instruction_image_paths]; 
+
+            // let's get some consent!
+        
             /* initialise timeline array */
             var timeline = [];
             if (jatos.studySessionData["consent_on"] === 1) {
