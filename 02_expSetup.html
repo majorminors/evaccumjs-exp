@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>EvAccum</title>
+        <title>EvAccum Experiment Setup</title>
     	<meta charset="utf-8"/>
         <!-- pull in axios so we can make post requests -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -11,6 +11,7 @@
         <!-- pull in the preexperiment functions -->
         <script src="tools/consent.js"></script>
         <script src="tools/demographics.js"></script>
+        <script src="tools/trial_pieces.js"></script>
         <!-- some additional styling to make the background black -->
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
         <style></style>
@@ -22,19 +23,26 @@
         /* exp set up */
         ////////////////
 
-        jatos.studySessionData["id_number"] = id_number;
-        jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions, get consent, and demographics
+        // for setting up trial pieces
         jatos.studySessionData["dots_fixation"] = 2; // if 0 just a fixation, if 1 a fixation with dots, 2 is fixation with dots and a space before hand
+        // call with the function `trial_pieces();`
+
+        // for setting up experiment blocks
+        jatos.studySessionData["id_number"] = id_number;
         jatos.studySessionData["num_prac_trials"] = 5;
         jatos.studySessionData["num_prac_blocks"] = 1; // I don't think this really does anything yet but it's coded in, so just leave it
         jatos.studySessionData["iti_range"] = [400,600]; // enter array of two values = [max, min]
         jatos.studySessionData["iti_duration"] = 300;
         jatos.studySessionData["cue_max_duration"] = 6500;
+        jatos.studySessionData["cueheight"] = window.innerHeight*0.65; // set the height to be a percentage of the window height
+
+
+        // timeline on/off switches
+        jatos.studySessionData["consent_on"] = 1; // if 1 well get consent, and demographics
+        jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
         jatos.studySessionData["skip_coherence"] = 0;
         jatos.studySessionData["skip_matching"] = 0;
         jatos.studySessionData["skip_coherence_with_angle"] = 0;
-
-        jatos.studySessionData["cueheight"] = window.innerHeight*0.65; // set the height to be a percentage of the window height
 
         ////////////////////////
         /* participant set up */
@@ -109,7 +117,7 @@
 
             /* initialise timeline array */
             var timeline = [];
-            if (jatos.studySessionData["instructions_on"] === 1) {
+            if (jatos.studySessionData["consent_on"] === 1) {
                 get_consent(timeline); // do the consent function
                 get_demographics(timeline); // do the demographics function
             }
