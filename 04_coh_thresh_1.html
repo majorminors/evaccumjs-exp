@@ -55,13 +55,17 @@
 	if (jatos.studySessionData["skip_coherence"]) {
 
             var coherence_values = [0.8, 0.3];
+
+            jatos.studySessionData["coherence_values"] = coherence_values;
+
+            console.log('coherence values set to: ',coherence_values);
+
             timeline.push(
                 {
                     type: "html-keyboard-response",
                     stimulus: "<p>skipping coherence thresholding<br>check console for what we set the coherence values to</p>",
                 },
             );
-            console.log('coherence values set to: ',coherence_values);
 
 	} else {
 
