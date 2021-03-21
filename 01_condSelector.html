@@ -29,8 +29,9 @@
             
             jatos.studySessionData["id_number"] = id_number;
 
+            // bin participants into conditions
             if (id_number > 1) {
-                condition_bin = id_number % 2; 
+                condition_bin = id_number % num_conditions; 
             } else if (id_number == 1) {
                 condition_bin = 1;
             } else if (id_number == 0) {
