@@ -11,6 +11,7 @@
         <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-survey-multi-choice.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
         <!-- pull in the preexperiment functions -->
         <script src="tools/consent.js"></script>
         <script src="tools/demographics.js"></script>
@@ -43,7 +44,7 @@
 
             // timeline on/off switches
             jatos.studySessionData["consent_on"] = 0; // if 1 well get consent, and demographics
-            jatos.studySessionData["instructions_on"] = 1; // if 1, will do instructions
+            jatos.studySessionData["instructions_on"] = 0; // if 1, will do instructions
             jatos.studySessionData["skip_coherence"] = 0;
             jatos.studySessionData["skip_matching"] = 0;
             jatos.studySessionData["skip_coherence_two"] = 0;
@@ -122,29 +123,35 @@
             if (jatos.studySessionData["consent_on"] === 1) {
                 get_consent(timeline); // do the consent function
                 get_demographics(timeline); // do the demographics function
-                jsPsych.init({
-                    timeline: timeline,
-                    on_finish: function() {
-                        var thisSessionData = jatos.studySessionData;
-                        var thisExpData = jsPsych.data.get();
-                        var resultJson = {...thisSessionData, ...thisExpData};
-                        jatos.submitResultData(resultJson, jatos.startNextComponent);
-                    },
-                    on_close: function(){ // save data if browser is closed
-                        var time = jspsych.totaltime();
-                        jspsych.data.addproperties({
-                            expt_duration: time,
-                        });
-
-                        var thisSessionData = jatos.studySessionData;
-                        var thisExpData = jsPsych.data.get();
-                        var resultJson = {...thisSessionData, ...thisExpData};
-                        jatos.submitResultData(resultJson, jatos.endStudy);
-                    }
-                });
             } else {
-                jatos.startNextComponent();
+                timeline.push(
+                    {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>skipping consent</p>",
+                    },
+                );
             }
+
+            jsPsych.init({
+                timeline: timeline,
+                on_finish: function() {
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.startNextComponent);
+                },
+                on_close: function(){ // save data if browser is closed
+                    var time = jspsych.totaltime();
+                    jspsych.data.addproperties({
+                        expt_duration: time,
+                    });
+
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = jsPsych.data.get();
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.endStudy);
+                }
+            });
         });
 
     </script>
