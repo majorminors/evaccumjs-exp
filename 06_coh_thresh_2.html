@@ -33,6 +33,9 @@
             var num_prac_trials = jatos.studySessionData.num_prac_trials;
             var num_prac_blocks = jatos.studySessionData.num_prac_blocks;
             var rule_values = jatos.studySessionData.rule_values;
+            var cues = jatos.studySessionData.cues;
+            var num_cues = jatos.studySessionData.num_cues;
+            var resp_keys = jatos.studySessionData.resp_keys;
 
             /* initialise timeline array */
 
@@ -54,7 +57,7 @@
             // call stimulus_array_generator function and save output
             var coh_stim_array_with_angle_adjustment = coh_stimulus_array_generator_with_angle(num_coherence_blocks, num_trials_per_block, num_cues, coh_point_values, num_point_tests,modification_angle);
 
-            if (jatos.studySessionData["skip_coherence"]) {
+            if (jatos.studySessionData["skip_coherence_two"]) {
 
                 var updated_coherence_values = [0.8, 0.3];
 
