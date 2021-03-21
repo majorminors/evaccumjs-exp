@@ -30,6 +30,10 @@
             var id_number = jatos.studySessionData.id_number;
             var iti_range = jatos.studySessionData.iti_range;
             var iti_duration = jatos.studySessionData.iti_duration;
+            var resp_keys = jatos.studySessionData.resp_keys;
+            var instruction_imgs = jatos.studySessionData.instruction_imgs;
+            var dots_fixation = jatos.studySessionData.dots_fixation; // required for a specific aspect of the instructions
+            var cues = jatos.studySessionData.cues;
 
             /* initialise timeline array */
 
@@ -243,7 +247,7 @@
 
             jsPsych.init({
                 timeline: timeline,
-                preload_images: jatos.studySessionData["image_paths"] = [cue_image_paths, instruction_image_paths],
+                preload_images: jatos.studySessionData["image_paths"],
                 on_finish: function() {
                     var thisSessionData = jatos.studySessionData;
                     var thisExpData = jsPsych.data.get();

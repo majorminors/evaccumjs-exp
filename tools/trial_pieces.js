@@ -1,6 +1,12 @@
 function trial_pieces(){
     // requires from JATOS studySessionData:
     // - dots_fixation
+    // - iti_duration
+    // - iti_range
+
+
+    var iti_range = jatos.studySessionData.iti_range;
+    var iti_duration = jatos.studySessionData.iti_duration;
 
     // create a reusable fixation
     if (jatos.studySessionData["dots_fixation"] == 0) {
