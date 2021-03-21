@@ -223,6 +223,11 @@
                         console.log(response);
                         coherence_values = response.data;
                         console.log(coherence_values);
+
+                        /////////////////////////////////////////
+                        /* this is where we collect the values */
+                        /////////////////////////////////////////
+
                         jatos.studySessionData["coherence_values"] = coherence_values;
                         jsPsych.resumeExperiment();
                     })
