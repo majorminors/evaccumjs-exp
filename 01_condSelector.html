@@ -14,11 +14,20 @@
 
             var num_conditions = 2;
             var num_condition_repeats = 25;
-            var test_condition = [0,99]; // if 1, uses the second number in the array as the id_number
+            var test_condition = [0,99]; // if 1, uses the second number in the array as the id_number to test condition binning
 
         jatos.onLoad(function() {
 
+            // get the prolific ID if there is one
+            if (jatos.urlQueryParameters.hasOwnProperty('PROLIFIC_ID')) {
+                jatos.studySessionData["app_identifier_string"] = jatos.urlQueryParameters.PROLIFIC_ID;
+            } else {
+                jatos.studySessionData["app_identifier_string"] = 'none_set';
+            }
+
+
             // will need to run this twice if first run on server (see fail condition)
+            console.log("if it fails because conditions are undefined, you need to run it again - it has now set the batch session data");
             initBatchConditions(num_conditions,num_condition_repeats);
 
             if (test_condition[0] == 1) {
