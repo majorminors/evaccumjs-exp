@@ -255,7 +255,7 @@
                 preload_images: jatos.studySessionData["image_paths"],
                 on_finish: function() {
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
@@ -266,7 +266,7 @@
                     });
 
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson); // this will fire when jatos moves to the next component too, beware!
                 }

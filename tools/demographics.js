@@ -4,7 +4,7 @@ function get_demographics(timeline){
         type: 'survey-text',
         questions: [
             {prompt: '<scan>How old are you?</scan>',rows: 1, columns: 10,name: 'age',required: true},
-            {prompt: '<scan>What is your Prolific ID?</scan>',rows: 1, columns: 10,name: 'prolificID', required: true},
+            {prompt: '<scan>What is your Prolific ID? If you cannot remember, write something here that I can use to identify you.</scan>',rows: 1, columns: 10,name: 'prolificID', required: true},
         ],
         button_label: ['->'],
     }

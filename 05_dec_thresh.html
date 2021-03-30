@@ -58,7 +58,7 @@
 
             if (jatos.studySessionData["skip_matching"]) {
 
-                var rule_values = [10, 80];
+                var rule_values = [25.13, 64.87];
 
                 jatos.studySessionData["rule_values"] = rule_values;
 
@@ -246,7 +246,7 @@
 
                         // send the results to jatos in case of failure (will override existing)
                         var thisSessionData = jatos.studySessionData;
-                        var thisExpData = jsPsych.data.get();
+                        var thisExpData = JSON.parse(jsPsych.data.get().json());
                         var resultJson = {...thisSessionData, ...thisExpData};
                         jatos.submitResultData(resultJson);
                              
@@ -300,7 +300,7 @@
                             .catch(function (error) {
                                 // send the results to jatos in case of failure (will override existing)
                                 var thisSessionData = jatos.studySessionData;
-                                var thisExpData = jsPsych.data.get();
+                                var thisExpData = JSON.parse(jsPsych.data.get().json());
                                 var resultJson = {...thisSessionData, ...thisExpData};
                                 jatos.submitResultData(resultJson);
                                 console.log(error);
@@ -309,7 +309,7 @@
                         .catch(function (error) {
                             // send the results to jatos in case of failure (will override existing)
                             var thisSessionData = jatos.studySessionData;
-                            var thisExpData = jsPsych.data.get();
+                            var thisExpData = JSON.parse(jsPsych.data.get().json());
                             var resultJson = {...thisSessionData, ...thisExpData};
                             jatos.submitResultData(resultJson);
                             console.log(error);
@@ -327,7 +327,7 @@
                 preload_images: jatos.studySessionData["image_paths"],
                 on_finish: function() {
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
@@ -338,7 +338,7 @@
                     });
 
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson); // this will fire when jatos moves to the next component too, beware!
                 }

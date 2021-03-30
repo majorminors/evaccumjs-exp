@@ -59,7 +59,7 @@
 
             if (jatos.studySessionData["skip_coherence_two"]) {
 
-                var updated_coherence_values = [0.8, 0.3];
+                var updated_coherence_values = [0.475, 0.334];
 
                 jatos.studySessionData["updated_coherence_values"] = updated_coherence_values;
 
@@ -209,7 +209,7 @@
 
                         // send the results to jatos in case of failure (will override existing)
                         var thisSessionData = jatos.studySessionData;
-                        var thisExpData = jsPsych.data.get();
+                        var thisExpData = JSON.parse(jsPsych.data.get().json());
                         var resultJson = {...thisSessionData, ...thisExpData};
                         jatos.submitResultData(resultJson);
                         console.log('results saved');
@@ -239,7 +239,7 @@
                         .catch(function (error) {
                             // send the results to jatos in case of failure (will override existing)
                             var thisSessionData = jatos.studySessionData;
-                            var thisExpData = jsPsych.data.get();
+                            var thisExpData = JSON.parse(jsPsych.data.get().json());
                             var resultJson = {...thisSessionData, ...thisExpData};
                             jatos.submitResultData(resultJson);
                             console.log(error);
@@ -255,7 +255,7 @@
                 preload_images: jatos.studySessionData["image_paths"],
                 on_finish: function() {
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson, jatos.startNextComponent);
                 },
@@ -266,7 +266,7 @@
                     });
 
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson); // this will fire when jatos moves to the next component too, beware!
                 }

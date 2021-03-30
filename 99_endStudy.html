@@ -39,7 +39,7 @@
                 timeline: timeline,
                 on_finish: function() {
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson)
                     .then(jatos.endStudyAjax)
@@ -54,7 +54,7 @@
                     });
 
                     var thisSessionData = jatos.studySessionData;
-                    var thisExpData = jsPsych.data.get();
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson, jatos.endStudy); // this may fire as jatos moves off this page, beware!
                 }

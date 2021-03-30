@@ -19,8 +19,8 @@
         jatos.onLoad(function() {
 
             // get the prolific ID if there is one
-            if (jatos.urlQueryParameters.hasOwnProperty('PROLIFIC_ID')) {
-                jatos.studySessionData["app_identifier_string"] = jatos.urlQueryParameters.PROLIFIC_ID;
+            if (jatos.urlQueryParameters.hasOwnProperty('PROLIFIC_PID')) {
+                jatos.studySessionData["app_identifier_string"] = jatos.urlQueryParameters.PROLIFIC_PID;
             } else {
                 jatos.studySessionData["app_identifier_string"] = 'none_set';
             }
