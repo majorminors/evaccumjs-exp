@@ -59,7 +59,7 @@
 
             if (jatos.studySessionData["skip_coherence_two"]) {
 
-                var updated_coherence_values = [0.475, 0.334];
+                var updated_coherence_values = [0.874, 0.685];
 
                 jatos.studySessionData["updated_coherence_values"] = updated_coherence_values;
 
@@ -93,6 +93,7 @@
                         "<p>We are testing you again on different levels of coherence (the number of dots moving in one direction).</p>"+
                         "<p>This will take about 5 minutes.</p><br>"+
                         "<br><p>Press any key to continue.</p>",
+		    data: {coherence_angle_array: coh_stim_array_with_angle_adjustment},
                 }
                 timeline.push(coh_angle_start_screen);
 
@@ -190,7 +191,7 @@
                 var coh_angle_analysis = {
                     type: "html-keyboard-response",
                     stimulus: "Now we analyse - press any key and please wait",
-                    data: {experiment_part: 'coherence_angle_analysis', coherence_angle_array: coh_stim_array_with_angle_adjustment},
+                    data: {experiment_part: 'coherence_angle_analysis'},
                     on_finish: function () {
                         jsPsych.pauseExperiment();
                         var payload = {
