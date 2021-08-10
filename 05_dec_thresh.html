@@ -1,0 +1,349 @@
+<html>
+    <head>
+        <title>EvAccum Matching Thresholding</title>
+    	<meta charset="utf-8"/>
+        <!-- pull in axios so we can make post requests -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!-- pull in JATOS resources -->
+        <script src="/assets/javascripts/jatos.js"></script>
+        <!-- pull in jsPsych resources -->
+        <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
+        <!-- pull in experiment resources -->
+        <script src="tools/trial_pieces.js"></script>
+        <script src="tools/credentials.js"></script>
+    	<script src="tools/rule_stimulus_array_generator.js"></script>
+        <!-- some additional styling to make the background black -->
+        <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+
+        jatos.onLoad(function() {
+
+            var fixation = trial_pieces();
+            var cueheight = jatos.studySessionData.cueheight;
+            var cue_max_duration = jatos.studySessionData.cue_max_duration;
+            var id_number = jatos.studySessionData.id_number;
+            var iti_range = jatos.studySessionData.iti_range;
+            var iti_duration = jatos.studySessionData.iti_duration;
+            var num_prac_trials = jatos.studySessionData.num_prac_trials;
+            var num_prac_blocks = jatos.studySessionData.num_prac_blocks;
+            var coherence_values = jatos.studySessionData.coherence_values;
+            var cues = jatos.studySessionData.cues;
+            var num_cues = jatos.studySessionData.num_cues;
+            var resp_keys = jatos.studySessionData.resp_keys;
+
+            /* initialise timeline array */
+
+            var timeline = [];
+
+            //////////////////
+            /* rule testing */
+            //////////////////
+
+            /* first define parameters */
+            var num_trials_per_block = 160;
+            // requires num_cues
+            var num_rule_blocks = 2; // one for each coherence level
+            var rule_point_values =  [5,25,40,45,60,65,70,75,80,85];
+            var num_point_tests = 16; 
+            var num_trials_per_block = num_point_tests * rule_point_values.length; // check this is an integer, or it'll break
+
+            // call stimulus_array_generator function
+            var rule_stim_array = rule_stimulus_array_generator(num_rule_blocks, num_trials_per_block, num_cues, rule_point_values, num_point_tests);
+
+            if (jatos.studySessionData["skip_matching"]) {
+
+                var rule_values = [29.0, 60.99];
+
+                jatos.studySessionData["rule_values"] = rule_values;
+
+                console.log('decision values set to: ', rule_values);
+
+                timeline.push(
+                    {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>skipping decision thresholding<br>check console for what we set the values to</p>",
+                    },
+                );
+
+            } else {
+
+                /* generate rule test procedure */
+                var block;
+                var trial;
+                var count = 0;
+                var turn_off_block_indicator = 0;
+                // for practice block
+                var prac_count = 0; // init practice counter
+                var prac_on = 1; // init a switch to turn practice off
+                var last_cue = -1; // set this to the number prior to the first cue index so we can manage the amount of practice by repeating cues
+                var rule_prac_timeline = [];
+                // for test block
+                var rule_test_timeline = [];
+                
+                // let them know we're onto the next test
+                var rule_start_screen = {
+                    type: "html-keyboard-response",
+                    stimulus: "<p>This is the second test.</p><br>"+
+                        "<p>We are testing you on different directions now.</p>"+
+                        "<p>This will take about 10 minutes.</p><br>"+
+                        "<br><p>Press any key to begin.</p>",
+                    data: { rule_stim_array: rule_stim_array }
+                }
+                timeline.push(rule_start_screen);
+
+                // now we're going to build two timelines - one for practice and one for the test
+                for (block = 0; block < rule_stim_array.length; block++) { // equivalent to number of blocks (rule_stim_array[0-n]) - should = num_blocks
+                    for (trial = 0; trial < rule_stim_array[0].length; trial++) { // equivalent to number of trials per block (rule_stim_array[x][0-n]) - should = num_trials_per_block
+                        count++; // use this to track how many trials have happened in total
+                        i_rule = rule_stim_array[block][trial]; // make this easier to call
+                        if (count === 1) {
+                            var rule_prac_screen ={
+                                type: "html-keyboard-response",
+                                stimulus: "<p>Let's do a bit of practice first.<br><br>Press any key to begin.</p>"
+                            }
+                            rule_prac_timeline.push(rule_prac_screen);
+
+                            var rule_test_screen = {
+                                type: "html-keyboard-response",
+                                stimulus: "<p>Good! Now we'll begin the test.<br><br>Press any key to begin.</p>"
+                            }
+                            rule_test_timeline.push(rule_test_screen);
+                        }
+
+                        // indicate at start of each block what kind of dots to expect (easy or hard) for the test
+                        if (block === 0 && count === 1) {
+                            var block_indicator = {
+                                type: "html-keyboard-response",
+                                stimulus: "<p> first with easy dots </p>",
+                                choices: jsPsych.NO_KEYS,
+                                trial_duration: 1000
+                            }
+                            rule_test_timeline.push(block_indicator);
+                        } else if (block === 1 && turn_off_block_indicator === 0) {
+                            turn_off_block_indicator = 1;
+                            var block_indicator = {
+                                type: "html-keyboard-response",
+                                stimulus: "<p> now with harder dots </p>",
+                                choices: jsPsych.NO_KEYS,
+                                trial_duration: 1000
+                            }
+                            rule_test_timeline.push(block_indicator);
+                        }
+
+                        if (count === 1 || (count-1) % 8 === 0) { // show this on the first trial, then every 8 - this assumes that a cue change happens after a number divisible by 8 otherwise your participant is going to have dots corresponding to a cue they haven't seen yet 
+                            var rule_cue = {
+                                type: 'image-keyboard-response',
+                                stimulus: cues[i_rule.cue_dir-1].stimulus, // -1 because cue_dir goes from 1-4 and javascript indexes from 0-3
+                                stimulus_height: cueheight,
+                                trial_duration: cue_max_duration,
+                                choices: resp_keys,
+                            }
+                            this_cue = cues[i_rule.cue_dir-1].stimulus; // get this cue number so we can check for repeating cues
+                            if (block <= num_prac_blocks && this_cue != last_cue) {
+                                prac_count = 1; // restart our practice counter (this is iterated on last trial of this experiment procedure)
+                                rule_prac_timeline.push({...rule_cue, data: {experiment_part: 'ruleprac_cue'}});
+                                last_cue = this_cue; // save this cue to check against later
+                            } else if (block > num_prac_blocks && this_cue == last_cue) {
+                                prac_on = 0; // turn practice off
+                            }
+                            rule_test_timeline.push({...rule_cue, data: {experiment_part: 'ruletest_cue'}});
+                        }
+
+                        if (prac_count <= num_prac_trials && prac_on) {
+                            rule_prac_timeline.push({...fixation, data: {experiment_part: 'ruleprac_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
+                        }
+                        rule_test_timeline.push({...fixation, data: {experiment_part: 'ruletest_fixation', index_value: block}}); // lets index the block value here, so we can use it to indicate coherence
+
+                        var rule_rdk = {
+                            type: 'rdk', 
+                            background_color: "black",
+                            dot_color: "white", 
+                            aperture_type: 1,
+                            fixation_cross: true,
+                            fixation_cross_color: "white", 
+                            fixation_cross_thickness: 6,
+                            post_trial_gap: 0, 
+                            number_of_dots: 100,
+                            response_ends_trial: false,
+                            coherence: function () {
+                                return coherence_values[jsPsych.data.get().last(1).values()[0].index_value]; // we pull the block value from the data in the last trial block to index into coherence_values
+                            },
+                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                            choices: resp_keys,
+                            correct_choice: resp_keys[i_rule.match_arrow-1],
+                            coherent_direction: i_rule.coh_direction_deg_rdk, 
+                            trial_duration: 1500,
+                        }
+                        if (prac_count <= num_prac_trials && prac_on) {
+                            rule_prac_timeline.push({...rule_rdk, data: {experiment_part: 'ruleprac_rdk', rule_code: i_rule.rule_point_code}});
+                        }
+                        if (block == 0) {
+                            rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk_easy', rule_code: i_rule.rule_point_code}});
+                        } else if (block == 1) {
+                            rule_test_timeline.push({...rule_rdk, data: {experiment_part: 'ruletest_rdk_hard', rule_code: i_rule.rule_point_code}});
+                        }
+
+                        var rule_feedback = { // you can use this for testing, otherwise comment out
+                            type: "html-keyboard-response",
+                            stimulus: function() {
+                                var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+                                if (last_rdk_accuracy) { // if true (data.correct is boolean)
+                                    return "<p>correct</p>";
+                                } else { // else if false
+                                    return "<p>incorrect</p>";
+                                }
+                            },
+                            choices: jsPsych.NO_KEYS,
+                            trial_duration: 300,
+                        }
+                        if (prac_count <= num_prac_trials && prac_on) {
+                            prac_count++; // iterate practice counter
+                            rule_prac_timeline.push({...rule_feedback, data: {experiment_part: 'ruleprac_feedback'}});
+                        }
+                        rule_test_timeline.push({...rule_feedback, data: {experiment_part: 'ruletest_feedback'}});
+                    }
+                }
+                // push those two blocks now by spreading them into timeline
+                timeline.push(...rule_prac_timeline,...rule_test_timeline);
+
+                /* collecting data for analysis */
+                var rule_analysis = {
+                    type: "html-keyboard-response",
+                    stimulus: "Now we analyse - press any key and please wait",
+                    data: {experiment_part: 'rule_analysis'},
+                    on_finish: function () {
+                        jsPsych.pauseExperiment();
+                        var payload_easy = {
+                            data_array: []
+                        };
+                        for (i = 0; i < rule_point_values.length; i++) {
+                            tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', rule_code: i+1}).count();
+                            tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_easy', correct: 1, rule_code: i+1}).count();
+                            payload_easy['data_array'].push([-rule_point_values[i],tmp_corr,tmp_trls]); // negative because python psignifit is broken for values that get harder as bigger
+                        }
+                        console.log("results to post: ", payload_easy['data_array']);
+                        var payload_hard = {
+                            data_array: []
+                        };
+                        for (i = 0; i < rule_point_values.length; i++) {
+                            tmp_trls = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', rule_code: i+1}).count();
+                            tmp_corr = jsPsych.data.get().filter({experiment_part: 'ruletest_rdk_hard', correct: 1, rule_code: i+1}).count();
+                            payload_hard['data_array'].push([-rule_point_values[i],tmp_corr,tmp_trls]);
+                        }
+                        console.log("results to post: ", payload_hard['data_array']);
+                        
+                        jsPsych.data.addProperties({
+                                easy_dots_rule_data_array: payload_easy,
+                                hard_dots_rule_data_array: payload_hard
+                        });
+
+                        // send the results to jatos in case of failure (will override existing)
+                        var thisSessionData = jatos.studySessionData;
+                        var thisExpData = JSON.parse(jsPsych.data.get().json());
+                        var resultJson = {...thisSessionData, ...thisExpData};
+                        jatos.submitResultData(resultJson);
+                             
+                        // POST the data to the psignifit function
+                        axios({
+                            url: credentials.url.concat(credentials.rule),
+                            method: 'post',
+                                data: payload_easy,
+                                auth: {
+                                    username: credentials.username,
+                                    password: credentials.password
+                                }
+                        })
+                        .then(function (response) {
+                            console.log(response);
+                            hard_rule_value_easy_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
+                            console.log(hard_rule_value_easy_dots);
+                            // POST the data again to the psignifit function
+                            axios({
+                                url: credentials.url.concat(credentials.rule),
+                                method: 'post',
+                                    data: payload_hard,
+                                    auth: {
+                                        username: credentials.username,
+                                        password: credentials.password
+                                    }
+                            })
+                            .then(function (response) {
+                                console.log(response);
+                                hard_rule_value_hard_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
+                                console.log(hard_rule_value_hard_dots);
+                                // lets average the rules, to get it off the floor
+                                hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
+                                // since easy rule is the inverse of the hard rule, lets cap it
+                                if (hard_rule_value <= 50) {
+                                    jsPsych.data.addProperties({
+                                        participant_maxed_match_threshold: hard_rule_value
+                                    });
+                                    hard_rule_value = 50;
+                                }
+
+                                /////////////////////////////////////////
+                                /* this is where we collect the values */
+                                /////////////////////////////////////////
+
+                                rule_values = [90-hard_rule_value, hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
+                                console.log('rule values: ',rule_values);
+                                jatos.studySessionData["rule_values"] = rule_values;
+                                jsPsych.resumeExperiment();
+                            })
+                            .catch(function (error) {
+                                // send the results to jatos in case of failure (will override existing)
+                                var thisSessionData = jatos.studySessionData;
+                                var thisExpData = JSON.parse(jsPsych.data.get().json());
+                                var resultJson = {...thisSessionData, ...thisExpData};
+                                jatos.submitResultData(resultJson);
+                                console.log(error);
+                            });
+                        })
+                        .catch(function (error) {
+                            // send the results to jatos in case of failure (will override existing)
+                            var thisSessionData = jatos.studySessionData;
+                            var thisExpData = JSON.parse(jsPsych.data.get().json());
+                            var resultJson = {...thisSessionData, ...thisExpData};
+                            jatos.submitResultData(resultJson);
+                            console.log(error);
+                        });
+
+
+                    }
+                }
+                timeline.push(rule_analysis);
+            }
+    
+
+            jsPsych.init({
+                timeline: timeline,
+                preload_images: jatos.studySessionData["image_paths"],
+                on_finish: function() {
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson, jatos.startNextComponent);
+                },
+                on_close: function(){ // save data if browser is closed
+                    var time = jsPsych.totalTime();
+                    jsPsych.data.addProperties({
+                        expt_duration: time,
+                    });
+
+                    var thisSessionData = jatos.studySessionData;
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
+                    var resultJson = {...thisSessionData, ...thisExpData};
+                    jatos.submitResultData(resultJson); // this will fire when jatos moves to the next component too, beware!
+                }
+            });
+        });
+
+    </script>
+</html>

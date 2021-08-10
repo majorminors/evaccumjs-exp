@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Evaccum Condition Selector</title>
+    	<meta charset="utf-8"/>
+        <!-- pull in JATOS resources -->
+        <script src="/assets/javascripts/jatos.js"></script>
+        <style></style>
+    </head>
+    <body></body>
+    <script>
+        
+            // will generate condition bins, the condition for this participant and move on to next component
+
+            var num_conditions = 2;
+            var num_condition_repeats = 25;
+            var test_condition = [0,99]; // if 1, uses the second number in the array as the id_number to test condition binning
+
+        jatos.onLoad(function() {
+
+            // get the prolific ID if there is one
+            if (jatos.urlQueryParameters.hasOwnProperty('PROLIFIC_PID')) {
+                jatos.studySessionData["app_identifier_string"] = jatos.urlQueryParameters.PROLIFIC_PID;
+            } else {
+                jatos.studySessionData["app_identifier_string"] = 'none_set';
+            }
+
+
+            // will need to run this twice if first run on server (see fail condition)
+            console.log("if it fails because conditions are undefined, you need to run it again - it has now set the batch session data");
+            initBatchConditions(num_conditions,num_condition_repeats);
+
+            if (test_condition[0] == 1) {
+                var id_number = test_condition[1];
+            } else {
+                var id_number = getNextCondition();
+            }
+            
+            jatos.studySessionData["id_number"] = id_number;
+
+            // bin participants into conditions
+            if (id_number > 1) {
+                condition_bin = id_number % num_conditions; 
+            } else if (id_number == 1) {
+                condition_bin = 1;
+            } else if (id_number == 0) {
+                condition_bin = 0;
+            } else {
+                console.log('id number: ',id_number);
+                throw 'invalid id_number - must be 0 or greater';
+            }
+            jatos.studySessionData["condition_bin"] = condition_bin;
+            console.log('condition_bin :',condition_bin)
+
+            var thisSessionData = jatos.studySessionData;
+            var resultJson = {...thisSessionData};
+            jatos.submitResultData(resultJson, jatos.startNextComponent);
+        
+            ///////////////
+            /* functions */
+            ///////////////
+
+            function initBatchConditions(num_conditions,conditionCounts) {
+                // Check if 'conditions' are not already in the batch session
+                if (!jatos.batchSession.defined("/conditions")) {
+                    // Get the count of each condition
+                    var conditions = [];
+                    // Fill the array with conditions according to the counters
+                    for (this_cond = 0; this_cond < num_conditions; this_cond++) {
+                        fillArrayWithValues(conditions, this_cond, conditionCounts)
+                    }
+                    // Put the conditions in the batch session
+                    jatos.batchSession.set("conditions", conditions)
+                    // may crash if this fail condition is triggered, but will have generated the conditions, so run this again and it should all work
+                        .fail(initBatchConditions); // If it fails: try again
+                }
+            }
+            function fillArrayWithValues(array, value, count) {
+                for (var i = 0; i < count; i++) {
+                    array.push(value);
+                }
+            }
+            function getNextCondition() {
+                // Get the still available conditions from the Batch Session
+                var conditions = jatos.batchSession.get("conditions");
+                // If no more conditions throw an error
+                if (conditions.length == 0) {
+                    throw "Max number of workers reached";
+                }
+                // Get a random condition
+                var randomIndex = Math.floor(Math.random() * conditions.length);
+                var randomCondition = conditions[randomIndex];
+                // Delete the choosen condition from the array
+                conditions.splice(randomIndex, 1);
+                // Set the changed conditions array in the Batch Session.
+                jatos.batchSession.set("conditions", conditions).fail(function () {
+                    randomCondition = getNextCondition(); // If it fails: try again
+                });
+                return randomCondition;
+            }
+
+        });
+    </script>
+</html>
