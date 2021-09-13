@@ -124,6 +124,16 @@
                     instruction_resp,
                     {...instruction_answers, stimulus: instruction_imgs[0].stimulus, trial_duration: 2000},
                     {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>Let's test your keyboard is compatible.<br>Press 'p' to continue.<br>If this doesn't work, contact the researcher!<br>We can't continue without a working 'p' key!</p>",
+                        choices: "p",
+                    },
+                    {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>Now press 'o' to continue.<br>If this doesn't work, contact the researcher!<br>We can't continue without a working 'o' key!</p>",
+                        choices: "o",
+                    },
+                    {
                         ...instruction_noresp,
                         stimulus: "<p>Any time you see a cue, or moving dots, use these keys to respond.<br>Now let me show you what a cue looks like.</p>"
                     },
