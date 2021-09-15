@@ -7,6 +7,8 @@ function trial_pieces(){
 
     var iti_range = jatos.studySessionData.iti_range;
     var iti_duration = jatos.studySessionData.iti_duration;
+    var cueheight = jatos.studySessionData.cueheight;
+    var dotradius = jatos.studySessionData.dotradius;
 
     // create a reusable fixation
     if (jatos.studySessionData["dots_fixation"] == 0) {
@@ -36,6 +38,8 @@ function trial_pieces(){
             type: 'rdk',
             background_color: "black",
             dot_color: "white", 
+            dot_radius: dotradius,
+            aperture_width: cueheight,
             aperture_type: 1,
             fixation_cross: true,
             fixation_cross_color: "lightpink", 
@@ -71,6 +75,8 @@ function trial_pieces(){
                     type: 'rdk',
                     background_color: "black",
                     dot_color: "white", 
+                    dot_radius: dotradius,
+                    aperture_width: cueheight,
                     aperture_type: 1,
                     fixation_cross: true,
                     fixation_cross_color: "lightpink", 

@@ -24,8 +24,11 @@
 
         jatos.onLoad(function() {
 
+            console.log("starting coherence thresholding one");
+
             var fixation = trial_pieces();
             var cueheight = jatos.studySessionData.cueheight;
+            var dotradius = jatos.studySessionData.dotradius;
             var cue_max_duration = jatos.studySessionData.cue_max_duration;
             var id_number = jatos.studySessionData.id_number;
             var iti_range = jatos.studySessionData.iti_range;
@@ -143,6 +146,8 @@
                             type: 'rdk', 
                             background_color: "black",
                             dot_color: "white", 
+                            dot_radius: dotradius,
+                            aperture_width: cueheight,
                             aperture_type: 1,
                             fixation_cross: true,
                             fixation_cross_color: "white", 

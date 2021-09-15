@@ -12,6 +12,7 @@
         <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-survey-multi-choice.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-resize.js"></script>
         <!-- pull in the preexperiment functions -->
         <script src="tools/consent.js"></script>
         <script src="tools/demographics.js"></script>
@@ -24,6 +25,9 @@
     <script>
 
         jatos.onLoad(function() {
+
+            console.log("initial set up");
+            
             ////////////////
             /* exp set up */
             ////////////////
@@ -39,7 +43,8 @@
             jatos.studySessionData["iti_range"] = [400,600]; // enter array of two values = [max, min]
             jatos.studySessionData["iti_duration"] = 300;
             jatos.studySessionData["cue_max_duration"] = 6500;
-            jatos.studySessionData["cueheight"] = window.innerHeight*0.65; // set the height to be a percentage of the window height
+            // jatos.studySessionData["cueheight"] = window.innerHeight*0.65; // set the height to be a percentage of the window height
+            // do height later
 
 
             // timeline on/off switches
@@ -119,7 +124,33 @@
             // let's get some consent!
         
             /* initialise timeline array */
+
             var timeline = [];
+
+            // standardise the screen size
+            timeline.push(
+                {
+                    type: 'resize',
+                    item_width: 8.56, // cm
+                    item_height: 5.398,
+                    prompt: "<p>Click and drag the lower right corner of the box until the box is the same size as a bank card held up to the screen.</p>",
+                    pixels_per_unit: 150
+                },
+            );
+
+            function ang_to_pix(angle) {
+                var unit_height = 1; // since we standardised pix per unit, we can use 1
+                var unit_resolution = 150; // since we standardised pix per unit
+                var distance_from_screen = 25; // in the unit
+                var pixSize = unit_height/unit_resolution;
+                var sz = 2*distance_from_screen*Math.tan(Math.PI*angle/(2*180)); // cm
+                return Math.round(sz/pixSize);
+            }
+
+            jatos.studySessionData["cueheight"] = ang_to_pix(10); // angle of cue as decimal
+            jatos.studySessionData["dotradius"] = (ang_to_pix(0.15)/2); // angle of dot as decimal then by 2 because the RDK plugin takes the radius as input and we're trying to replicate diameter from the matlab script
+
+            // do consent stuff
             if (jatos.studySessionData["consent_on"] === 1) {
                 get_consent(timeline); // do the consent function
                 get_demographics(timeline); // do the demographics function
