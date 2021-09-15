@@ -233,19 +233,19 @@
                         .then(function (response) {
                             console.log(response);
                             updated_coherence_values = response.data;
+                            console.log(updated_coherence_values);
                             
                             /////////////////////////////////////////
                             /* this is where we collect the values */
                             /////////////////////////////////////////
 
                             jatos.studySessionData["updated_coherence_values"] = updated_coherence_values;
-                            console.log(updated_coherence_values);
                             jsPsych.resumeExperiment();
                         })
                         .catch(function (error) {
                             // send the results to jatos in case of failure (will override existing)
                             var thisSessionData = jatos.studySessionData;
-                            var thisExpData = JSON.parse(jsPsych.data.get().json());
+			    var thisExpData = JSON.parse(jsPsych.data.get().json());
                             var resultJson = {...thisSessionData, ...thisExpData};
                             jatos.submitResultData(resultJson);
                             console.log(error);
