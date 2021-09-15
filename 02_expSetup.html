@@ -127,7 +127,21 @@
 
             var timeline = [];
 
+            // do consent stuff
+            if (jatos.studySessionData["consent_on"] === 1) {
+                get_consent(timeline); // do the consent function
+                get_demographics(timeline); // do the demographics function
+            } else {
+                timeline.push(
+                    {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>skipping consent</p>",
+                    },
+                );
+            }
+
             // standardise the screen size
+            // after the consent stuff because it makes the survey plugin super tiny
             timeline.push(
                 {
                     type: 'resize',
@@ -148,20 +162,8 @@
             }
 
             jatos.studySessionData["cueheight"] = ang_to_pix(10); // angle of cue as decimal
-            jatos.studySessionData["dotradius"] = (ang_to_pix(0.15)/2); // angle of dot as decimal then by 2 because the RDK plugin takes the radius as input and we're trying to replicate diameter from the matlab script
+            jatos.studySessionData["dotradius"] = (ang_to_pix(0.15)/4); // angle of dot as decimal then divide to account for diff matlab script vs jsPsych rdk
 
-            // do consent stuff
-            if (jatos.studySessionData["consent_on"] === 1) {
-                get_consent(timeline); // do the consent function
-                get_demographics(timeline); // do the demographics function
-            } else {
-                timeline.push(
-                    {
-                        type: "html-keyboard-response",
-                        stimulus: "<p>skipping consent</p>",
-                    },
-                );
-            }
 
             jsPsych.init({
                 timeline: timeline,
