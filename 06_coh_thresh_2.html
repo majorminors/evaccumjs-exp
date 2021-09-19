@@ -218,8 +218,8 @@
                         var thisExpData = JSON.parse(jsPsych.data.get().json());
                         var resultJson = {...thisSessionData, ...thisExpData};
                         jatos.submitResultData(resultJson)
-                           .then() => console.log('data submitted, results saved'))
-                           .catch() => console.log('data submission error'));))
+                           .then(() => console.log('data submitted, results saved'))
+                           .catch(() => console.log('data submission error'));))
                         console.log('results saved');
 
                         // POST the data to the psignifit function
@@ -250,8 +250,8 @@
 			    var thisExpData = JSON.parse(jsPsych.data.get().json());
                             var resultJson = {...thisSessionData, ...thisExpData};
                             jatos.submitResultData(resultJson)
-                               .then() => console.log('data submitted, results saved'))
-                               .catch() => console.log('data submission error'));))
+                               .then(() => console.log('data submitted, results saved'))
+                               .catch(() => console.log('data submission error'));))
                             console.log(error);
                         });
                     }
@@ -272,8 +272,8 @@
                     var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson, jatos.startNextComponent)
-                       .then() => console.log('data submitted, results saved'))
-                       .catch() => console.log('data submission error'));))
+                       .then(() => console.log('data submitted, results saved'))
+                       .catch(() => console.log('data submission error'));))
                 }
             });
         });
