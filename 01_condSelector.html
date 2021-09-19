@@ -10,7 +10,6 @@
     <body></body>
     <script>
             console.log("selecting conditions");
-            console.log("an error 'conditions undefined' first time occurring requires re-running component. conditions will now be generated and it can select them");
         
             // will generate condition bins, the condition for this participant and move on to next component
 
@@ -29,7 +28,7 @@
 
 
             // will need to run this twice if first run on server (see fail condition)
-            console.log("if it fails because conditions are undefined, you need to run it again - it has now set the batch session data");
+            console.log("if this fails because conditions are undefined, you need to run it again - it has now set the batch session data");
             initBatchConditions(num_conditions,num_condition_repeats);
 
             if (test_condition[0] == 1) {
