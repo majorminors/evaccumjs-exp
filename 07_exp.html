@@ -111,7 +111,7 @@
                                 var resultJson = {...thisSessionData, ...thisExpData};
                                 jatos.submitResultData(resultJson)
                                    .then(() => console.log('data submitted, results saved'))
-                                   .catch(() => console.log('data submission error'));))
+                                   .catch(() => console.log('data submission error'));
                                 console.log('results saved');
                             }
                         }
@@ -182,7 +182,7 @@
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson, jatos.startNextComponent)
                        .then(() => console.log('data submitted, results saved'))
-                       .catch(() => console.log('data submission error'));))
+                       .catch(() => console.log('data submission error'));
                 }
             });
         });
