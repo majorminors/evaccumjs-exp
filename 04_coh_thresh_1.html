@@ -231,13 +231,21 @@
                         })
                         .then(function (response) {
                             console.log(response);
-                            coherence_values = response.data;
+                            var all_coherence_values = response.data;
+
+                            var coherence_values = [];
+                            var unscaled_coherence_values = [];
+
+                            [coherence_values[0], coherence_values[1], scaled_coherence_values[0], scaled_coherence_values[1]] = all_coherence_values;
                             console.log(coherence_values);
 
                             /////////////////////////////////////////
                             /* this is where we collect the values */
                             /////////////////////////////////////////
 
+                            jsPsych.data.addProperties({
+                                    scaled_coherence_values: scaled_coherence_values,
+                            });
                             jatos.studySessionData["coherence_values"] = coherence_values;
                             jsPsych.resumeExperiment();
                         })

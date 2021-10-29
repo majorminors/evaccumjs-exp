@@ -233,6 +233,12 @@
                         })
                         .then(function (response) {
                             console.log(response);
+                            var all_coherence_values = response.data;
+
+                            var updated_coherence_values = [];
+                            var scaled_updated_coherence_values = [];
+
+                            [updated_coherence_values[0], updated_coherence_values[1], scaled_updated_coherence_values[0], scaled_updated_coherence_values[1]] = all_coherence_values;
                             updated_coherence_values = response.data;
                             console.log(updated_coherence_values);
                             
@@ -240,6 +246,9 @@
                             /* this is where we collect the values */
                             /////////////////////////////////////////
 
+                            jsPsych.data.addProperties({
+                                    scaled_updated_coherence_values: scaled_updated_coherence_values,
+                            });
                             jatos.studySessionData["updated_coherence_values"] = updated_coherence_values;
                             jsPsych.resumeExperiment();
                         })

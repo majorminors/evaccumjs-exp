@@ -285,7 +285,7 @@
                                 hard_rule_value_hard_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
                                 console.log(hard_rule_value_hard_dots);
                                 // lets average the rules, to get it off the floor
-                                hard_rule_value = (hard_rule_value_easy_dots+hard_rule_value_hard_dots)/2;
+                                hard_rule_value = (hard_rule_value_easy_dots[0]+hard_rule_value_hard_dots[0])/2;
                                 // since easy rule is the inverse of the hard rule, lets cap it
                                 if (hard_rule_value <= 50) {
                                     jsPsych.data.addProperties({
@@ -297,6 +297,10 @@
                                 /////////////////////////////////////////
                                 /* this is where we collect the values */
                                 /////////////////////////////////////////
+
+                                jsPsych.data.addProperties({
+                                    all_match_values: [hard_rule_value_easy_dots,hard_rule_value_hard_dots]
+                                });
 
                                 rule_values = [90-hard_rule_value, hard_rule_value]; // easy rule needs to be symmetrical to rule value for decoding analysis
                                 console.log('rule values: ',rule_values);
