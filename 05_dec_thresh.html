@@ -268,7 +268,7 @@
                         })
                         .then(function (response) {
                             console.log(response);
-                            hard_rule_value_easy_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
+				hard_rule_value_easy_dots = response.data.map(thisVal => -thisVal); // make negative because we fed psignifit neg values, so we want to convert it back
                             console.log(hard_rule_value_easy_dots);
                             // POST the data again to the psignifit function
                             axios({
@@ -282,7 +282,7 @@
                             })
                             .then(function (response) {
                                 console.log(response);
-                                hard_rule_value_hard_dots = -response.data; // negative because we fed psignifit neg values, so we want to convert it back
+                                hard_rule_value_hard_dots = response.data.map(thisVal => -thisVal); // make negative because we fed psignifit neg values, so we want to convert it back
                                 console.log(hard_rule_value_hard_dots);
                                 // lets average the rules, to get it off the floor
                                 hard_rule_value = (hard_rule_value_easy_dots[0]+hard_rule_value_hard_dots[0])/2;
