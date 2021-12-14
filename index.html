@@ -1,57 +1,397 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>EvAccum</title>
+        <title>EvAccum Instructions</title>
     	<meta charset="utf-8"/>
         <!-- pull in axios so we can make post requests -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <!-- pull in jsPsych resources -->
         <script src="jspsych-6.1.0/jspsych.js"></script>
+        <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-image-keyboard-response.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-rdk.js"></script>
-        <script src="jspsych-6.1.0/plugins/jspsych-instructions.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-survey-text.js"></script>
         <script src="jspsych-6.1.0/plugins/jspsych-survey-multi-choice.js"></script>
-        <!-- pull in the experiment resources we need -->
-        <script src="tools/credentials.js"></script>
-    	<script src="tools/exp_stimulus_array_generator.js"></script>
-    	<script src="tools/coh_stimulus_array_generator.js"></script>
-    	<script src="tools/coh_stimulus_array_generator_with_angle.js"></script>
-    	<script src="tools/rule_stimulus_array_generator.js"></script>
-        <!-- call the experiment creator function 'make_experiment' - needs to be called after the generators, because this function uses them -->
-        <script src="exp.js"></script>
-        <!-- pull in the preexperiment functions -->
+        <script src="jspsych-6.1.0/plugins/jspsych-resize.js"></script>
+        <!-- pull in experiment resources -->
         <script src="tools/consent.js"></script>
         <script src="tools/demographics.js"></script>
+        <script src="tools/trial_pieces.js"></script>
         <!-- some additional styling to make the background black -->
         <link href="tools/exp.css" rel="stylesheet" type="text/css"></link>
         <style></style>
     </head>
     <body></body>
     <script>
-		
-        console.log('this will not work currently - JATOS functionality called in exp.js');
 
-        /*
-         * the experiment script is in exp.js (called in the head)
-         * this is so we don't need to maintain it twice for index.html and jatos.html
-         * the experiment script is wrapped in a function 'make_experiment', which we call in jsPsych.init to get the timeline and image paths
-         * this is my messy solution to working with JATOS batch session data to manage the conditions, although the JATOS stuff is not in this document
-        */
+            var thisID = 1;
+            var iti_range = [400,600];
+            var iti_duration = 300;
+            var cue_max_duration = 6500;
+            var dots_fixation = 1;
 
-        // set the id_number (0-1, although if you go 1-2, will set 2 to 0, and above that will use the modulus after remainder - allows you to use this as a participant id)
-        var id_number = 1;
-
-        /* initialise experiment */
-        jsPsych.init({
-            timeline: make_experiment(id_number),
-            preload_images: make_experiment(id_number,1),
-            show_progress_bar: false,
-            show_preload_progress_bar: false,
-            on_finish: function(){
-                jsPsych.data.displayData();
+            function ang_to_pix(angle) {
+                var unit_height = 1; // since we standardised pix per unit, we can use 1
+                var unit_resolution = 150; // since we standardised pix per unit
+                var distance_from_screen = 25; // in the unit
+                var pixSize = unit_height/unit_resolution;
+                var sz = 2*distance_from_screen*Math.tan(Math.PI*angle/(2*180)); // cm
+                return Math.round(sz/pixSize);
             }
-        });
+            
+            var cueheight = ang_to_pix(10); // angle of cue as decimal
+            var dotradius = ang_to_pix(0.15)/4; // angle of dot as decimal then divide to account for diff matlab script vs jsPsych rdk
+
+            var imgs_info = [];
+            if (thisID % 2 === 1) { // if even
+                /* keys */
+                resp_keys = ['o', 'p'];
+                condition = ['op',1];
+                /* cues */
+                cues = [
+                    {stimulus: "stimuli/1-3.svg"},
+                    {stimulus: "stimuli/2-4.svg"},
+                    {stimulus: "stimuli/3-1.svg"},
+                    {stimulus: "stimuli/4-2.svg"}
+                ];
+                instruction_imgs = [
+                    {stimulus: "stimuli/buttons.svg"},
+                    {stimulus: "stimuli/buttons-o.svg"},
+                    {stimulus: "stimuli/buttons-p.svg"}
+                ];
+
+            } else if (thisID % 2 === 0) { // else if odd
+                /* keys */
+                resp_keys = ['p', 'o'];
+                condition = ['po',2];
+                /* cues */
+                cues = [
+                    {stimulus: "stimuli/3-1.svg"},
+                    {stimulus: "stimuli/4-2.svg"},
+                    {stimulus: "stimuli/1-3.svg"},
+                    {stimulus: "stimuli/2-4.svg"}
+                ];
+                instruction_imgs = [
+                    {stimulus: "stimuli/buttons.svg"},
+                    {stimulus: "stimuli/buttons-p.svg"},
+                    {stimulus: "stimuli/buttons-o.svg"}
+                ];
+            }
+		
+            var timeline = [];
+
+            get_consent(timeline); // do the consent function
+            get_demographics(timeline); // do the demographics function
+
+            //////////////////
+            /* instructions */
+            //////////////////
+
+            if (dots_fixation == 0) {
+                fixation = { // this is an RDK block with invisible (black) dots just to have the fixation cross
+                    type: 'rdk',
+                    background_color: "black",
+                    dot_color: "black", 
+                    aperture_type: 1,
+                    fixation_cross: true,
+                    fixation_cross_color: "white", 
+                    fixation_cross_thickness: 6,
+                    post_trial_gap: 0, 
+                    choices: jsPsych.NO_KEYS,
+                    response_ends_trial: false,
+                    correct_choice: "q",
+                    trial_duration: function(){ // lil function to randomise the iti between a range
+                        var min = iti_range[0];
+                        var max = iti_range[1];
+                        var random_iti = Math.random() * (max - min) + min;
+                        // console.log(random_iti);
+                        return random_iti;
+                    },
+                    data: {experiment_part: 'fixation'}
+                }
+            } else if (dots_fixation == 1) {
+                fixation = { // this is an RDK block with a red fixation cross and 100% random dots
+                    type: 'rdk',
+                    background_color: "black",
+                    dot_color: "white", 
+                    dot_radius: dotradius,
+                    aperture_width: cueheight,
+                    aperture_type: 1,
+                    fixation_cross: true,
+                    fixation_cross_color: "lightpink", 
+                    fixation_cross_thickness: 6,
+                    post_trial_gap: 0, 
+                    choices: jsPsych.NO_KEYS,
+                    response_ends_trial: false,
+                    correct_choice: "q",
+                    trial_duration: function(){ // lil function to randomise the iti between a range
+                        var min = iti_range[0];
+                        var max = iti_range[1];
+                        var random_iti = Math.random() * (max - min) + min;
+                        // console.log(random_iti);
+                        return random_iti;
+                    },
+                    number_of_dots: 100,
+                    coherence: 0, 
+                    move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                    dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                    data: {experiment_part: 'fixation'}
+                }
+            } else if (jatos.studySessionData["dots_fixation"] == 2 ) {
+                fixation = {
+                    timeline: [
+                        { // blank interval
+                            type: 'html-keyboard-response',
+                            stimulus: '<div></div>',
+                            choices: jsPsych.NO_KEYS,
+                            trial_duration: iti_duration,
+                            response_ends_trial: false
+                        },
+                        { // rdk with random dots
+                            type: 'rdk',
+                            background_color: "black",
+                            dot_color: "white", 
+                            dot_radius: dotradius,
+                            aperture_width: cueheight,
+                            aperture_type: 1,
+                            fixation_cross: true,
+                            fixation_cross_color: "lightpink", 
+                            fixation_cross_thickness: 6,
+                            post_trial_gap: 0, 
+                            choices: jsPsych.NO_KEYS,
+                            response_ends_trial: false,
+                            correct_choice: "q",
+                            trial_duration: function(){ // lil function to randomise the iti between a range
+                                var min = iti_range[0];
+                                var max = iti_range[1];
+                                var random_iti = Math.random() * (max - min) + min;
+                                return random_iti;
+                            },
+                            number_of_dots: 100,
+                            coherence: 0, 
+                            move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                            dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                            data: {experiment_part: 'fixation'}
+                        }
+                    ]
+                }
+            }
+
+            var instruction_cue = {
+                type: 'image-keyboard-response',
+                stimulus_height: cueheight,
+                choices: resp_keys,
+                trial_duration: cue_max_duration,
+                data: {experiment_part: 'instructions'}
+            }
+            var instruction_rdk = {
+                type: 'rdk', 
+                background_color: "black",
+                dot_color: "white", 
+                dot_radius: dotradius,
+                aperture_width: cueheight,
+                aperture_type: 1,
+                fixation_cross: true,
+                fixation_cross_color: "white", 
+                fixation_cross_thickness: 6,
+                post_trial_gap: 0, 
+                number_of_dots: 100,
+                response_ends_trial: false,
+                coherence: 1, 
+                move_distance: 2.5, // I've only approximated the MATLAB experiment here - that's 5 degrees per second (like .01 Hz/fps) this is in pixel lengths per second...
+                dot_life: 7, // this is not the same as MATLAB - expressed in same units (frames of life), but MATLAB's 5 is visibly different to jsPsych's 5...
+                choices: resp_keys,
+                trial_duration: 1500,
+                data: {experiment_part: 'instructions'}
+            }
+            var instruction_answers = {
+                type: 'image-keyboard-response',
+                stimulus_height: cueheight,
+                response_ends_trial: false,
+                trial_duration: 1000,
+                choices: jsPsych.NO_KEYS,
+                data: {experiment_part: 'instructions'}
+            }
+            var instruction_feedback = { // you can use this for testing, otherwise comment out
+                type: "html-keyboard-response",
+                stimulus: function() {
+                    var last_rdk_accuracy = jsPsych.data.get().last(1).values()[0].correct; // dynamic var (runs throughout) asking for data.correct from last rdk block
+                    if (last_rdk_accuracy) { // if true (data.correct is boolean)
+                        return "<p>correct</p>";
+                    } else { // else if false
+                        return "<p>incorrect</p>";
+                    }
+                },
+                choices: jsPsych.NO_KEYS,
+                trial_duration: 300,
+                data: {experiment_part: 'instructions'}
+            }
+            var instruction_noresp = {
+                type: 'html-keyboard-response',
+                choices: jsPsych.NO_KEYS,
+                trial_duration: 1000,
+                response_ends_trial: false
+            }
+            var instruction_resp = { // requires html stimulus entry in previous trial
+                type: 'html-keyboard-response',
+                stimulus: function() {
+                    var last_stim = jsPsych.data.get().last(1).values()[0].stimulus;
+                    var addcontinue = last_stim+'<p style="position: fixed; bottom: 0; left: 50%; transform: translate(-50%, -50%); margin: 0 auto;"><br>Press any key to continue</p>';
+                    return addcontinue;
+                }
+            }
+
+            var instructions = {
+                timeline: [
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Welcome, and thanks for participating.</p><br>"+
+                                "<p>Trials will go as follows:</p>"+
+                                "<p>1. You'll see a cue</p>"+
+                                "<p>2. You'll see some moving dots on the screen</p>"+
+                                "<p>3. You'll press a button based on the cue and the moving dots</p><br>"+
+                                "<p>Let's see how that looks</p>"
+                    },
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>First, let me introduce you to the buttons you'll be using. Position your hand as in the following image.</p>"
+                    },
+                    instruction_resp,
+                    {...instruction_answers, stimulus: instruction_imgs[0].stimulus, trial_duration: 2000},
+                    {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>Let's test your keyboard is compatible.<br>Press 'p' to continue.<br>If this doesn't work, contact the researcher!<br>We can't continue without a working 'p' key!</p>",
+                        choices: "p",
+                    },
+                    {
+                        type: "html-keyboard-response",
+                        stimulus: "<p>Now press 'o' to continue.<br>If this doesn't work, contact the researcher!<br>We can't continue without a working 'o' key!</p>",
+                        choices: "o",
+                    },
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Any time you see a cue, or moving dots, use these keys to respond.<br>Now let me show you what a cue looks like.</p>"
+                    },
+                    instruction_resp,
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Here's what the moving dots look like.</p>"
+                    },
+                    instruction_resp,
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Now together.</p>"
+                    },
+                    instruction_resp,
+                    // example
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                    {
+                        ...instruction_noresp,
+                        // this is a ternery operator - if dots_fixation is false, it will show the bit in quotes before the :, if true it will show the bit in quotes after the :
+                        stimulus: dots_fixation ? "<p>Ok. Now let me explain the task in a bit more detail.<br>First, when the cross in the middle of the dots is red, you shouldn't respond.<br>These dots are moving completely randomly.<br><br>Then, when the cross turns white,<br>only some of the moving dots will be moving randomly—the rest will be moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>" : "<p>Ok. Now let me explain the task in a bit more detail.<br>On each trial, some of the moving dots are moving randomly—the rest are moving all together in one (coherent) direction.<br><br>The cue lets you know which button to press depending on what direction the coherent dots are moving in on that trial.<br>If the dots are moving more in the direction of 'p', you would press 'p'.<br>If they were moving more towards 'o', you would press 'o'.<br><br>Let's look again and I'll show you the answer at the end.</p>"
+                    },
+                    instruction_resp,
+                    // example
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45},
+                    {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>The dots can move in any direction, so make sure you pay close attention to the cue.<br>Let me show you a couple more examples.</p>"
+                    },
+                    instruction_resp,
+                    // example
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 0},
+                    {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
+                    // example
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 225},
+                    {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
+                    // example
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 245},
+                    {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>The cue can also change.</p>"
+                    },
+                    instruction_resp,
+                    // example
+                    {...instruction_cue, stimulus: cues[3].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[1], coherent_direction: 0},
+                    {...instruction_answers, stimulus: instruction_imgs[2].stimulus},
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>The dots can also be easier or harder to see<br>This is because some dots will be moving in one direction and the rest will be moving in a random direction.</p>"
+                    },
+                    instruction_resp,
+                    // example
+                    {...instruction_cue, stimulus: cues[0].stimulus},
+                    fixation,
+                    {...instruction_rdk, correct_choice: resp_keys[0], coherent_direction: 45, coherence: 0.7},
+                    {...instruction_answers, stimulus: instruction_imgs[1].stimulus},
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>You'll have a chance to practice a bit, but first a couple of final notes.</p>"
+                    },
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>You'll get a couple of opportunities to take a little break throughout the experiment.</p>"
+                    },
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Answer as soon as you're sure of your answer.</p>"
+                    },
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>The cue will only appear every once in a while, so please pay attention.<br>It will also only stay on the screen for a few seconds.<br>You can press any key to continue when you're ready, but if you wait too long the experiment will continue anyway.</p>"
+                    }, 
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Some trials are easy, but many trials are hard.<br>This is on purpose—I am also interested in errors.<br>So just do your best and don't be discouraged.</p>"
+                    }, 
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Lastly, <strong>Always answer!</strong><br><br>Try to be as <em>accurate</em> and as <em>fast</em> as possible,<br><br>but please make sure you always answer.</p>"
+                    },
+                    instruction_resp,
+                    {
+                        ...instruction_noresp,
+                        stimulus: "<p>Ok! Let's get started.<br><br>This experiment has four parts.<br>The first is a short five minute test,<br>the second is about ten minutes.<br>A third which is short again, about five minutes.<br> The last test is the full experiment and will take up the rest of the time.<br><br>It's long, so do take breaks when you're prompted.<br>But not too long!<br>The experiment will continue by itself if left for long enough.<br>And remember, if you miss more than 10% of responses,<br>I won't be able to accept your submission.<br>Nor if you're just guessing throughout!<br>Let's begin!</p>"
+                    },
+                    instruction_resp,
+                ]
+            }
+            timeline.push(instructions);
+
+
+            jsPsych.init({
+                timeline: timeline,
+                on_finish: function() {
+                    var time = jsPsych.totalTime();
+                    jsPsych.data.addProperties({
+                        expt_duration: time,
+                    });
+                    var thisExpData = JSON.parse(jsPsych.data.get().json());
+                }
+            });
     </script>
 </html>
