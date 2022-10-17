@@ -18,9 +18,10 @@
 
         // for debriefing and redirecting to e.g. Prolific
 
-        var redirect_link = 'https://app.prolific.co/submissions/complete?cc=18112FFE';
+        var coherence_values = jatos.studySessionData.coherence_values;
+        var rule_values = jatos.studySessionData["rule_values"];
 
-        var debrief_html = "<p>All done!<br><br>Thanks so much for participating.<br>Feel free to email me if you'd like to know more about what the study was exploring.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish and please wait to be redirected to Prolific.</p>";
+        var debrief_html = "<p>All done!<br><br>Please email me with the following information:<br>coh:"+JSON.stringify(coherence_values)+"<br>rule:"+JSON.stringify(rule_values)+"<br>I'll use this to look at the data and make sure all is well for our upcoming study.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish.</p>";
 
         jatos.onLoad(function() {
 
@@ -46,10 +47,7 @@
                     var thisExpData = JSON.parse(jsPsych.data.get().json());
                     var resultJson = {...thisSessionData, ...thisExpData};
                     jatos.submitResultData(resultJson)
-                    .then(jatos.endStudyAjax)
-                    .then(() => {
-                        window.location.href = redirect_link
-                    });
+                    .then(jatos.endStudyAjax);
                 }
             });
         });
