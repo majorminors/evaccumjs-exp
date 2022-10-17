@@ -25,15 +25,15 @@ var info = {
     You should be aware, however, that we keep results anonymous to protect your privacy. If you decide to withdraw some time after your participation it may therefore not be possible to identify and remove your specific results.</p>",
 
     "<p><strong>What will I be asked to do in the study?</strong><br>\
-    Taking part requires you to complete a computerised task online from wherever suits you.\
-    We will explain the task in detail before you start and you will have the opportunity to practice it.</p>\
+    Taking part requires you to complete a computerised screening online from wherever suits you, before coming in to do the experiment.\
+    When you come in, we will explain the task in detail before you start and you will have the opportunity to practice it.</p>\
     <p> <strong>Will video or audio recordings be made?</strong><br>\
     The study does not involve video or audio recording.</p>\
     <p><strong>Will I be paid for taking part?</strong><br>\
-    To thank you for your contribution to this study we will give you £6 for each hour.</p>",
+    To thank you for your contribution to this study we will give you £5 for this screening, regardless of whether you continue on to the experiment or not.</p>",
 
     "<p><strong>What are the possible risks/side effects of taking part?</strong><br>\
-    There are no obvious risks from the computer task that you will be asked to complete. For online studies, we will include regular opportunities for breaks. Remember, you can withdraw from the study at any time without needing to give us a reason.</p>\
+    There are no obvious risks from the computer task that you will be asked to complete. Remember, you can withdraw from the study at any time without needing to give us a reason.</p>\
     <p><strong>What happens to my anonymised research data?</strong><br>\
     Anonymised research data includes information like the buttons you pushed on a computer task or your answers on a questionnaire; in other words, information from which it would not be possible, or would be very difficult, to identify you personally. \
     Your anonymised research data, typically combined with similar information from other volunteers, will be used for scientific research. The results are presented in scientific papers and talks, in teaching and in explaining our science to health professionals, school groups and the public in general. We take great care to ensure that individuals cannot be identified from our research outputs.</p>",
@@ -51,10 +51,15 @@ var info = {
     We are keen that volunteers feel informed and well treated when they take part in our research. If you have a complaint about this study please contact the Principle Investigator listed at the end of this information sheet in the first instance. If you are not happy with the response, please contact the Director of the Cognition and Brain Sciences Unit (director@mrc-cbu.cam.ac.uk). Further steps can be taken through the University of Cambridge if necessary.</p>\
     <p>Thank you for considering taking part in this study. Our research depends entirely on the goodwill of potential volunteers such as you.  If you require any further information, we will be pleased to help you in any way we can.</p>\
     <p>If you require more information, please contact:</p>\
+    <p>Dorian Minors<br>\
+    Email: Dorian.Minors@mrc-cbu.cam.ac.uk<br>\
+    MRC Cognition & Brain Sciences Unit<br>\
+    15 Chaucer Road, Cambridge. CB2 7EF Tel: 01223 767704</p>\
+    <p>The Principle Investigator is:</p>\
     <p>Dr Alexandra Woolgar<br>\
     MRC Cognition & Brain Sciences Unit<br>\
     15 Chaucer Road, Cambridge. CB2 7EF Tel: 01223 767704<br>\
-    Email: Alexandra.woolgar@mrc-cbu.cam.ac.uk"
+    Email: Alexandra.woolgar@mrc-cbu.cam.ac.uk</p>"
     ], 
 
     show_clickable_nav: true,

@@ -18,10 +18,7 @@
 
         // for debriefing and redirecting to e.g. Prolific
 
-        var coherence_values = jatos.studySessionData.coherence_values;
-        var rule_values = jatos.studySessionData["rule_values"];
-
-        var debrief_html = "<p>All done!<br><br>Please email me with the following information:<br>coh:"+JSON.stringify(coherence_values)+"<br>rule:"+JSON.stringify(rule_values)+"<br>I'll use this to look at the data and make sure all is well for our upcoming study.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish.</p>";
+        var debrief_html = "<p>All done!<br><br>Please email me to let me know.<br>look at the data and make sure all is well for our upcoming study.<br>dorian.minors@mrc-cbu.cam.ac.uk<br><br>Press any key to finish, then you can close the window.</p>";
 
         jatos.onLoad(function() {
 
